@@ -1,29 +1,86 @@
-# Create T3 App
+# Yallburru Community Services Website
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A modern, responsive website for Yallburru Community Services, an Elder Care & Disability Services Provider serving the Gold Coast, South East Queensland & Nationwide.
 
-## What's next? How do I make an app with this?
+## 🌟 Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Responsive design that works on all devices
+- Single-page application with smooth scroll navigation
+- Accessible and SEO-friendly
+- Modern UI with Tailwind CSS
+- Interactive mobile menu
+- Contact information and services showcase
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## 🚀 Tech Stack
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- [Next.js](https://nextjs.org/) - React framework
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Lucide React](https://lucide.dev/) - Icons
 
-## Learn More
+## 🛠️ Installation
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+1. Clone the repository:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```bash
+git clone https://github.com/your-username/yallburru.git
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+2. Install dependencies:
 
-## How do I deploy this?
+```bash
+pnpm install
+```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+3. Run the development server:
+
+```bash
+pnpm dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 📝 Environment Variables
+
+Create a `.env.local` file in the root directory and add the following variables:
+
+```env
+NEXT_PUBLIC_SITE_URL=your-production-url
+```
+
+## 🔧 Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm type-check` - Run TypeScript compiler
+
+## 📱 Pages
+
+- Home/Landing Page with:
+  - Navigation Menu
+  - Hero Section
+  - Services Overview
+  - Contact Information
+  - Footer
+
+## 🎨 Design
+
+The website uses a clean, professional design with:
+- Blue and white color scheme
+- Modern iconography
+- Responsive layout
+- Accessible navigation
+- Mobile-first approach
+
+## 📄 License
+
+Copyright © 2024 Yallburru Community Services. All rights reserved.
+
+## 📞 Contact
+
+For any inquiries, please contact:
+- Phone: (07) 5632 5727
+- Email: admin@yallburru.org.au
+- Address: 55 Highland way, Upper Coomera, QLD, 4209
