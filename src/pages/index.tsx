@@ -35,13 +35,14 @@ export default function Homepage() {
       </Head>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50">
+      <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-sm shadow-sm z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="w-48 relative">
+
             <Image 
               src="/banner.webp" 
-              alt="Yallburru Community Services Logo" 
+              alt="Yallburru Community Services banner" 
               width={192}
               height={48}
               priority
@@ -51,15 +52,15 @@ export default function Homepage() {
           
           {/* Desktop Navigation links */}
           <div className="hidden md:flex gap-6">
-            <Link href="#about" className="hover:text-blue-600 flex items-center gap-2">
+            <Link href="#about" className="text-white hover:text-sky-400 flex items-center gap-2">
               <Users size={18} />
               About
             </Link>
-            <Link href="#services" className="hover:text-blue-600 flex items-center gap-2">
+            <Link href="#services" className="text-white hover:text-sky-400 flex items-center gap-2">
               <Heart size={18} />
               Services
             </Link>
-            <Link href="#contact" className="hover:text-blue-600 flex items-center gap-2">
+            <Link href="#contact" className="text-white hover:text-sky-400 flex items-center gap-2">
               <Phone size={18} />
               Contact
             </Link>
@@ -67,7 +68,7 @@ export default function Homepage() {
           
           {/* Mobile menu button */}
           <button 
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="md:hidden p-2 text-white hover:bg-sky-900/50 rounded-lg transition-colors"
             onClick={toggleMenu}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -83,7 +84,7 @@ export default function Homepage() {
             top-full 
             left-0 
             w-full 
-            bg-white 
+            bg-black/95 
             shadow-lg 
             transition-all 
             duration-300 
@@ -95,7 +96,7 @@ export default function Homepage() {
             <div className="flex flex-col space-y-4 pb-4">
               <Link
                 href="#about" 
-                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Users size={18} />
@@ -103,7 +104,7 @@ export default function Homepage() {
               </Link>
               <Link
                 href="#services" 
-                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Heart size={18} />
@@ -111,7 +112,7 @@ export default function Homepage() {
               </Link>
               <Link 
                 href="#contact" 
-                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Phone size={18} />
@@ -123,17 +124,17 @@ export default function Homepage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-0 bg-sky-600">
+      <section className="pt-24 pb-0 bg-gradient-to-b from-black via-sky-900 to-sky-600">
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-4xl text-white md:text-5xl font-bold mb-6">
             Elder Care & Disability Services Provider
           </h1>
-          <p className="text-xl text-gray-200 mb-8">
+          <p className="text-xl text-purple-200 mb-8">
             Gold Coast, South East Qld & Nationwide
           </p>
           <Link 
             href="#contact" 
-            className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 inline-flex items-center gap-2"
+            className="bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-400 inline-flex items-center gap-2 transition-colors"
           >
             Get In Touch
             <ArrowRight size={18} />
@@ -145,27 +146,27 @@ export default function Homepage() {
       {/* Services Section */}
       <section id="services" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Our Services</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Our Services</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="w-16 h-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
-                <Home size={32} className="text-blue-600" />
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
+                <Home size={32} className="text-sky-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Home Health Care</h3>
+              <h3 className="text-xl font-semibold mb-4 text-sky-900">Home Health Care</h3>
               <p className="text-gray-600">Professional care services in the comfort of your home.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="w-16 h-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
-                <Heart size={32} className="text-blue-600" />
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
+                <Heart size={32} className="text-sky-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Disability Support</h3>
+              <h3 className="text-xl font-semibold mb-4 text-sky-900">Disability Support</h3>
               <p className="text-gray-600">Specialized support for individuals with disabilities.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="w-16 h-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
-                <Users size={32} className="text-blue-600" />
+            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
+                <Users size={32} className="text-sky-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Elder Care</h3>
+              <h3 className="text-xl font-semibold mb-4 text-sky-900">Elder Care</h3>
               <p className="text-gray-600">Compassionate care services for elderly individuals.</p>
             </div>
           </div>
