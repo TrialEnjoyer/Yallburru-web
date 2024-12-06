@@ -12,6 +12,8 @@ import {
   Building2,
   X
 } from "lucide-react";
+import Image from "next/image";
+//import yallburrubanner from "/banner.webp";
 
 export default function Homepage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,8 +36,17 @@ export default function Homepage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          {/* Logo placeholder */}
-          <div className="w-48 h-12 bg-gray-200 rounded"></div>
+          {/* Logo */}
+          <a href="/" className="w-48 relative">
+            <Image 
+              src="/banner.webp" 
+              alt="Yallburru Community Services Logo" 
+              width={192}
+              height={48}
+              priority
+              className="h-12 w-auto object-contain"
+            />
+          </a>
           
           {/* Desktop Navigation links */}
           <div className="hidden md:flex gap-6">
