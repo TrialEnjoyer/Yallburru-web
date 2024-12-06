@@ -57,7 +57,7 @@ export default function Homepage() {
           </Link>
           
           {/* Desktop Navigation links */}
-          <div className="hidden md:flex gap-6">
+          <div className="hidden md:flex gap-6 pr-4">
             <Link href="#about" className="text-white hover:text-sky-400 flex items-center gap-2">
               <Users size={18} />
               About
@@ -74,7 +74,7 @@ export default function Homepage() {
           
           {/* Mobile menu button */}
           <button 
-            className="md:hidden p-2 text-white hover:bg-sky-900/50 rounded-lg transition-colors"
+            className="md:hidden p-2 text-white hover:bg-sky-900/50 rounded-lg transition-colors pr-4"
             onClick={toggleMenu}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
