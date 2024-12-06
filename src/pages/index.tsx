@@ -234,13 +234,13 @@ export default function Homepage() {
                 reflects our commitment to community and care.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                With over (X) years of experience, we specialize in providing personalized care 
+                With over 15 years of experience, we specialize in providing personalized care 
                 solutions that enhance the quality of life for our clients. Our dedicated team 
                 of professionals is committed to delivering exceptional care with compassion and respect.
               </p>
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="text-center p-4 bg-sky-50 rounded-lg">
-                  <h4 className="text-2xl font-bold text-sky-900">(X)+</h4>
+                  <h4 className="text-2xl font-bold text-sky-900">15+</h4>
                   <p className="text-gray-600">Years Experience</p>
                 </div>
                 <div className="text-center p-4 bg-sky-50 rounded-lg">
