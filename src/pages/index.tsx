@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Phone,
   Mail,
@@ -11,7 +11,6 @@ import {
   ArrowRight,
   X,
   LayoutGrid,
-  Image as ImageIcon,
   Award,
   Shield,
   CheckCircle,
@@ -24,6 +23,17 @@ import WaveDivider from "../components/WaveDivider";
 
 export default function Homepage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 0;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -41,18 +51,29 @@ export default function Homepage() {
       </Head>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-sm shadow-sm z-50">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className={`
+        fixed top-0 w-full bg-black/90 backdrop-blur-sm shadow-sm z-50
+        transition-all duration-300
+        ${scrolled ? 'h-[64px]' : 'h-auto'}
+      `}>
+        <div className={`
+          container mx-auto flex justify-between items-center h-full
+          transition-all duration-300
+          ${scrolled ? 'px-4' : 'px-6'}
+        `}>
           {/* Logo */}
           <Link href="/" className="w-48 relative">
-
             <Image 
               src="/banner.webp" 
               alt="Yallburru Community Services banner" 
               width={192}
               height={48}
               priority
-              className="h-full w-auto object-contain"
+              className={`
+                h-full w-auto object-contain
+                transition-all duration-300
+                ${scrolled ? 'scale-[0.74]' : 'scale-100'}
+              `}
             />
           </Link>
           
