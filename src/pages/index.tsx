@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import WaveDivider from "../components/WaveDivider";
 //import yallburrubanner from "/banner.webp";
 
 export default function Homepage() {
@@ -122,12 +123,12 @@ export default function Homepage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-blue-50">
+      <section className="pt-24 pb-0 bg-sky-600">
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl text-white md:text-5xl font-bold mb-6">
             Elder Care & Disability Services Provider
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-200 mb-8">
             Gold Coast, South East Qld & Nationwide
           </p>
           <Link 
@@ -138,6 +139,7 @@ export default function Homepage() {
             <ArrowRight size={18} />
           </Link>
         </div>
+        <WaveDivider />
       </section>
 
       {/* Services Section */}
