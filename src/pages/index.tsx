@@ -198,7 +198,13 @@ export default function Homepage() {
           <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">About Yallburru</h2>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="flex items-center justify-center bg-sky-100 rounded-lg p-12">
-              <ImageIcon size={200} className="text-sky-400" />
+              <Image 
+                src="/banner.webp"
+                alt="Caring staff member with client"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
             </div>
             <div className="space-y-6">
               <p className="text-gray-600 leading-relaxed">
@@ -304,7 +310,7 @@ export default function Homepage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Our Accreditations</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+          <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
             <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
               <Shield size={48} className="text-sky-600 mb-2" />
               <p className="text-sm text-sky-900 text-center">NDIS Registered Provider</p>
