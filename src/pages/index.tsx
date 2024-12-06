@@ -9,7 +9,13 @@ import {
   Heart,
   Users,
   ArrowRight,
-  X
+  X,
+  LayoutGrid,
+  Image as ImageIcon,
+  Award,
+  Shield,
+  CheckCircle,
+  BadgeCheck
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,7 +42,7 @@ export default function Homepage() {
 
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-sm shadow-sm z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="w-48 relative">
 
@@ -46,7 +52,7 @@ export default function Homepage() {
               width={192}
               height={48}
               priority
-              className="h-12 w-auto object-contain"
+              className="h-full w-auto object-contain"
             />
           </Link>
           
@@ -125,20 +131,33 @@ export default function Homepage() {
 
       {/* Hero Section */}
       <section className="pt-24 pb-0 bg-gradient-to-b from-black via-sky-900 to-sky-600">
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-4xl text-white md:text-5xl font-bold mb-6">
+        <div className="container mx-auto px-4 py-28 md:py-32 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
             Elder Care & Disability Services Provider
           </h1>
-          <p className="text-xl text-purple-200 mb-8">
+          <p className="text-xl md:text-2xl font-light text-purple-100 mb-12 max-w-3xl mx-auto">
             Gold Coast, South East Qld & Nationwide
           </p>
-          <Link 
-            href="#contact" 
-            className="bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-400 inline-flex items-center gap-2 transition-colors"
-          >
-            Get In Touch
-            <ArrowRight size={18} />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link 
+              href="#contact" 
+              className="bg-sky-500 text-white px-8 py-4 rounded-full 
+                         hover:bg-sky-400 inline-flex items-center gap-2 
+                         transition-colors shadow-lg"
+            >
+              Get In Touch
+              <ArrowRight size={20} />
+            </Link>
+            <Link 
+              href="#services" 
+              className="text-white px-8 py-4 rounded-full 
+                         border border-white/30 hover:border-sky-300 hover:text-sky-300
+                         inline-flex items-center gap-2 transition-colors"
+            >
+              Our Services
+              <LayoutGrid size={20} />
+            </Link>
+          </div>
         </div>
         <WaveDivider />
       </section>
@@ -168,6 +187,139 @@ export default function Homepage() {
               </div>
               <h3 className="text-xl font-semibold mb-4 text-sky-900">Elder Care</h3>
               <p className="text-gray-600">Compassionate care services for elderly individuals.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">About Yallburru</h2>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="flex items-center justify-center bg-sky-100 rounded-lg p-12">
+              <ImageIcon size={200} className="text-sky-400" />
+            </div>
+            <div className="space-y-6">
+              <p className="text-gray-600 leading-relaxed">
+                Yallburru Community Services is a leading provider of disability and aged care services 
+                in South East Queensland. Our name, derived from Indigenous Australian language, 
+                reflects our commitment to community and care.
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                With over (X) years of experience, we specialize in providing personalized care 
+                solutions that enhance the quality of life for our clients. Our dedicated team 
+                of professionals is committed to delivering exceptional care with compassion and respect.
+              </p>
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="text-center p-4 bg-sky-50 rounded-lg">
+                  <h4 className="text-2xl font-bold text-sky-900">(X)+</h4>
+                  <p className="text-gray-600">Years Experience</p>
+                </div>
+                <div className="text-center p-4 bg-sky-50 rounded-lg">
+                  <h4 className="text-2xl font-bold text-sky-900">1000+</h4>
+                  <p className="text-gray-600">Clients Served</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">What Our Clients Say</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                text: "The care and attention provided by Yallburru has made a significant difference in my father's life. Their staff is exceptional.",
+                author: "Sarah Mitchell",
+                role: "Family Member"
+              },
+              {
+                text: "As an NDIS participant, I've found Yallburru's services to be professional, reliable, and truly person-centered.",
+                author: "James Wilson",
+                role: "Client"
+              },
+              {
+                text: "The team at Yallburru goes above and beyond. Their commitment to quality care is evident in everything they do.",
+                author: "Emma Thompson",
+                role: "Family Member"
+              }
+            ].map((testimonial, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                <div className="mb-4">
+                  {"⭐".repeat(5)}
+                </div>
+                <p className="text-gray-600 mb-4 italic">&ldquo;{testimonial.text}&rdquo;</p>
+                <div>
+                  <p className="font-semibold text-sky-900">{testimonial.author}</p>
+                  <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-sky-900 text-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center">Why Choose Yallburru</h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              {
+                title: "Person-Centered Care",
+                description: "Tailored support plans that put your needs first",
+                icon: "🎯"
+              },
+              {
+                title: "Qualified Staff",
+                description: "Experienced and professionally trained caregivers",
+                icon: "👥"
+              },
+              {
+                title: "Cultural Sensitivity",
+                description: "Respect for diverse cultural backgrounds",
+                icon: "🤝"
+              },
+              {
+                title: "24/7 Support",
+                description: "Round-the-clock care when you need it",
+                icon: "⏰"
+              }
+            ].map((feature, index) => (
+              <div key={index} className="text-center p-6">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sky-100">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Accreditation Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Our Accreditations</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+            <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
+              <Shield size={48} className="text-sky-600 mb-2" />
+              <p className="text-sm text-sky-900 text-center">NDIS Registered Provider</p>
+            </div>
+            <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
+              <Award size={48} className="text-sky-600 mb-2" />
+              <p className="text-sm text-sky-900 text-center">Aged Care Quality Standards</p>
+            </div>
+            <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
+              <CheckCircle size={48} className="text-sky-600 mb-2" />
+              <p className="text-sm text-sky-900 text-center">ISO Certified</p>
+            </div>
+            <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
+              <BadgeCheck size={48} className="text-sky-600 mb-2" />
+              <p className="text-sm text-sky-900 text-center">Disability Services Certified</p>
             </div>
           </div>
         </div>
