@@ -13,6 +13,7 @@ import {
   X
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 //import yallburrubanner from "/banner.webp";
 
 export default function Homepage() {
@@ -37,7 +38,7 @@ export default function Homepage() {
       <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
-          <a href="/" className="w-48 relative">
+          <Link href="/" className="w-48 relative">
             <Image 
               src="/banner.webp" 
               alt="Yallburru Community Services Logo" 
@@ -46,22 +47,22 @@ export default function Homepage() {
               priority
               className="h-12 w-auto object-contain"
             />
-          </a>
+          </Link>
           
           {/* Desktop Navigation links */}
           <div className="hidden md:flex gap-6">
-            <a href="#about" className="hover:text-blue-600 flex items-center gap-2">
+            <Link href="#about" className="hover:text-blue-600 flex items-center gap-2">
               <Users size={18} />
               About
-            </a>
-            <a href="#services" className="hover:text-blue-600 flex items-center gap-2">
+            </Link>
+            <Link href="#services" className="hover:text-blue-600 flex items-center gap-2">
               <Heart size={18} />
               Services
-            </a>
-            <a href="#contact" className="hover:text-blue-600 flex items-center gap-2">
+            </Link>
+            <Link href="#contact" className="hover:text-blue-600 flex items-center gap-2">
               <Phone size={18} />
               Contact
-            </a>
+            </Link>
           </div>
           
           {/* Mobile menu button */}
@@ -92,30 +93,30 @@ export default function Homepage() {
         >
           <div className="container mx-auto px-4 py-2">
             <div className="flex flex-col space-y-4 pb-4">
-              <a 
+              <Link
                 href="#about" 
                 className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Users size={18} />
                 About
-              </a>
-              <a 
+              </Link>
+              <Link
                 href="#services" 
                 className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Heart size={18} />
                 Services
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="#contact" 
                 className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
                 <Phone size={18} />
                 Contact
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -130,13 +131,13 @@ export default function Homepage() {
           <p className="text-xl text-gray-600 mb-8">
             Gold Coast, South East Qld & Nationwide
           </p>
-          <a 
+          <Link 
             href="#contact" 
             className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 inline-flex items-center gap-2"
           >
             Get In Touch
             <ArrowRight size={18} />
-          </a>
+          </Link>
         </div>
       </section>
 
