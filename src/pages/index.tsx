@@ -198,7 +198,9 @@ export default function Homepage() {
       <footer className="bg-gray-900 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Building2 size={24} />
+            <Link href="/">
+            <Image src="/logo.webp" alt="Yallburru Community Services Logo" className="rounded-full" width={36} height={36} />
+            </Link>
           </div>
           <p>© {new Date().getFullYear()} Yallburru Community Services. All rights reserved.</p>
         </div>
