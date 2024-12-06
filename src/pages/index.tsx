@@ -266,7 +266,7 @@ export default function Homepage() {
       {/* Why Choose Us Section */}
       <section className="py-20 bg-sky-900 text-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Why Choose Yallburru</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">Why Yallburru?</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
