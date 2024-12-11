@@ -15,7 +15,8 @@ import {
   Shield,
   CheckCircle,
   BadgeCheck,
-  Accessibility
+  Accessibility,
+  MapPinned
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -254,6 +255,7 @@ export default function Homepage() {
       </section>
 
       {/* Testimonials Section */}
+      {/* Removed for now 
       <section className="py-20 bg-gradient-to-b from-sky-50 to-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">What Our Clients Say</h2>
@@ -288,7 +290,8 @@ export default function Homepage() {
             ))}
           </div>
         </div>
-      </section>
+      </section>*/
+      }
 
       {/* Why Choose Us Section */}
       <section className="py-20 bg-sky-900 text-white">
@@ -314,11 +317,13 @@ export default function Homepage() {
               {
                 title: "Nationwide Support",
                 description: "Serving communities across Australia",
-                icon: "🏠"
+                icon: <MapPinned className="mx-auto text-white" size={40} />
               }
             ].map((feature, index) => (
               <div key={index} className="text-center p-6">
-                <div className="text-4xl mb-4">{feature.icon}</div>
+                <div className="text-4xl mb-4">
+                  {typeof feature.icon === 'string' ? feature.icon : feature.icon}
+                </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-sky-100">{feature.description}</p>
               </div>
@@ -328,6 +333,7 @@ export default function Homepage() {
       </section>
 
       {/* Accreditation Section */}
+      {/*
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Our Accreditations</h2>
