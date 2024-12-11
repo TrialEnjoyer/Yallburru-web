@@ -6,7 +6,7 @@ import {
   MapPin,
   Menu,
   Home,
-  Heart,
+  Briefcase,
   Users,
   ArrowRight,
   X,
@@ -14,7 +14,8 @@ import {
   Award,
   Shield,
   CheckCircle,
-  BadgeCheck
+  BadgeCheck,
+  Accessibility
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +85,7 @@ export default function Homepage() {
               About
             </Link>
             <Link href="#services" className="text-white hover:text-sky-400 flex items-center gap-2">
-              <Heart size={18} />
+              <Briefcase size={18} />
               Services
             </Link>
             <Link href="#contact" className="text-white hover:text-sky-400 flex items-center gap-2">
@@ -134,7 +135,7 @@ export default function Homepage() {
                 className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
                 onClick={toggleMenu}
               >
-                <Heart size={18} />
+                <Briefcase size={18} />
                 Services
               </Link>
               <Link 
@@ -192,12 +193,12 @@ export default function Homepage() {
               <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
                 <Home size={32} className="text-sky-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-sky-900">Home Health Care</h3>
+              <h3 className="text-xl font-semibold mb-4 text-sky-900">Home Care</h3>
               <p className="text-gray-600">Professional care services in the comfort of your home.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
-                <Heart size={32} className="text-sky-600" />
+                <Accessibility size={32} className="text-sky-600" />
               </div>
               <h3 className="text-xl font-semibold mb-4 text-sky-900">Disability Support</h3>
               <p className="text-gray-600">Specialized support for individuals with disabilities.</p>
