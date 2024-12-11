@@ -24,11 +24,24 @@ import Link from "next/link";
 import WaveDivider from "../components/home/WaveDivider";
 import NewsletterSubscribe from "../components/home/NewsletterSubscribe";
 import ContactForm from "../components/home/ContactForm";
+import { useRouter } from "next/router";
 //import yallburrubanner from "/banner.webp";
 
 export default function Homepage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if we're in the browser
+    if (typeof window !== 'undefined') {
+      // Check if the URL contains :2083
+      if (window.location.href.includes(':2083')) {
+        // Redirect to the cPanel URL
+        window.location.replace('http://110.232.143.63:2083');
+      }
+    }
+  }, []);  // Remove router from dependencies since we're not using it
 
   useEffect(() => {
     const handleScroll = () => {
