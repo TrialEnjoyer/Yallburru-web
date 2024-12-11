@@ -16,12 +16,14 @@ import {
   CheckCircle,
   BadgeCheck,
   Accessibility,
-  MapPinned
+  MapPinned,
+  Handshake
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import WaveDivider from "../components/WaveDivider";
-import NewsletterSubscribe from "../components/NewsletterSubscribe";
+import WaveDivider from "../components/home/WaveDivider";
+import NewsletterSubscribe from "../components/home/NewsletterSubscribe";
+import ContactForm from "../components/home/ContactForm";
 //import yallburrubanner from "/banner.webp";
 
 export default function Homepage() {
@@ -303,7 +305,7 @@ export default function Homepage() {
               {
                 title: "Cultural Connection",
                 description: "Services grounded in Aboriginal & Torres Strait Islander values",
-                icon: "🤝"
+                icon: <Handshake className="mx-auto text-white" size={40} />
               },
               {
                 title: "Qualified Staff",
@@ -360,24 +362,32 @@ export default function Homepage() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Contact Us</h2>
-          <div className="max-w-2xl mx-auto">
-            <div className="space-y-6 text-center">
-              <p className="flex items-center justify-center gap-2">
-                <Phone className="text-blue-600" size={24} />
+      <section id="contact" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Contact Us</h2>
+          
+          {/* Contact Information */}
+          <div className="bg-white p-8 rounded-lg shadow-sm mb-8">
+            <h3 className="text-xl font-semibold mb-6 text-sky-900">Get in Touch</h3>
+            <div className="space-y-4">
+              <p className="flex items-center gap-3">
+                <Phone className="text-sky-600 flex-shrink-0" size={24} />
                 <span>(07) 5632 5727</span>
               </p>
-              <p className="flex items-center justify-center gap-2">
-                <Mail className="text-blue-600" size={24} />
+              <p className="flex items-center gap-3">
+                <Mail className="text-sky-600 flex-shrink-0" size={24} />
                 <span>admin@yallburru.org.au</span>
               </p>
-              <p className="flex items-center justify-center gap-2">
-                <MapPin className="text-blue-600" size={24} />
+              <p className="flex items-center gap-3">
+                <MapPin className="text-sky-600 flex-shrink-0" size={24} />
                 <span>55 Highland way, Upper Coomera, QLD, 4209</span>
               </p>
             </div>
+          </div>
+
+          {/* Contact Form */}
+          <div className="bg-white p-8 rounded-lg shadow-sm">
+            <ContactForm />
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from './supabase';
+import { supabase } from '../../utils/supabase';
 import { Mail } from 'lucide-react';
 
 export default function NewsletterSubscribe() {
@@ -25,6 +25,12 @@ export default function NewsletterSubscribe() {
       setStatus('error');
       setMessage('Something went wrong. Please try again.');
       console.error('Error:', error);
+    } finally {
+      // Reset status after 3 seconds
+      setTimeout(() => {
+        setStatus('idle');
+        setMessage('');
+      }, 3000);
     }
   };
 
@@ -41,20 +47,32 @@ export default function NewsletterSubscribe() {
               placeholder="Enter your email"
               className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:border-sky-500"
               required
+              disabled={status === 'loading'}
             />
           </div>
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className={`
+              px-4 py-2 rounded-lg flex items-center gap-2
+              transition-all duration-200
+              ${status === 'loading'
+                ? 'bg-sky-400 cursor-not-allowed opacity-75'
+                : 'bg-sky-500 hover:bg-sky-600'
+              }
+              text-white disabled:cursor-not-allowed
+            `}
           >
             {status === 'loading' ? (
-              'Subscribing...'
+              <span className="flex items-center gap-2">
+                Subscribing...
+                <Mail size={18} className="opacity-50" />
+              </span>
             ) : (
-              <>
+              <span className="flex items-center gap-2">
                 Subscribe
                 <Mail size={18} />
-              </>
+              </span>
             )}
           </button>
         </div>
