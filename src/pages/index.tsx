@@ -155,10 +155,10 @@ export default function Homepage() {
       <section className="pt-24 pb-0 bg-gradient-to-b from-black via-sky-900 to-sky-600">
         <div className="container mx-auto px-4 py-28 md:py-32 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
-            Elder Care & Disability Services Provider
+            Yallburru Community Services
           </h1>
           <p className="text-xl md:text-2xl font-light text-purple-100 mb-12 max-w-3xl mx-auto">
-            Gold Coast, South East Qld & Nationwide
+            Providing Elder Care & Disability Support Across Gold Coast, South East QLD & Nationwide
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
@@ -194,21 +194,21 @@ export default function Homepage() {
                 <Home size={32} className="text-sky-600" />
               </div>
               <h3 className="text-xl font-semibold mb-4 text-sky-900">Home Care</h3>
-              <p className="text-gray-600">Professional care services in the comfort of your home.</p>
+              <p className="text-gray-600">Prefessional care services delivered to your home.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
                 <Accessibility size={32} className="text-sky-600" />
               </div>
               <h3 className="text-xl font-semibold mb-4 text-sky-900">Disability Support</h3>
-              <p className="text-gray-600">Specialized support for individuals with disabilities.</p>
+              <p className="text-gray-600">Culturally sensitive disability support services and NDIS coordination.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
                 <Users size={32} className="text-sky-600" />
               </div>
               <h3 className="text-xl font-semibold mb-4 text-sky-900">Elder Care</h3>
-              <p className="text-gray-600">Compassionate care services for elderly individuals.</p>
+              <p className="text-gray-600">Respectful and compassionate care services for our Elders.</p>
             </div>
           </div>
         </div>
@@ -230,23 +230,22 @@ export default function Homepage() {
             </div>
             <div className="space-y-6">
               <p className="text-gray-600 leading-relaxed">
-                Yallburru Community Services is a leading provider of disability and aged care services 
-                in South East Queensland. Our name, derived from Indigenous Australian language, 
-                reflects our commitment to community and care.
+                Yallburru Community Services is a leading Indiginous, Disability and aged care service provider 
+                at the forefront of service and program development in South East Queensland.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                With over 15 years of experience, we specialize in providing personalized care 
+                {`With over 15 years of experience, we specialize in providing personalized care 
                 solutions that enhance the quality of life for our clients. Our dedicated team 
-                of professionals is committed to delivering exceptional care with compassion and respect.
+                of professionals is committed to delivering exceptional care with compassion, respect and honoring our communities' cultural heritage.`}
               </p>
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="text-center p-4 bg-sky-50 rounded-lg">
-                  <h4 className="text-2xl font-bold text-sky-900">15+</h4>
-                  <p className="text-gray-600">Years Experience</p>
+                  <h4 className="text-2xl font-bold text-sky-900">Community</h4>
+                  <p className="text-gray-600">First Approach</p>
                 </div>
                 <div className="text-center p-4 bg-sky-50 rounded-lg">
-                  <h4 className="text-2xl font-bold text-sky-900">1000+</h4>
-                  <p className="text-gray-600">Clients Served</p>
+                  <h4 className="text-2xl font-bold text-sky-900">Nationwide</h4>
+                  <p className="text-gray-600">Service Coverage</p>
                 </div>
               </div>
             </div>
@@ -298,9 +297,9 @@ export default function Homepage() {
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
-                title: "Person-Centered Care",
-                description: "Tailored support plans that put your needs first",
-                icon: "🎯"
+                title: "Cultural Connection",
+                description: "Services grounded in Aboriginal & Torres Strait Islander values",
+                icon: "🤝"
               },
               {
                 title: "Qualified Staff",
@@ -308,14 +307,14 @@ export default function Homepage() {
                 icon: "👥"
               },
               {
-                title: "Cultural Sensitivity",
-                description: "Respect for diverse cultural backgrounds",
-                icon: "🤝"
+                title: "Holistic Care",
+                description: "Supporting physical, social, and cultural wellbeing",
+                icon: "🌟"
               },
               {
-                title: "24/7 Support",
-                description: "Round-the-clock care when you need it",
-                icon: "⏰"
+                title: "Nationwide Support",
+                description: "Serving communities across Australia",
+                icon: "🏠"
               }
             ].map((feature, index) => (
               <div key={index} className="text-center p-6">
