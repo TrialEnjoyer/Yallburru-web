@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Head from 'next/head';
 
 export default function CPanel() {
   useEffect(() => {
@@ -11,8 +12,15 @@ export default function CPanel() {
 
   // Return null or a loading message while redirecting
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-gray-600">Redirecting to cPanel...</div>
-    </div>
+    <>
+      <Head>
+        <title>Redirecting to cPanel...</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+      </Head>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-gray-600">Redirecting to cPanel...</div>
+      </div>
+    </>
   );
 }
