@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Pencil,
   InboxIcon,
+  Settings
 } from 'lucide-react';
 
 type NavigationProps = {
@@ -22,6 +23,11 @@ export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: Navigati
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/admin' },
     { name: 'Site Editor', icon: <Pencil size={20} />, href: '/admin/editor' },
     { name: 'Form Submissions', icon: <InboxIcon size={20} />, href: '/admin/submissions' },
+    {
+      name: 'Settings',
+      href: '/admin/settings',
+      icon: <Settings size={20} />
+    }
   ];
 
   return (
