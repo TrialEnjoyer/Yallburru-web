@@ -28,6 +28,79 @@ type Submission = {
   removed: boolean;
 }
 
+const TEST_SUBMISSIONS: Submission[] = [
+  {
+    id: 1,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+    first_name: 'John',
+    last_name: 'Smith',
+    email: 'john.smith@email.com',
+    phone: '0412345678',
+    preferred_contact: 'phone',
+    subject: 'NDIS Support Query',
+    message: 'Hi, I\'m interested in learning more about your NDIS support services. Could someone please contact me to discuss options?',
+    status: 'new',
+    read: false,
+    removed: false
+  },
+  {
+    id: 2,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
+    first_name: 'Sarah',
+    last_name: 'Johnson',
+    email: 'sarah.j@email.com',
+    phone: '0423456789',
+    preferred_contact: 'email',
+    subject: 'Elder Care Services',
+    message: 'Looking for information about elder care services for my mother. What services do you provide and what are the costs involved?',
+    status: 'new',
+    read: false,
+    removed: false
+  },
+  {
+    id: 3,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    first_name: 'Michael',
+    last_name: 'Williams',
+    email: 'mike.w@email.com',
+    phone: null,
+    preferred_contact: 'email',
+    subject: 'General Enquiry',
+    message: 'I would like to know more about your community services and how to get involved.',
+    status: 'new',
+    read: true,
+    removed: false
+  },
+  {
+    id: 4,
+    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+    first_name: 'Emma',
+    last_name: 'Brown',
+    email: 'emma.brown@email.com',
+    phone: '0434567890',
+    preferred_contact: 'phone',
+    subject: 'Urgent Support Request',
+    message: 'Need assistance with disability support services. Please contact me as soon as possible.',
+    status: 'new',
+    read: false,
+    removed: false
+  },
+  {
+    id: 5,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
+    first_name: 'David',
+    last_name: 'Wilson',
+    email: 'david.wilson@email.com',
+    phone: '0445678901',
+    preferred_contact: 'email',
+    subject: 'Feedback',
+    message: 'I wanted to share some positive feedback about your services. The support worker who visited last week was excellent.',
+    status: 'new',
+    read: true,
+    removed: false
+  }
+];
+
 export default function Submissions() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,8 +108,27 @@ export default function Submissions() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
-    void fetchSubmissions();
+    // For testing, just set the test data directly
+    setSubmissions(TEST_SUBMISSIONS);
+    setIsLoading(false);
+
+    // Comment out or remove the actual fetch for testing
+    // void fetchSubmissions();
   }, []);
+
+  useEffect(() => {
+    if (selectedSubmission && !selectedSubmission.read) {
+      void markAsRead(selectedSubmission.id);
+      // Update the local state to show the message as read
+      setSubmissions(prevSubmissions => 
+        prevSubmissions.map(sub => 
+          sub.id === selectedSubmission.id 
+            ? { ...sub, read: true }
+            : sub
+        )
+      );
+    }
+  }, [selectedSubmission]);
 
   const fetchSubmissions = async () => {
     const { data, error } = await supabase
@@ -132,7 +224,8 @@ export default function Submissions() {
                   submissions.map((submission) => (
                     <div 
                       key={submission.id}
-                      className={`p-6 hover:bg-gray-50 transition-colors ${
+                      onClick={() => setSelectedSubmission(submission)}
+                      className={`p-6 hover:bg-gray-50 transition-colors cursor-pointer ${
                         !submission.read ? 'bg-sky-50' : ''
                       }`}
                     >
@@ -165,31 +258,6 @@ export default function Submissions() {
                             Preferred Contact: {submission.preferred_contact}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {!submission.read && (
-                            <button
-                              onClick={() => void markAsRead(submission.id)}
-                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                              title="Mark as read"
-                            >
-                              <CheckCircle size={20} />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => setSelectedSubmission(submission)}
-                            className="p-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
-                            title="View details"
-                          >
-                            <Mail size={20} />
-                          </button>
-                          <button
-                            onClick={() => void removeSubmission(submission.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Remove submission"
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                        </div>
                       </div>
                     </div>
                   ))
@@ -207,12 +275,24 @@ export default function Submissions() {
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-semibold">Message Details</h2>
-                <button
-                  onClick={() => setSelectedSubmission(null)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      void removeSubmission(selectedSubmission.id);
+                      setSelectedSubmission(null);
+                    }}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete submission"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                  <button
+                    onClick={() => setSelectedSubmission(null)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
               <div className="space-y-4">
                 <div>

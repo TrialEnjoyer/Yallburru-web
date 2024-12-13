@@ -1,37 +1,18 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { 
-  LogOut,
-  Mail,
-} from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Mail } from 'lucide-react';
 import { supabase } from '~/utils/supabase';
 import Navigation from '~/components/admin/Navigation';
+import AuthGuard from '~/components/admin/AuthGuard';
 
 type Stat = { label: string; value: string; color: string, icon?: React.ReactNode }
 
-// You'll want to implement proper authentication later
-const isAuthenticated = () => {
-  // Temporary - replace with real auth check
-  return typeof window !== 'undefined' && localStorage.getItem('adminToken');
-};
-
 export default function AdminDashboard() {
-  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<Stat[]>([]);
 
   useEffect(() => {
-    // Check authentication
-    //if (!isAuthenticated()) {
-      //router.push('/admin/login');
-      //return;
-    //}
     void fetchUnreadMessages();
-    setIsLoading(false);
   }, []);
 
   const fetchUnreadMessages = async () => {
@@ -57,25 +38,8 @@ export default function AdminDashboard() {
     ]);
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    );
-  }
-
-  const FetchMessages = async () => {
-    const { data, error } = await supabase.from('messages').select('*');
-    if (error) {
-      console.error('Error fetching messages:', error);
-      return;
-    }
-    setStats(data);
-  }
-
   return (
-    <>
+    <AuthGuard>
       <Head>
         <title>Admin Dashboard - Yallburru Community Services</title>
         <meta name="robots" content="noindex, nofollow" />
@@ -124,6 +88,6 @@ export default function AdminDashboard() {
           </div>
         </main>
       </div>
-    </>
+    </AuthGuard>
   );
 }
