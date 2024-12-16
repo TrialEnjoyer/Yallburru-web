@@ -38,4 +38,3 @@ For any inquiries, please contact:
 - Phone: (07) 5632 5727
 - Email: admin@yallburru.org.au
 - Address: 55 Highland way, Upper Coomera, QLD, 4209
-

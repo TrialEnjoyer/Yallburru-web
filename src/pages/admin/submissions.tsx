@@ -109,11 +109,11 @@ export default function Submissions() {
 
   useEffect(() => {
     // For testing, just set the test data directly
-    setSubmissions(TEST_SUBMISSIONS);
-    setIsLoading(false);
+    //setSubmissions(TEST_SUBMISSIONS);
+    //setIsLoading(false);
 
     // Comment out or remove the actual fetch for testing
-    // void fetchSubmissions();
+     void fetchSubmissions();
   }, []);
 
   useEffect(() => {
@@ -270,8 +270,8 @@ export default function Submissions() {
 
       {/* Message Modal */}
       {selectedSubmission && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div onClick={() => setSelectedSubmission(null)} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-semibold">Message Details</h2>
