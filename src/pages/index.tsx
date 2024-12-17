@@ -377,7 +377,7 @@ export default function Homepage() {
               </p>
               <p className="flex items-center gap-3">
                 <Mail className="text-sky-600 flex-shrink-0" size={24} />
-                <span>admin@yallburru.org.au</span>
+                <Link href="mailto:contact@yallburru.org.au">contact@yallburru.org.au</Link>
               </p>
               <p className="flex items-center gap-3">
                 <MapPin className="text-sky-600 flex-shrink-0" size={24} />

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { Send, ChevronDown } from 'lucide-react';
+import { api } from '~/utils/api';
 
 type FormData = {
   first_name: string;
@@ -27,6 +28,8 @@ export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const sendEmail = api.mail.send.useMutation();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +41,17 @@ export default function ContactForm() {
         .insert([formData]);
 
       if (error) throw error;
+
+      // send email to origin
+      await sendEmail.mutateAsync({
+        email: formData.email,
+        message: formData.message,
+        subject: formData.subject,
+        name: formData.first_name,
+        fullName: formData.first_name + ' ' + formData.last_name,
+        phone: formData.phone,
+        preferred_contact: formData.preferred_contact,
+      });
 
       setStatus('success');
       setMessage('Thank you for your message. We will get back to you soon!');

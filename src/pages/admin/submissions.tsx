@@ -203,7 +203,10 @@ export default function Submissions() {
         `}>
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">Form Submissions</h1>
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Form Submissions</h1>
+                    <p className="text-sm text-gray-500"> - All submissions are sent to the contact email address as well</p>
+                </div>
               <button
                 onClick={() => void fetchSubmissions()}
                 className="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"

@@ -38,3 +38,4 @@ export const postRouter = createTRPCRouter({
     return posts.at(-1) ?? null;
   }),
 });
+

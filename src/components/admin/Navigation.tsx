@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { 
   Menu, 
+  Server,
   X,
   LayoutDashboard,
   Pencil,
@@ -19,7 +20,7 @@ type NavigationProps = {
 export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
   const router = useRouter();
 
-  const navigationItems = [
+  const navigationItems: { name: string; href: string; icon: React.ReactNode, target?: string }[] = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/admin' },
     { name: 'Site Editor', icon: <Pencil size={20} />, href: '/admin/editor' },
     { name: 'Form Submissions', icon: <InboxIcon size={20} />, href: '/admin/submissions' },
@@ -27,6 +28,12 @@ export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: Navigati
       name: 'Settings',
       href: '/admin/settings',
       icon: <Settings size={20} />
+    },
+    {
+      name: 'cPanel',
+      href: 'http://110.232.143.63:2083',
+      icon: <Server size={20} />,
+      target: '_blank'
     }
   ];
 
@@ -59,12 +66,12 @@ export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: Navigati
             />
             <span className="font-semibold">Admin Panel</span>
           </div>
-
           <nav className="space-y-2">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
+                target={item.target ?? undefined}
                 className={`
                   flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
                   ${router.pathname === item.href 
