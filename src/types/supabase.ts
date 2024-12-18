@@ -1,3 +1,6 @@
+//disable linter
+/* eslint-disable */
+
 export type Json =
   | string
   | number
@@ -278,7 +281,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    //| keyof PublicSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database

@@ -11,13 +11,14 @@ import {
   InboxIcon,
   Settings
 } from 'lucide-react';
+import AuthGuard from './AuthGuard';
 
 type NavigationProps = {
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
 }
 
-export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
+function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
   const router = useRouter();
 
   const navigationItems: { name: string; href: string; icon: React.ReactNode, target?: string }[] = [
@@ -39,33 +40,44 @@ export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: Navigati
 
   return (
     <>
-      {/* Sidebar Toggle Button (Mobile) */}
-      <button
-        className="fixed top-4 left-4 z-50 lg:hidden bg-white p-2 rounded-md shadow-md"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Admin Header */}
+      <nav className={`
+        bg-black/90 backdrop-blur-sm shadow-sm h-[64px]
+        transition-all duration-300
+      `}>
+        <div className="container mx-auto h-full px-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              className="lg:hidden p-2 text-white hover:bg-sky-900/50 rounded-lg transition-colors"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <Link href="/" className="flex items-center gap-2">
+              <Image 
+                src="/banner.webp" 
+                alt="Yallburru Community Services banner" 
+                width={192}
+                height={48}
+                priority
+                className="h-8 w-auto"
+              />
+            </Link>
+          </div>
+          <div className="text-white font-semibold">Admin Panel</div>
+        </div>
+      </nav>
 
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-sky-900 text-white transition-transform duration-300 ease-in-out z-40
+          fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 bg-sky-900 text-white 
+          transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
       >
         <div className="p-4">
-          <div className="flex items-center gap-2 mb-8">
-            <Image 
-              src="/Logo.webp" 
-              alt="Yallburru Logo" 
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="font-semibold">Admin Panel</span>
-          </div>
           <nav className="space-y-2">
             {navigationItems.map((item) => (
               <Link
@@ -87,5 +99,13 @@ export default function Navigation({ isSidebarOpen, setIsSidebarOpen }: Navigati
         </div>
       </aside>
     </>
+  );
+}
+
+export default function ProtectedNavigation(props: NavigationProps) {
+  return (
+    <AuthGuard>
+      <Navigation {...props} />
+    </AuthGuard>
   );
 } 

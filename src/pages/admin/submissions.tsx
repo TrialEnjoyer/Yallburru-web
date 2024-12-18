@@ -105,7 +105,6 @@ export default function Submissions() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     // For testing, just set the test data directly
@@ -190,15 +189,9 @@ export default function Submissions() {
       </Head>
 
       <div className="min-h-screen bg-gray-100">
-        <Navigation 
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-        />
 
         {/* Main Content */}
         <main className={`
-          transition-all duration-300 ease-in-out
-          ${isSidebarOpen ? 'lg:ml-64' : ''}
           p-4 lg:p-8
         `}>
           <div className="max-w-7xl mx-auto">
