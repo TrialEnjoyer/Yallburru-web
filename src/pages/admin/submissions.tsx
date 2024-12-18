@@ -12,6 +12,7 @@ import {
   XCircle
 } from 'lucide-react';
 import Navigation from '~/components/admin/Navigation';
+import Link from 'next/link';
 
 type Submission = {
   id: number;
@@ -306,7 +307,7 @@ export default function Submissions() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="font-medium text-gray-900">Email</h3>
-                    <p>{selectedSubmission.email}</p>
+                    <Link className='text-sky-500 hover:underline' target='_blank' href={`mailto:${selectedSubmission.email}?subject=RE: ${selectedSubmission.subject}`}>{selectedSubmission.email}</Link>
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">Phone</h3>
