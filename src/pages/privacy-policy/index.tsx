@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function PrivacyPolicy() {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -142,7 +144,7 @@ export default function PrivacyPolicy() {
             <p>55 Highland way</p>
             <p>Upper Coomera, QLD, 4209</p>
             <p>Phone: (07) 5632 5727</p>
-            <p>Email: contact@yallburru.org.au</p>
+            <p>Email: <Link href="mailto:contact@yallburru.org.au" className="text-sky-500 hover:underline">contact@yallburru.org.au</Link></p>
           </div>
         </section>
       </div>

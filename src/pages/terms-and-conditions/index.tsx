@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function TermsAndConditions() {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -10,7 +12,7 @@ export default function TermsAndConditions() {
           <h2 className="text-2xl font-semibold mb-4">1. Agreement to Terms</h2>
           <p>
             By accessing and using the Yallburru Community Services website (our &quot;Service&quot;), 
-            you agree to be bound by these Terms and Conditions (&quot;Terms&quot;) and our Privacy Policy. 
+            you agree to be bound by these Terms and Conditions (&quot;Terms&quot;) and our <Link href="/privacy-policy" className="text-blue-600 hover:text-blue-800 underline">Privacy Policy</Link>. 
             Our Privacy Policy, available on our website, describes our policies and procedures on the 
             collection, use, and disclosure of your personal information. If you disagree with any part 
             of these Terms or our Privacy Policy, you do not have permission to access the Service.
@@ -120,7 +122,7 @@ export default function TermsAndConditions() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">12. Privacy Policy</h2>
           <p>
-            Your use of our Service is also governed by our Privacy Policy. During your use of our 
+            Your use of our Service is also governed by our <Link href="/privacy-policy" className="text-blue-600 hover:text-blue-800 underline">Privacy Policy</Link>. During your use of our 
             Service, you agree to the collection and use of information as detailed in our Privacy 
             Policy. It is advised to read our Privacy Policy before proceeding to use our Service.
           </p>
@@ -129,7 +131,7 @@ export default function TermsAndConditions() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">13. Entire Agreement</h2>
           <p>
-            These Terms, together with the Privacy Policy, constitute the entire agreement between us 
+            These Terms, together with the <Link href="/privacy-policy" className="text-blue-600 hover:text-blue-800 underline">Privacy Policy</Link>, constitute the entire agreement between us 
             regarding our Service and supersede and replace any prior agreements we might have had 
             between us regarding the Service.
           </p>
