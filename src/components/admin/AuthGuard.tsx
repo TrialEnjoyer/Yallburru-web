@@ -46,7 +46,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         setIsAuthenticated(true);
       } catch (error) {
         console.error('Auth error:', error);
-        void router.push('/admin/login');
+        void router.push('/');
       } finally {
         setIsLoading(false);
       }
