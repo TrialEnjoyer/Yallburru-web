@@ -19,9 +19,17 @@ export default function Footer() {
                 />
               </Link>
             </div>
-            <p className="text-gray-400">
+            <p className="text-gray-400 mb-4">
               © {new Date().getFullYear()} Yallburru Community Services. All rights reserved.
             </p>
+            <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
+                Terms & Conditions
+              </Link>
+            </div>
           </div>
           <div className="flex justify-center md:justify-end">
             <NewsletterSubscribe />
