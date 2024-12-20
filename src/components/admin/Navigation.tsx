@@ -68,11 +68,22 @@ function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
         </div>
       </nav>
 
-      {/* Sidebar */}
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className={`
+          fixed inset-0 bg-black/50 transition-opacity duration-300
+          lg:hidden
+          ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+        `}
+        onClick={() => setIsSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Sidebar - updated z-index to appear above overlay */}
       <aside
         className={`
           fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 bg-sky-900 text-white 
-          transition-transform duration-300 ease-in-out
+          transition-transform duration-300 ease-in-out z-50
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}

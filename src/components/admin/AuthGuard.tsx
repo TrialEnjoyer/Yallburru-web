@@ -17,7 +17,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
-          void router.push('/admin/login');
+          void router.push('/login');
           return;
         }
 
@@ -31,7 +31,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         if (error) {
           console.error('Profile fetch error:', error);
           setIsAuthenticated(false);
-          void router.push('/admin/login');
+          void router.push('/');
           return;
         }
 

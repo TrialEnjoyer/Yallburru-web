@@ -84,5 +84,5 @@ Copyright © 2024 Yallburru Community Services. All rights reserved.
 For any inquiries, please contact:
 ### Yallburru
 - Phone: (07) 5632 5727
-- Email: admin@yallburru.org.au
+- Dev Email: Adrian@yallburru.org.au
 - Address: 55 Highland way, Upper Coomera, QLD, 4209
