@@ -156,6 +156,9 @@ const EditorMenu = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow mb-4 p-4">
+          <p className="text-gray-600 italic">Editor still in the development stage, some buttons dont work yet, feel free to play around if you want</p>
+        </div>
         <div className="bg-white rounded-lg shadow mb-8">
           <MenuBar editor={editor} />
           <div className="p-4">
