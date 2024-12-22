@@ -19,17 +19,17 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import ImageUploadModal from '~/components/shared/ImageUploadModal';
 
 const MenuBar = ({ editor }: { editor: any }) => {
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
   if (!editor) {
     return null;
   }
 
-  const addImage = () => {
-    const url = window.prompt('Enter the URL of the image:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+  const addImage = (url: string) => {
+    editor.chain().focus().setImage({ src: url }).run();
   };
 
   const setLink = () => {
@@ -40,91 +40,99 @@ const MenuBar = ({ editor }: { editor: any }) => {
   };
 
   return (
-    <div className="border-b border-gray-200 p-4 flex flex-wrap gap-2">
-      <select
-        className="p-2 rounded border"
-        onChange={(event) => editor.chain().focus().setColor(event.target.value).run()}
-      >
-        <option value="#000000">Default</option>
-        <option value="#958DF1">Purple</option>
-        <option value="#F98181">Red</option>
-        <option value="#FBBC88">Orange</option>
-        <option value="#FAF594">Yellow</option>
-        <option value="#70CFF8">Blue</option>
-        <option value="#94FADB">Teal</option>
-        <option value="#B9F18D">Green</option>
-      </select>
+    <>
+      <div className="border-b border-gray-200 p-4 flex flex-wrap gap-2">
+        <select
+          className="p-2 rounded border"
+          onChange={(event) => editor.chain().focus().setColor(event.target.value).run()}
+        >
+          <option value="#000000">Default</option>
+          <option value="#958DF1">Purple</option>
+          <option value="#F98181">Red</option>
+          <option value="#FBBC88">Orange</option>
+          <option value="#FAF594">Yellow</option>
+          <option value="#70CFF8">Blue</option>
+          <option value="#94FADB">Teal</option>
+          <option value="#B9F18D">Green</option>
+        </select>
 
-      <select
-        className="p-2 rounded border"
-        onChange={(event) => {
-          const size = event.target.value;
-          editor.chain().focus().setFontSize(size).run();
-          console.log(event.target.value);
-        }}
-      >
-        <option value="normal">Normal</option>
-        <option value="12px">Small</option>
-        <option value="16px">Medium</option>
-        <option value="20px">Large</option>
-        <option value="24px">Extra Large</option>
-      </select>
+        <select
+          className="p-2 rounded border"
+          onChange={(event) => {
+            const size = event.target.value;
+            editor.chain().focus().setFontSize(size).run();
+            console.log(event.target.value);
+          }}
+        >
+          <option value="normal">Normal</option>
+          <option value="12px">Small</option>
+          <option value="16px">Medium</option>
+          <option value="20px">Large</option>
+          <option value="24px">Extra Large</option>
+        </select>
 
-      <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
-      >
-        <Bold size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
-      >
-        <Italic size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
-      >
-        <List size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`}
-      >
-        <ListOrdered size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`}
-      >
-        <Quote size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().undo().run()}
-        className="p-2 rounded hover:bg-gray-100"
-      >
-        <Undo size={20} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().redo().run()}
-        className="p-2 rounded hover:bg-gray-100"
-      >
-        <Redo size={20} />
-      </button>
-      <button
-        onClick={setLink}
-        className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('link') ? 'bg-gray-200' : ''}`}
-      >
-        <LinkIcon size={20} />
-      </button>
-      <button
-        onClick={addImage}
-        className="p-2 rounded hover:bg-gray-100"
-      >
-        <ImageIcon size={20} />
-      </button>
-    </div>
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+        >
+          <Bold size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+        >
+          <Italic size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
+        >
+          <List size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`}
+        >
+          <ListOrdered size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`}
+        >
+          <Quote size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().undo().run()}
+          className="p-2 rounded hover:bg-gray-100"
+        >
+          <Undo size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().redo().run()}
+          className="p-2 rounded hover:bg-gray-100"
+        >
+          <Redo size={20} />
+        </button>
+        <button
+          onClick={setLink}
+          className={`p-2 rounded hover:bg-gray-100 ${editor.isActive('link') ? 'bg-gray-200' : ''}`}
+        >
+          <LinkIcon size={20} />
+        </button>
+        <button
+          onClick={() => setIsImageModalOpen(true)}
+          className="p-2 rounded hover:bg-gray-100"
+        >
+          <ImageIcon size={20} />
+        </button>
+      </div>
+
+      <ImageUploadModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        onImageSelect={addImage}
+      />
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-//disable linter
+// disable eslint for this file
 /* eslint-disable */
 
 export type Json =
@@ -127,6 +127,42 @@ export type Database = {
           removed?: boolean
           status?: string
           subject?: string
+        }
+        Relationships: []
+      }
+      images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          description: string | null
+          filename: string
+          id: string
+          size: number
+          tags: string[] | null
+          url: string
+          user_id: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          description?: string | null
+          filename: string
+          id?: string
+          size: number
+          tags?: string[] | null
+          url: string
+          user_id?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          description?: string | null
+          filename?: string
+          id?: string
+          size?: number
+          tags?: string[] | null
+          url?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -281,7 +317,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    //| keyof PublicSchema["CompositeTypes"]
+    | keyof PublicSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database

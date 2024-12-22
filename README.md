@@ -30,7 +30,7 @@ Current Features:
 
 ### Admin Features
 - [ ] Rich text editor for content management
-- [ ] Image upload and management system
+- [x] Image upload and management system
 - [ ] Blog post creation and management
 - [ ] User profile management
 - [ ] Analytics dashboard
