@@ -9,6 +9,6 @@ export default createRouteHandler({
   // Apply an (optional) custom config:
   // config: { ... },
   config: {
-    token: env.UPLOADTHING_SECRET,
+    token: env.UPLOADTHING_TOKEN,
   },
 });
