@@ -38,17 +38,22 @@ export default function ImageUploadModal({ isOpen, onClose, onImageSelect }: Ima
     setIsLoading(false);
   };
 
-  const handleImageUploadComplete = (res: { url: string }[]) => {
+  const handleImageUploadComplete = async (res: { url: string }[]) => {
     // Save the uploaded image to our Supabase images table
     if (res[0]?.url) {
       const filename = res[0].url.split('/').pop() ?? 'unknown';
-      void supabase.from('images').insert([
+      const { data, error } = await supabase.from('images').insert([
         {
           url: res[0].url,
           filename,
           size: 0, // We don't get the size from uploadthing in this response
         },
       ]);
+      if (error) {
+        console.error('Error saving image to Supabase:', error);
+      } else {
+        console.log('Image saved to Supabase:', data);
+      }
       onImageSelect(res[0].url);
       onClose();
     }
