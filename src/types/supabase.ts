@@ -137,6 +137,10 @@ export type Database = {
           description: string | null
           filename: string
           id: string
+          modified: boolean | null
+          original_id: string | null
+          owner: string | null
+          owner_id: string | null
           size: number
           tags: string[] | null
           url: string
@@ -148,6 +152,10 @@ export type Database = {
           description?: string | null
           filename: string
           id?: string
+          modified?: boolean | null
+          original_id?: string | null
+          owner?: string | null
+          owner_id?: string | null
           size: number
           tags?: string[] | null
           url: string
@@ -159,12 +167,24 @@ export type Database = {
           description?: string | null
           filename?: string
           id?: string
+          modified?: boolean | null
+          original_id?: string | null
+          owner?: string | null
+          owner_id?: string | null
           size?: number
           tags?: string[] | null
           url?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "images_original_id_fkey"
+            columns: ["original_id"]
+            isOneToOne: false
+            referencedRelation: "images"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profile: {
         Row: {

@@ -7,6 +7,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Extension } from '@tiptap/core'
 import { 
   Bold, 
   Italic, 
@@ -20,6 +21,61 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ImageUploadModal from '~/components/shared/ImageUploadModal';
+
+interface FontSizeOptions {
+  types: string[];
+}
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    fontSize: {
+      setFontSize: (size: string) => ReturnType;
+    };
+  }
+}
+
+// Custom extension for font size
+const FontSize = Extension.create<FontSizeOptions>({
+  name: 'fontSize',
+
+  addOptions() {
+    return {
+      types: ['textStyle'],
+    }
+  },
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: element => element.style.fontSize?.replace(/['"]+/g, ''),
+            renderHTML: attributes => {
+              if (!attributes.fontSize) {
+                return {}
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+
+  addCommands() {
+    return {
+      setFontSize: (fontSize: string) => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontSize })
+          .run()
+      },
+    }
+  },
+})
 
 const MenuBar = ({ editor }: { editor: any }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
@@ -45,6 +101,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <select
           className="p-2 rounded border"
           onChange={(event) => editor.chain().focus().setColor(event.target.value).run()}
+          value={editor.getAttributes('textStyle').color || "#000000"}
         >
           <option value="#000000">Default</option>
           <option value="#958DF1">Purple</option>
@@ -59,16 +116,15 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <select
           className="p-2 rounded border"
           onChange={(event) => {
-            const size = event.target.value;
-            editor.chain().focus().setFontSize(size).run();
-            console.log(event.target.value);
+            editor.chain().focus().setFontSize(event.target.value).run();
           }}
+          value={editor.getAttributes('textStyle').fontSize}
         >
-          <option value="normal">Normal</option>
-          <option value="12px">Small</option>
-          <option value="16px">Medium</option>
-          <option value="20px">Large</option>
-          <option value="24px">Extra Large</option>
+          <option value="">Default</option>
+          <option value="0.875rem">Small</option>
+          <option value="1rem">Medium</option>
+          <option value="1.25rem">Large</option>
+          <option value="1.5rem">Extra Large</option>
         </select>
 
         <button
@@ -126,7 +182,6 @@ const MenuBar = ({ editor }: { editor: any }) => {
           <ImageIcon size={20} />
         </button>
       </div>
-
       <ImageUploadModal
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
@@ -140,12 +195,26 @@ const EditorMenu = () => {
   const [content, setContent] = useState('');
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+      }),
       Image,
       Color.configure({ types: [TextStyle.name] }),
-      TextStyle,//.configure({ types: [TextStyle.name] }),
+      TextStyle.configure(),
+      FontSize,
       ListItem,
-      Link,
+      Link.configure({
+        HTMLAttributes: {
+          class: 'text-sky-600 hover:text-sky-500 underline',
+        },
+      }),
       Placeholder.configure({
         placeholder: 'Write something amazing...',
       }),
@@ -153,7 +222,7 @@ const EditorMenu = () => {
     content: '<p>Hello World! 🌎</p>',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
+        class: 'prose max-w-none focus:outline-none',
       },
     },
     onUpdate: ({ editor }) => {
@@ -178,7 +247,7 @@ const EditorMenu = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Preview</h2>
           <div 
-            className="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl"
+            className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>

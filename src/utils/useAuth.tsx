@@ -1,25 +1,62 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
 
+interface AuthState {
+  userId: string | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
 export function useAuth() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [authState, setAuthState] = useState<AuthState>({
+    userId: null,
+    isLoading: true,
+    error: null,
+  });
 
   const signOut = async () => {
-    console.log('Signing out');
-    await supabase.auth.signOut();
-    console.log('Signed out');
-    setUserId(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setAuthState({
+        userId: null,
+        isLoading: false,
+        error: null,
+      });
+    } catch (err) {
+      setAuthState(state => ({
+        ...state,
+        error: err instanceof Error ? err.message : 'Failed to sign out',
+      }));
+    }
   };
 
   useEffect(() => {
     // Initial auth state check
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUserId(session?.user?.id ?? null);
-      } finally {
-        setIsLoading(false);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          setAuthState({
+            userId: null,
+            isLoading: false,
+            error: error.message,
+          });
+          return;
+        }
+
+        setAuthState({
+          userId: session?.user?.id ?? null,
+          isLoading: false,
+          error: null,
+        });
+      } catch (err) {
+        setAuthState({
+          userId: null,
+          isLoading: false,
+          error: err instanceof Error ? err.message : 'Failed to get session',
+        });
       }
     };
 
@@ -27,7 +64,11 @@ export function useAuth() {
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUserId(session?.user?.id ?? null);
+      setAuthState({
+        userId: session?.user?.id ?? null,
+        isLoading: false,
+        error: null,
+      });
     });
 
     return () => {
@@ -36,9 +77,8 @@ export function useAuth() {
   }, []);
 
   return {
-    userId,
-    isLoading,
-    isAuthenticated: !!userId,
+    ...authState,
+    isAuthenticated: !!authState.userId,
     signOut,
   };
 } 
