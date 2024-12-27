@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '~/utils/supabase';
+import { withRetry } from '~/utils/retryUtils';
+import { Database } from '~/types/supabase';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -35,11 +37,19 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         }
 
         // Check if user has admin role in user_profile
-        const { data: profile, error } = await supabase
-          .from('user_profile')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
+        const response = await withRetry<{ role: "user" | "admin" | null; }>(() =>
+          Promise.resolve(
+            supabase
+              .from('user_profile')
+              .select('role')
+              .eq('id', session.user.id)
+              .single()
+          )
+        );
+
+        if (response.error) throw response.error;
+
+        const profile = response.data as { role: "user" | "admin" | null };
 
         if (!isMounted) return;
 

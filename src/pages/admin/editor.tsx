@@ -39,6 +39,7 @@ import { supabase } from '~/utils/supabase';
 import { Database } from '~/types/supabase';
 import { useUserProfile } from '~/utils/UserProfileContext';
 import Cookies from 'js-cookie';
+import { withRetry } from '~/utils/retryUtils';
 
 interface FontSizeOptions {
   types: string[];
@@ -421,25 +422,32 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-const saveArticle = async (articleData: any) => {
-  //console.log('Saving article:', articleData);
-  
-  const {data, error} = await supabase.from('articles').insert(articleData);
-  console.log('Saved article:', articleData);
-
-  if (error) {
-    console.error('Error saving article:', error);
-    throw error;
-  }
-
-  return data;
-};
-
 interface ArticlePath {
   category: string;
   subcategory: string | null;
   slug: string;
 }
+
+type Article = Database['public']['Tables']['articles']['Row'];
+
+const saveArticle = async (articleData: Database['public']['Tables']['articles']['Insert']) => {
+  const response = await withRetry<Article>(() =>
+    Promise.resolve(
+      supabase
+        .from('articles')
+        .insert(articleData)
+        .select()
+        .single()
+    )
+  );
+
+  if (response.error) {
+    console.error('Error saving article:', response.error);
+    throw response.error;
+  }
+
+  return response.data;
+};
 
 const EditorMenu = () => {
   const [content, setContent] = useState('');
@@ -486,14 +494,20 @@ const EditorMenu = () => {
   const handleLoadPaths = async () => {
     setIsLoading(true);
     try {
-      const { data: articles, error } = await supabase
-        .from('articles')
-        .select('category, subcategory, slug');
+      type ArticleFields = Pick<Article, 'category' | 'subcategory' | 'slug'>;
+      const response = await withRetry<ArticleFields>(() => 
+        Promise.resolve(
+          supabase
+            .from('articles')
+            .select('category, subcategory, slug')
+        )
+      );
 
-      if (error) throw error;
+      if (response.error) throw response.error;
 
-      if (articles) {
-        const paths = articles.map(article => ({
+      const articles = response.data;
+      if (articles && Array.isArray(articles)) {
+        const paths: ArticlePath[] = articles.map(article => ({
           category: article.category,
           subcategory: article.subcategory,
           slug: article.slug
@@ -501,18 +515,18 @@ const EditorMenu = () => {
         setArticlePaths(paths);
 
         // Save to cookie
-        Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 }); // Expires in 1 day
+        Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 });
 
         // Extract unique categories
-        const categories = [...new Set(paths.map(p => p.category))].sort();
+        const categories = [...new Set(paths.map((p: ArticlePath) => p.category))].sort();
         setAvailableCategories(categories);
 
         // Update subcategories if category is selected
         if (category) {
           const subs = [...new Set(paths
-            .filter(p => p.category === category)
-            .map(p => p.subcategory)
-            .filter((sub): sub is string => sub !== null)
+            .filter((p: ArticlePath) => p.category === category)
+            .map((p: ArticlePath) => p.subcategory)
+            .filter((sub: string | null): sub is string => sub !== null)
           )].sort();
           setAvailableSubcategories(subs);
         }
@@ -520,9 +534,9 @@ const EditorMenu = () => {
         // Update slugs if category (and optionally subcategory) is selected
         if (category) {
           const filteredSlugs = paths
-            .filter(p => p.category === category && 
+            .filter((p: ArticlePath) => p.category === category && 
               (subcategory ? p.subcategory === subcategory : true))
-            .map(p => p.slug)
+            .map((p: ArticlePath) => p.slug)
             .sort();
           setAvailableSlugs(filteredSlugs);
         }
@@ -646,24 +660,28 @@ const EditorMenu = () => {
   const handleLoadArticle = async () => {
     setIsLoadingArticle(true);
     try {
-      const { data: article, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('category', category)
-        .eq('slug', slug)
-        .single();
+      const response = await withRetry<Article>(() =>
+        Promise.resolve(
+          supabase
+            .from('articles')
+            .select('*')
+            .eq('category', category)
+            .eq('slug', slug)
+            .single()
+        )
+      );
 
-      if (error) throw error;
+      if (response.error) throw response.error;
 
-      if (article) {
-        // Update all the form fields with the article data
+      const article = response.data;
+      if (article && !Array.isArray(article)) {
         editor?.commands.setContent(article.content);
         setSeoMeta({
           title: article.title ?? '',
           description: article.description ?? '',
           keywords: article.keywords ?? [],
         });
-        setIsSeoOpen(true); // Open SEO section to show loaded data
+        setIsSeoOpen(true);
       }
     } catch (error) {
       console.error('Error loading article:', error);
