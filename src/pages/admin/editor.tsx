@@ -27,9 +27,18 @@ import {
   Highlighter,
   X,
   Save,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  ArrowDownToLine,
+  RotateCw,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ImageUploadModal from '~/components/shared/ImageUploadModal';
+import { supabase } from '~/utils/supabase';
+import { Database } from '~/types/supabase';
+import { useUserProfile } from '~/utils/UserProfileContext';
+import Cookies from 'js-cookie';
 
 interface FontSizeOptions {
   types: string[];
@@ -412,6 +421,26 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
+const saveArticle = async (articleData: any) => {
+  //console.log('Saving article:', articleData);
+  
+  const {data, error} = await supabase.from('articles').insert(articleData);
+  console.log('Saved article:', articleData);
+
+  if (error) {
+    console.error('Error saving article:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+interface ArticlePath {
+  category: string;
+  subcategory: string | null;
+  slug: string;
+}
+
 const EditorMenu = () => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
@@ -419,7 +448,117 @@ const EditorMenu = () => {
   const [slug, setSlug] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSeoOpen, setIsSeoOpen] = useState(false);
+  const [seoMeta, setSeoMeta] = useState({
+    title: '',
+    description: '',
+    keywords: [] as string[],
+  });
+  const [articlePaths, setArticlePaths] = useState<ArticlePath[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [availableSubcategories, setAvailableSubcategories] = useState<string[]>([]);
+  const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
+  const [isLoadingArticle, setIsLoadingArticle] = useState(false);
+  const {userProfile} = useUserProfile()
   
+  // Load paths from cookie on mount and fetch fresh data
+  useEffect(() => {
+    // First try to load from cookie
+    const savedPaths = Cookies.get('articlePaths');
+    if (savedPaths) {
+      try {
+        const paths = JSON.parse(savedPaths) as ArticlePath[];
+        setArticlePaths(paths);
+        
+        // Set available options from saved paths
+        const categories = [...new Set(paths.map(p => p.category))].sort();
+        setAvailableCategories(categories);
+      } catch (error) {
+        console.error('Error parsing saved paths:', error);
+      }
+    }
+    
+    // Then fetch fresh data
+    handleLoadPaths();
+  }, []);
+
+  const handleLoadPaths = async () => {
+    setIsLoading(true);
+    try {
+      const { data: articles, error } = await supabase
+        .from('articles')
+        .select('category, subcategory, slug');
+
+      if (error) throw error;
+
+      if (articles) {
+        const paths = articles.map(article => ({
+          category: article.category,
+          subcategory: article.subcategory,
+          slug: article.slug
+        }));
+        setArticlePaths(paths);
+
+        // Save to cookie
+        Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 }); // Expires in 1 day
+
+        // Extract unique categories
+        const categories = [...new Set(paths.map(p => p.category))].sort();
+        setAvailableCategories(categories);
+
+        // Update subcategories if category is selected
+        if (category) {
+          const subs = [...new Set(paths
+            .filter(p => p.category === category)
+            .map(p => p.subcategory)
+            .filter((sub): sub is string => sub !== null)
+          )].sort();
+          setAvailableSubcategories(subs);
+        }
+
+        // Update slugs if category (and optionally subcategory) is selected
+        if (category) {
+          const filteredSlugs = paths
+            .filter(p => p.category === category && 
+              (subcategory ? p.subcategory === subcategory : true))
+            .map(p => p.slug)
+            .sort();
+          setAvailableSlugs(filteredSlugs);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading article paths:', error);
+      alert('Failed to load article paths');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Add effect to update available options when selection changes
+  useEffect(() => {
+    if (articlePaths.length > 0) {
+      if (category) {
+        const subs = [...new Set(articlePaths
+          .filter(p => p.category === category)
+          .map(p => p.subcategory)
+          .filter((sub): sub is string => sub !== null)
+        )].sort();
+        setAvailableSubcategories(subs);
+
+        const slugs = articlePaths
+          .filter(p => p.category === category && 
+            (subcategory ? p.subcategory === subcategory : true))
+          .map(p => p.slug)
+          .sort();
+        setAvailableSlugs(slugs);
+      } else {
+        setAvailableSubcategories([]);
+        setAvailableSlugs([]);
+      }
+    }
+  }, [category, subcategory, articlePaths]);
+
   const handleSave = async () => {
     if (!category || !slug) {
       alert('Category and slug are required');
@@ -428,17 +567,21 @@ const EditorMenu = () => {
     
     setIsSaving(true);
     try {
-      // TODO: Implement save functionality with your API
-      const articleData = {
+      const articleData:Database['public']['Tables']['articles']['Insert'] = {
         content,
         category,
         subcategory: subcategory || null,
         slug,
-        status: 'draft',
+        title: seoMeta.title,
+        description: seoMeta.description,
+        keywords: seoMeta.keywords,
+        author_id: userProfile?.id ?? '0', // TODO: Add actual owner_id
+        published:false,
+        created_at: new Date().toISOString(),
       };
       
-      console.log('Saving article:', articleData);
-      // await saveArticle(articleData);
+      const savedArticle = await saveArticle(articleData);
+      console.log('Saved article:', savedArticle);
       
       alert('Draft saved successfully!');
     } catch (error) {
@@ -454,24 +597,34 @@ const EditorMenu = () => {
       alert('Category, slug, and content are required to publish');
       return;
     }
+
+    // Validate SEO fields for publishing
+    if (!seoMeta.title || !seoMeta.description) {
+      alert('Title and description are required for publishing');
+      setIsSeoOpen(true); // Open SEO section to show required fields
+      return;
+    }
     
     const confirmPublish = window.confirm('Are you sure you want to publish this article? It will be visible to the public.');
     if (!confirmPublish) return;
     
     setIsPublishing(true);
     try {
-      // TODO: Implement publish functionality with your API
       const articleData = {
         content,
         category,
         subcategory: subcategory || null,
         slug,
+        title: seoMeta.title,
+        description: seoMeta.description,
+        keywords: seoMeta.keywords,
         status: 'published',
+        owner_id: '', // TODO: Add actual owner_id
         published_at: new Date().toISOString(),
       };
       
-      console.log('Publishing article:', articleData);
-      // await publishArticle(articleData);
+      const savedArticle = await saveArticle(articleData);
+      console.log('Published article:', savedArticle);
       
       alert('Article published successfully!');
     } catch (error) {
@@ -479,6 +632,44 @@ const EditorMenu = () => {
       alert('Failed to publish article. Please try again.');
     } finally {
       setIsPublishing(false);
+    }
+  };
+
+  const doesCurrentPathExist = () => {
+    return articlePaths.some(path => 
+      path.category === category && 
+      path.slug === slug &&
+      (subcategory ? path.subcategory === subcategory : path.subcategory === null)
+    );
+  };
+
+  const handleLoadArticle = async () => {
+    setIsLoadingArticle(true);
+    try {
+      const { data: article, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('category', category)
+        .eq('slug', slug)
+        .single();
+
+      if (error) throw error;
+
+      if (article) {
+        // Update all the form fields with the article data
+        editor?.commands.setContent(article.content);
+        setSeoMeta({
+          title: article.title ?? '',
+          description: article.description ?? '',
+          keywords: article.keywords ?? [],
+        });
+        setIsSeoOpen(true); // Open SEO section to show loaded data
+      }
+    } catch (error) {
+      console.error('Error loading article:', error);
+      alert('Failed to load article');
+    } finally {
+      setIsLoadingArticle(false);
     }
   };
 
@@ -529,11 +720,18 @@ const EditorMenu = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Category inputs */}
         <div className="bg-white rounded-lg shadow mb-4 p-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-700">Article Details</h2>
             <div className="flex gap-2">
+              <button
+                onClick={handleLoadPaths}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Reload article paths"
+              >
+                <RotateCw size={20} className={isLoading ? 'animate-spin' : ''} />
+              </button>
               <button
                 onClick={handleSave}
                 disabled={isSaving || isPublishing}
@@ -560,12 +758,22 @@ const EditorMenu = () => {
                 </label>
                 <input
                   id="category"
-                  type="text"
+                  list="category-list"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setSubcategory(''); // Reset subcategory when category changes
+                    setSlug(''); // Reset slug when category changes
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   required
+                  placeholder="Select or type category"
                 />
+                <datalist id="category-list">
+                  {availableCategories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </datalist>
               </div>
 
               <div className="flex items-center self-end h-[42px]">
@@ -578,12 +786,20 @@ const EditorMenu = () => {
                 </label>
                 <input
                   id="subcategory"
-                  type="text"
+                  list="subcategory-list"
                   value={subcategory}
-                  onChange={(e) => setSubcategory(e.target.value)}
-                  placeholder="Optional"
+                  onChange={(e) => {
+                    setSubcategory(e.target.value);
+                    setSlug(''); // Reset slug when subcategory changes
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Select or type subcategory"
                 />
+                <datalist id="subcategory-list">
+                  {availableSubcategories.map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </datalist>
               </div>
 
               <div className="flex items-center self-end h-[42px]">
@@ -594,21 +810,107 @@ const EditorMenu = () => {
                 <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
                   Slug
                 </label>
-                <input
-                  id="slug"
-                  type="text"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
+                <div className="flex gap-2">
+                  <input
+                    id="slug"
+                    list="slug-list"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    required
+                    placeholder="Select or type slug"
+                  />
+                  {doesCurrentPathExist() && (
+                    <button
+                      onClick={handleLoadArticle}
+                      disabled={isLoadingArticle}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      title="Load article data"
+                    >
+                      <ArrowDownToLine size={20} />
+                      {isLoadingArticle ? 'Loading...' : 'Get'}
+                    </button>
+                  )}
+                </div>
+                <datalist id="slug-list">
+                  {availableSlugs.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </datalist>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow mb-4 p-4">
-          <p className="text-gray-600 italic">Editor still in the development stage, some buttons dont work yet, feel free to play around if you want</p>
+            {/* SEO Section */}
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <button
+                onClick={() => setIsSeoOpen(!isSeoOpen)}
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+              >
+                <span className="text-sm font-medium">SEO Metadata</span>
+                {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+              
+              {isSeoOpen && (
+                <div className="mt-4 space-y-4">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Title <span className="text-red-500">*</span>
+                          <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={seoMeta.title}
+                          onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          placeholder="Enter title (60 characters max)"
+                          maxLength={60}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {seoMeta.title.length}/60 characters
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Description <span className="text-red-500">*</span>
+                          <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                        </label>
+                        <textarea
+                          value={seoMeta.description}
+                          onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          placeholder="Enter description (160 characters max)"
+                          maxLength={160}
+                          rows={3}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {seoMeta.description.length}/160 characters
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Keywords
+                        </label>
+                        <input
+                          type="text"
+                          value={seoMeta.keywords.join(', ')}
+                          onChange={(e) => setSeoMeta({ 
+                            ...seoMeta, 
+                            keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          placeholder="Enter keywords separated by commas"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         
         <div className="bg-white rounded-lg shadow mb-8">
