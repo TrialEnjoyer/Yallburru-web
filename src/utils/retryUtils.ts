@@ -37,14 +37,7 @@ export async function withRetry<T>(
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const result = await operation();
-      
-      // If we got a response (even with error), return it
-      if (result !== undefined) {
-        return result;
-      }
-
-      // If we got undefined (no response), throw to trigger retry
-      throw new Error('No response received from Supabase');
+      return result;
     } catch (error) {
       lastError = {
         message: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -67,7 +60,7 @@ export async function withRetry<T>(
     }
   }
 
-  // If all retries failed, return error response
+  // Return error response if all retries failed
   return {
     data: null,
     error: lastError,

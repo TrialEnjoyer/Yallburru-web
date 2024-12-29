@@ -25,8 +25,24 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); 
-  const {userId, isLoading: authLoading, isAuthenticated} = useAuth();
+  const [userId, setUserId] = useState<string | null>(null);
+  //const {userId, isLoading: authLoading, isAuthenticated} = useAuth();
   //const router = useRouter();
+
+  const getUser = async () => {
+    //check for jwt
+    const sess = await supabase.auth.getSession();
+    //if no active jwt, exit.
+    if (!sess.data.session?.user) return;
+    //use jwt to obtain user
+    const { data, error } = await supabase.auth.getUser(
+      sess.data.session?.access_token,
+    );
+    if (error) {
+      console.log(error);
+    }
+    setUserId(data.user?.id ?? null);
+  };
 
   const fetchProfile = async () => {
     if (!userId) return;
@@ -52,7 +68,10 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      getUser().catch(console.error);
+      return;
+    }
 
     // Initial profile fetch
     const initializeProfile = async () => {
@@ -70,8 +89,10 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     // Set up auth state change listener
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          await fetchProfile();
+        if ((event === 'INITIAL_SESSION') && session) {
+          if (!userProfile) {
+            await fetchProfile();
+          }
         } else if (event === 'SIGNED_OUT') {
           setUserProfile(null);
         }

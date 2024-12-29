@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { supabase } from '~/utils/supabase';
 import { type Database } from '~/types/supabase';
+import { withRetry } from '~/utils/retryUtils';
 type Article = Database['public']['Tables']['articles']['Row'];
 
 interface ArticlePageProps {
@@ -139,17 +140,20 @@ export default function ArticlePage({ article, error }: ArticlePageProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Only get published articles for static paths
-  const { data: articles } = await supabase
-    .from('articles')
-    .select('category, subcategory, slug')
-    //.eq('published', true); // Only generate paths for published articles
+  type ArticleFields = Pick<Article, 'category' | 'subcategory' | 'slug'>;
+  const response = await withRetry<ArticleFields[]>(() => 
+    new Promise((resolve) => {
+      supabase
+        .from('articles')
+        .select('category, subcategory, slug')
+        .then(resolve);
+    })
+  );
 
-  const paths = articles?.map(article => {
-    const slugParts = [article.category, article.slug];
-    return {
-      params: { slug: slugParts }
-    };
-  }) ?? [];
+  const articles = response.data as ArticleFields[] ?? [];
+  const paths = articles.map(article => ({
+    params: { slug: [article.category, article.slug] }
+  }));
 
   return {
     paths,
@@ -176,21 +180,24 @@ export const getStaticProps: GetStaticProps<ArticlePageProps> = async ({ params 
       };
     }
 
-    // The RLS policy will automatically handle the permissions
-    // If the user is authenticated, they'll see their own articles
-    // If not, they'll only see published articles
-    const { data: articles, error } = await supabase
-      .from('articles')
-      .select('*')
-      .eq('category', category)
-      .eq('slug', slug)
-      .single();
+    const response = await withRetry<Article>(() =>
+      new Promise((resolve) => {
+        supabase
+          .from('articles')
+          .select('*')
+          .eq('category', category)
+          .eq('slug', slug)
+          .single()
+          .then(resolve);
+      })
+    );
 
-    if (error) {
-      throw error;
+    if (response.error) {
+      throw response.error;
     }
 
-    if (!articles) {
+    const article = response.data as Article;
+    if (!article) {
       return {
         notFound: true
       };
@@ -198,7 +205,7 @@ export const getStaticProps: GetStaticProps<ArticlePageProps> = async ({ params 
 
     return {
       props: {
-        article: articles
+        article
       },
       revalidate: 60
     };

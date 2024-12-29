@@ -24,14 +24,14 @@ Current Features:
 - [ ] Implement image gallery
 - [ ] Add staff/team member profiles
 - [ ] Create FAQ page
-- [ ] Add privacy policy and terms of service pages
-- [ ] Implement breadcrumb navigation
+- [x] Add privacy policy and terms of service pages
+- [x] Implement breadcrumb navigation
 - [ ] Add loading states and animations
 
 ### Admin Features
-- [ ] Rich text editor for content management
+- [x] Rich text editor for content management
 - [x] Image upload and management system
-- [ ] Blog post creation and management
+- [x] Blog post creation and management
 - [ ] User profile management
 - [ ] Analytics dashboard
 - [ ] Email template customization

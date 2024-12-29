@@ -432,13 +432,14 @@ type Article = Database['public']['Tables']['articles']['Row'];
 
 const saveArticle = async (articleData: Database['public']['Tables']['articles']['Insert']) => {
   const response = await withRetry<Article>(() =>
-    Promise.resolve(
+    new Promise((resolve) => {
       supabase
         .from('articles')
         .insert(articleData)
         .select()
         .single()
-    )
+        .then(resolve);
+    })
   );
 
   if (response.error) {
@@ -446,7 +447,7 @@ const saveArticle = async (articleData: Database['public']['Tables']['articles']
     throw response.error;
   }
 
-  return response.data;
+  return response.data as Article;
 };
 
 const EditorMenu = () => {
@@ -494,52 +495,56 @@ const EditorMenu = () => {
   const handleLoadPaths = async () => {
     setIsLoading(true);
     try {
-      type ArticleFields = Pick<Article, 'category' | 'subcategory' | 'slug'>;
-      const response = await withRetry<ArticleFields>(() => 
-        Promise.resolve(
+      interface ArticleFields {
+        category: string;
+        subcategory: string | null;
+        slug: string;
+      }
+
+      const response = await withRetry<ArticleFields[]>(() => 
+        new Promise((resolve) => {
           supabase
             .from('articles')
             .select('category, subcategory, slug')
-        )
+            .then(resolve);
+        })
       );
 
       if (response.error) throw response.error;
 
-      const articles = response.data;
-      if (articles && Array.isArray(articles)) {
-        const paths: ArticlePath[] = articles.map(article => ({
-          category: article.category,
-          subcategory: article.subcategory,
-          slug: article.slug
-        }));
-        setArticlePaths(paths);
+      const articles = response.data as ArticleFields[] ?? [];
+      const paths: ArticlePath[] = articles.map(article => ({
+        category: article.category,
+        subcategory: article.subcategory,
+        slug: article.slug
+      }));
+      setArticlePaths(paths);
 
-        // Save to cookie
-        Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 });
+      // Save to cookie
+      Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 });
 
-        // Extract unique categories
-        const categories = [...new Set(paths.map((p: ArticlePath) => p.category))].sort();
-        setAvailableCategories(categories);
+      // Extract unique categories
+      const categories = [...new Set(paths.map((p: ArticlePath) => p.category))].sort();
+      setAvailableCategories(categories);
 
-        // Update subcategories if category is selected
-        if (category) {
-          const subs = [...new Set(paths
-            .filter((p: ArticlePath) => p.category === category)
-            .map((p: ArticlePath) => p.subcategory)
-            .filter((sub: string | null): sub is string => sub !== null)
-          )].sort();
-          setAvailableSubcategories(subs);
-        }
+      // Update subcategories if category is selected
+      if (category) {
+        const subs = [...new Set(paths
+          .filter((p: ArticlePath) => p.category === category)
+          .map((p: ArticlePath) => p.subcategory)
+          .filter((sub: string | null): sub is string => sub !== null)
+        )].sort();
+        setAvailableSubcategories(subs);
+      }
 
-        // Update slugs if category (and optionally subcategory) is selected
-        if (category) {
-          const filteredSlugs = paths
-            .filter((p: ArticlePath) => p.category === category && 
-              (subcategory ? p.subcategory === subcategory : true))
-            .map((p: ArticlePath) => p.slug)
-            .sort();
-          setAvailableSlugs(filteredSlugs);
-        }
+      // Update slugs if category (and optionally subcategory) is selected
+      if (category) {
+        const filteredSlugs = paths
+          .filter((p: ArticlePath) => p.category === category && 
+            (subcategory ? p.subcategory === subcategory : true))
+          .map((p: ArticlePath) => p.slug)
+          .sort();
+        setAvailableSlugs(filteredSlugs);
       }
     } catch (error) {
       console.error('Error loading article paths:', error);
@@ -661,20 +666,21 @@ const EditorMenu = () => {
     setIsLoadingArticle(true);
     try {
       const response = await withRetry<Article>(() =>
-        Promise.resolve(
+        new Promise((resolve) => {
           supabase
             .from('articles')
             .select('*')
             .eq('category', category)
             .eq('slug', slug)
             .single()
-        )
+            .then(resolve);
+        })
       );
 
       if (response.error) throw response.error;
 
-      const article = response.data;
-      if (article && !Array.isArray(article)) {
+      const article = response.data as Article;
+      if (article) {
         editor?.commands.setContent(article.content);
         setSeoMeta({
           title: article.title ?? '',
