@@ -3,13 +3,11 @@ import { Menu, Users, Briefcase, Phone, X, LogIn, User, LogOut } from "lucide-re
 import Image from "next/image";
 import Link from "next/link";
 import { useUserProfile } from "~/utils/UserProfileContext";
-import { useAuth } from "~/utils/useAuth";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { userProfile } = useUserProfile();
-  const { signOut } = useAuth();
+  const { userProfile, signOut } = useUserProfile();
 
   useEffect(() => {
     const handleScroll = () => {

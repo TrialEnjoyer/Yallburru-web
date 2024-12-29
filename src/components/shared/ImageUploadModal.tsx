@@ -4,7 +4,7 @@ import ReactCrop, { type Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { UploadButton } from '~/utils/uploadthing';
 import {genUploader} from 'uploadthing/client';
-import { useAuth } from '~/utils/useAuth';
+import { useUserProfile } from '~/utils/UserProfileContext';
 import {
   Dialog,
   DialogContent,
@@ -401,7 +401,7 @@ function ImageEditor({ image: initialImage, onSave, onCancel, userId }: {
 }
 
 export default function ImageUploadModal({ isOpen, onClose, onImageSelect }: ImageUploadModalProps) {
-  const { userId } = useAuth();
+  const { userId } = useUserProfile();
   const [showPreviousImages, setShowPreviousImages] = useState(false);
   const [showModifiedImages, setShowModifiedImages] = useState(false);
   const [images, setImages] = useState<Image[]>([]);

@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from './supabase';
-import { useAuth } from './useAuth';
 
 export type UserProfile = {
   id: string;
@@ -14,9 +13,11 @@ export type UserProfile = {
 
 type UserProfileContextType = {
   userProfile: UserProfile | null;
+  userId: string | null;
   isLoading: boolean;
   error: string | null;
   refreshProfile: () => Promise<void>;
+  signOut: () => Promise<void>;
 };
 
 const UserProfileContext = createContext<UserProfileContextType | undefined>(undefined);
@@ -26,8 +27,6 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); 
   const [userId, setUserId] = useState<string | null>(null);
-  //const {userId, isLoading: authLoading, isAuthenticated} = useAuth();
-  //const router = useRouter();
 
   const getUser = async () => {
     //check for jwt
@@ -66,6 +65,20 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     if (!userId) return;
     void fetchProfile();
   };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setUserProfile(null);
+      setUserId(null);
+
+    } catch (err) {
+      console.error('Error signing out:', err);
+    }
+  };
+
 
   useEffect(() => {
     if (!userId) {
@@ -129,9 +142,11 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     <UserProfileContext.Provider
       value={{
         userProfile,
+        userId,
         isLoading,
         error,
         refreshProfile,
+        signOut,
       }}
     >
       {children}
