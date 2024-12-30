@@ -159,7 +159,7 @@ export default function Contact() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-3 border-b border-gray-100">
                     <span className="font-medium text-gray-900">Monday - Friday</span>
-                    <span className="text-gray-600">9:00 AM - 5:00 PM</span>
+                    <span className="text-gray-600">8:30 AM - 4:30 PM</span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-b border-gray-100">
                     <span className="font-medium text-gray-900">Saturday</span>
