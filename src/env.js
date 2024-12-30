@@ -14,6 +14,8 @@ export const env = createEnv({
     CONTACT_SMTP_USER: z.string(),
     CONTACT_SMTP_PASS: z.string(),
     UPLOADTHING_TOKEN: z.string(),
+    GOOGLE_MAPS_API_KEY: z.string(),
+
   },
 
   /**
@@ -40,6 +42,7 @@ export const env = createEnv({
     CONTACT_SMTP_USER: process.env.CONTACT_SMTP_USER,
     CONTACT_SMTP_PASS: process.env.CONTACT_SMTP_PASS,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+    GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
