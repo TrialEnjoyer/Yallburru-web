@@ -134,7 +134,8 @@ export default function Contact() {
                       loading="lazy"
                       allowFullScreen
                       referrerPolicy="no-referrer-when-downgrade"
-                      src={`https://www.google.com/maps/embed/v1/place?q=The%20Well%2C%2058%20Highland%20Way%2C%20Upper%20Coomera%20QLD%204209&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&zoom=15`}
+                      title="58 Highland Way, Upper Coomera QLD 4209"
+                      src={`https://www.google.com/maps/embed/v1/place?q=Yallburru%20Community%20Services%2C%20The%20Well%2C%2058%20Highland%20Way%2C%20Upper%20Coomera%20QLD%204209&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&zoom=15`}
                     ></iframe>
                   </div>
                   <Link
