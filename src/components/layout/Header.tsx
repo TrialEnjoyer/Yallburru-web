@@ -121,7 +121,7 @@ export default function Header() {
         <div className="container mx-auto px-4 py-2">
           <div className="flex flex-col space-y-4 pb-4">
             <Link
-              href="#about" 
+              href="/#about" 
               className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
               onClick={toggleMenu}
             >
@@ -129,7 +129,7 @@ export default function Header() {
               About
             </Link>
             <Link
-              href="#services" 
+              href="/#services" 
               className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
               onClick={toggleMenu}
             >
@@ -137,7 +137,7 @@ export default function Header() {
               Services
             </Link>
             <Link 
-              href="#contact" 
+              href="/contact" 
               className="text-white flex items-center gap-2 p-2 hover:bg-sky-900/50 rounded-lg transition-colors"
               onClick={toggleMenu}
             >
