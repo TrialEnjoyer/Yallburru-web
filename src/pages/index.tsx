@@ -17,15 +17,52 @@ import {
   BadgeCheck,
   Accessibility,
   MapPinned,
-  Handshake
+  Handshake,
+  Calendar,
+  Clock
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import WaveDivider from "../components/home/WaveDivider";
 import ContactForm from "../components/home/ContactForm";
-//import yallburrubanner from "/banner.webp";
+import { supabase } from "~/utils/supabase";
 
-export default function Homepage() {
+interface Article {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  created_at: string;
+  imageurl?: string;
+}
+
+export async function getStaticProps() {
+  const { data: articles, error } = await supabase
+    .from('articles')
+    .select('id, title, description, slug, created_at, imageurl')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error('Error fetching articles:', error);
+    return {
+      props: {
+        articles: [],
+      },
+      revalidate: 60 * 60, // Revalidate every hour
+    };
+  }
+
+  return {
+    props: {
+      articles: articles || [],
+    },
+    revalidate: 60 * 60, // Revalidate every hour
+  };
+}
+
+export default function Homepage({ articles }: { articles: Article[] }) {
 
   return (
     <>
@@ -239,6 +276,140 @@ export default function Homepage() {
             <div className="flex flex-col items-center p-6 bg-sky-50 rounded-lg w-full max-w-[200px] aspect-video">
               <BadgeCheck size={48} className="text-sky-600 mb-2" />
               <p className="text-sm text-sky-900 text-center">Disability Services Certified</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* News Section - Add before the Contact Section */}
+      <section className="py-12 md:py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="text-center md:text-left md:flex md:justify-between md:items-center mb-8 md:mb-12">
+              <div className="mb-6 md:mb-0">
+                <h2 className="text-3xl md:text-4xl font-bold text-sky-900 mb-2">Latest Updates</h2>
+                <p className="text-gray-600 text-sm md:text-base">Stay informed with our latest news and announcements</p>
+              </div>
+              {articles?.length > 2 && (
+                <Link 
+                  href="/news" 
+                  className="group inline-flex items-center justify-center gap-2 
+                         bg-white px-5 py-2.5 md:px-6 md:py-3 rounded-full shadow-sm hover:shadow-md 
+                         border border-gray-200 text-sky-600 hover:text-sky-700 
+                         text-sm md:text-base transition-all duration-300"
+              >
+                  View All News
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
+            </div>
+            
+            {/* Articles Grid */}
+            <div className="grid gap-6 md:gap-8">
+              {articles?.map((article, index) => (
+                <Link 
+                  key={article.id}
+                  href={`/news/${article.slug}`}
+                  className={`group transform hover:-translate-y-1 transition-all duration-300 ${
+                    index === 0 ? 'md:col-span-2' : ''
+                  }`}
+                >
+                  <article className="bg-white rounded-xl md:rounded-2xl shadow-sm overflow-hidden hover:shadow-lg h-full">
+                    {article.imageurl ? (
+                      <div className="flex flex-col md:flex-row">
+                        <div className={`relative ${
+                          index === 0 ? 'aspect-[16/9] md:aspect-[3/2] md:w-2/3' : 'aspect-video md:w-2/5'
+                        }`}>
+                          <Image
+                            src={article.imageurl}
+                            alt={article.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+                        </div>
+                        <div className={`relative p-4 md:p-6 ${
+                          index === 0 ? 'md:w-1/3' : 'md:w-3/5'
+                        }`}>
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                            <Calendar size={16} className="text-sky-600" />
+                            {new Date(article.created_at).toLocaleDateString('en-AU', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
+                          <h3 className={`font-semibold text-gray-900 group-hover:text-sky-600 transition-colors mb-3 ${
+                            index === 0 ? 'text-xl md:text-2xl' : 'text-lg md:text-xl'
+                          }`}>
+                            {article.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm md:text-base line-clamp-2 mb-4">
+                            {article.description}
+                          </p>
+                          <div className="inline-flex items-center gap-1 text-sky-600 font-medium text-sm md:text-base group-hover:gap-2 transition-all">
+                            Read More
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col md:flex-row">
+                        <div className={`relative ${
+                          index === 0 ? 'aspect-[16/9] md:aspect-[3/2] md:w-2/3' : 'aspect-video md:w-2/5'
+                        }`}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-50 flex items-center justify-center">
+                            <Image
+                              src="/Logo.webp"
+                              alt="Yallburru Logo"
+                              width={index === 0 ? 120 : 80}
+                              height={index === 0 ? 120 : 80}
+                              className="rounded-full opacity-50"
+                            />
+                          </div>
+                        </div>
+                        <div className={`relative p-4 md:p-6 ${
+                          index === 0 ? 'md:w-1/3' : 'md:w-3/5'
+                        }`}>
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                            <Calendar size={16} className="text-sky-600" />
+                            {new Date(article.created_at).toLocaleDateString('en-AU', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
+                          <h3 className={`font-semibold text-gray-900 group-hover:text-sky-600 transition-colors mb-3 ${
+                            index === 0 ? 'text-xl md:text-2xl' : 'text-lg md:text-xl'
+                          }`}>
+                            {article.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm md:text-base line-clamp-2 mb-4">
+                            {article.description}
+                          </p>
+                          <div className="inline-flex items-center gap-1 text-sky-600 font-medium text-sm md:text-base group-hover:gap-2 transition-all">
+                            Read More
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                </Link>
+              ))}
+
+              {!articles || articles.length === 0 && (
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm p-6 md:p-12 text-center">
+                  <div className="max-w-md mx-auto">
+                    <Calendar size={32} className="mx-auto mb-4 text-gray-400" />
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">No News Yet</h3>
+                    <p className="text-sm md:text-base text-gray-600">
+                      Check back soon for updates and announcements from Yallburru Community Services.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
