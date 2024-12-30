@@ -61,7 +61,7 @@ export default function Contact() {
                     loading="lazy"
                     allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps/embed/v1/place?q=${-27.89303560802856},${153.27929367921863}&zoom=15&key=${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+                    src={`https://www.google.com/maps/embed/v1/place?q=${-27.89303560802856},${153.27929367921863}&zoom=15&key=${env.GOOGLE_MAPS_API_KEY}`}
                   ></iframe>
                 </div>
               </div>
