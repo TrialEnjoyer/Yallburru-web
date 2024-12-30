@@ -72,7 +72,7 @@ export default function Contact() {
                   <Phone className="w-6 h-6 text-sky-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Call Us</h3>
-                <p className="text-gray-600 mb-4">Available Mon-Fri, 9am-5pm</p>
+                <p className="text-gray-600 mb-4">Available Mon-Fri, 8:30am-4:30pm</p>
                 <a 
                   href="tel:0756325727"
                   className="text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1"
