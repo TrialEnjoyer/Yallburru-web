@@ -56,15 +56,15 @@ export default function Header() {
         
         {/* Desktop Navigation links with Auth */}
         <div className="hidden md:flex gap-6 pr-4 items-center">
-          <Link href="#about" className="text-white hover:text-sky-400 flex items-center gap-2">
+          <Link href="/#about" className="text-white hover:text-sky-400 flex items-center gap-2">
             <Users size={18} />
             About
           </Link>
-          <Link href="#services" className="text-white hover:text-sky-400 flex items-center gap-2">
+          <Link href="/#services" className="text-white hover:text-sky-400 flex items-center gap-2">
             <Briefcase size={18} />
             Services
           </Link>
-          <Link href="#contact" className="text-white hover:text-sky-400 flex items-center gap-2">
+          <Link href="/contact" className="text-white hover:text-sky-400 flex items-center gap-2">
             <Phone size={18} />
             Contact
           </Link>
