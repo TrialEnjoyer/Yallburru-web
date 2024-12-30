@@ -11,7 +11,6 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const router = useRouter();
   const isAdminRoute = router.pathname.startsWith("/admin");
-  const isHomePage = router.pathname === "/";
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -28,8 +27,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
       <main className={`
         flex-grow 
-        ${!isHomePage ? "pt-[64px]" : ""}
-        ${isAdminRoute ? "lg:ml-64" : ""}
+        ${isAdminRoute ? "lg:ml-64 pt-[64px]" : ""}
         transition-all duration-300
       `}>
         {children}

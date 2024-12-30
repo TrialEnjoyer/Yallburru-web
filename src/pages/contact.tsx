@@ -15,7 +15,7 @@ export default function Contact() {
       </Head>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-sky-900 to-sky-800 text-white">
+      <div className="pt-24 bg-gradient-to-b from-sky-900 to-sky-800 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
