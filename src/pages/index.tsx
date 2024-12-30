@@ -263,7 +263,7 @@ export default function Homepage() {
               </p>
               <p className="flex items-center gap-3">
                 <MapPin className="text-sky-600 flex-shrink-0" size={24} />
-                <span>55 Highland way, Upper Coomera, QLD, 4209</span>
+                <span>The Well, 58 Highland Way, Upper Coomera, QLD, 4209</span>
               </p>
             </div>
           </div>
