@@ -12,6 +12,8 @@ export default withUt({
       },
       animation: {
         'gradient-x': 'gradient-x 15s ease infinite',
+        'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+        'snake': 'snake 20s linear infinite'
       },
       keyframes: {
         'gradient-x': {
@@ -24,6 +26,42 @@ export default withUt({
             'transform': 'translateX(100%)',
           },
         },
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'snake': {
+          '0%, 100%': {
+            transform: 'translate(0%, 0%)'
+          },
+          '12.5%': {
+            transform: 'translate(0%, 100%)'
+          },
+          '25%': {
+            transform: 'translate(0%, 200%)'
+          },
+          '37.5%': {
+            transform: 'translate(0%, 300%)'
+          },
+          '50%': {
+            transform: 'translate(100%, 300%)'
+          },
+          '62.5%': {
+            transform: 'translate(200%, 300%)'
+          },
+          '75%': {
+            transform: 'translate(200%, 0%)'
+          },
+          '87.5%': {
+            transform: 'translate(100%, 0%)'
+          }
+        }
       },
       typography: {
         DEFAULT: {

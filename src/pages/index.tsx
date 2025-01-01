@@ -63,7 +63,6 @@ export async function getStaticProps() {
 }
 
 export default function Homepage({ articles }: { articles: Article[] }) {
-
   return (
     <>
       <Head>
@@ -76,85 +75,129 @@ export default function Homepage({ articles }: { articles: Article[] }) {
       </Head>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-0 bg-gradient-to-b from-black via-sky-900 to-sky-600">
-        <div className="container mx-auto px-4 py-28 md:py-32 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
-            Yallburru Community Services
-          </h1>
-          <p className="text-xl md:text-2xl font-light text-purple-100 mb-12 max-w-3xl mx-auto">
-            Providing Elder Care & Disability Support Across Gold Coast, South East QLD & Nationwide
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link 
-              href="#contact" 
-              className="bg-sky-500 text-white px-8 py-4 rounded-full 
-                         hover:bg-sky-400 inline-flex items-center gap-2 
-                         transition-colors shadow-lg"
-            >
-              Get In Touch
-              <ArrowRight size={20} />
-            </Link>
-            <Link 
-              href="#services" 
-              className="text-white px-8 py-4 rounded-full 
-                         border border-white/30 hover:border-sky-300 hover:text-sky-300
-                         inline-flex items-center gap-2 transition-colors"
-            >
-              Our Services
-              <LayoutGrid size={20} />
-            </Link>
+      <section className="relative pt-24 pb-0 bg-gradient-to-b from-black via-sky-900 to-sky-600 overflow-hidden">
+        {/* Add decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-48 -right-48 w-96 h-96 bg-sky-400 rounded-full filter blur-3xl opacity-20"></div>
+          <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-purple-400 rounded-full filter blur-3xl opacity-20"></div>
+        </div>
+        
+        <div className="container relative mx-auto px-4 py-28 md:py-32 text-center">
+          <div className="animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-100 to-white">
+              Yallburru Community Services
+            </h1>
+            <p className="text-xl md:text-2xl font-light text-purple-100 mb-12 max-w-3xl mx-auto opacity-90">
+              Providing Elder Care & Disability Support Across Gold Coast, South East QLD & Nationwide
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link 
+                href="#contact" 
+                className="bg-sky-500 text-white px-8 py-4 rounded-full 
+                           hover:bg-sky-400 inline-flex items-center gap-2 
+                           transition-all duration-300 hover:translate-y-[-2px]
+                           shadow-lg hover:shadow-sky-500/50"
+              >
+                Get In Touch
+                <ArrowRight size={20} />
+              </Link>
+              <Link 
+                href="#services" 
+                className="text-white px-8 py-4 rounded-full 
+                           border border-white/30 hover:border-sky-300 hover:text-sky-300
+                           inline-flex items-center gap-2 transition-all duration-300
+                           hover:translate-y-[-2px] hover:shadow-lg"
+              >
+                Our Services
+                <LayoutGrid size={20} />
+              </Link>
+            </div>
           </div>
         </div>
         <WaveDivider />
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-gray-50">
+      <section id="services" className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">Our Services</h2>
+          <h2 className="text-3xl font-bold mb-4 text-center text-sky-900">Our Services</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Comprehensive care solutions tailored to meet your unique needs with compassion and cultural sensitivity
+          </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
-                <Home size={32} className="text-sky-600" />
+            {[
+              {
+                icon: <Home size={32} className="text-sky-600" />,
+                title: "Home Care",
+                description: "Professional care services delivered to your home, ensuring comfort and independence.",
+                color: "sky"
+              },
+              {
+                icon: <Accessibility size={32} className="text-purple-600" />,
+                title: "Disability Support",
+                description: "Culturally sensitive disability support services and NDIS coordination.",
+                color: "purple"
+              },
+              {
+                icon: <Users size={32} className="text-indigo-600" />,
+                title: "Elder Care",
+                description: "Respectful and compassionate care services for our Elders.",
+                color: "indigo"
+              }
+            ].map((service, index) => (
+              <div 
+                key={index}
+                className={`group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl 
+                           transition-all duration-300 hover:-translate-y-1 
+                           border border-gray-100 hover:border-${service.color}-100`}
+              >
+                <div className={`w-16 h-16 bg-${service.color}-50 group-hover:bg-${service.color}-100 
+                                rounded-xl mb-6 flex items-center justify-center 
+                                transition-colors duration-300`}>
+                  {service.icon}
+                </div>
+                <h3 className={`text-xl font-semibold mb-4 text-${service.color}-900`}>
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {service.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-sky-900">Home Care</h3>
-              <p className="text-gray-600">Prefessional care services delivered to your home.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
-                <Accessibility size={32} className="text-sky-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-sky-900">Disability Support</h3>
-              <p className="text-gray-600">Culturally sensitive disability support services and NDIS coordination.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 bg-sky-100 rounded-full mb-4 flex items-center justify-center">
-                <Users size={32} className="text-sky-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-sky-900">Elder Care</h3>
-              <p className="text-gray-600">Respectful and compassionate care services for our Elders.</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center text-sky-900">About Yallburru</h2>
+      <section id="about" className="py-20 bg-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-50/50 to-transparent"></div>
+        <div className="absolute right-0 top-0 w-1/3 h-1/3 bg-gradient-to-br from-sky-100/20 to-purple-100/20 blur-3xl"></div>
+        
+        <div className="container mx-auto px-4 relative">
+          <h2 className="text-3xl font-bold mb-4 text-center text-sky-900">About Yallburru</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Empowering communities through culturally sensitive care and support services
+          </p>
+          
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="flex items-center justify-center bg-sky-100 rounded-lg p-12">
-              <Image 
-                src="/banner.webp"
-                alt="Caring staff member with client"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-lg"
-              />
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-purple-500 rounded-2xl transform rotate-1 opacity-10 group-hover:rotate-2 group-hover:scale-105 transition-transform"></div>
+              <div className="relative bg-white rounded-2xl p-2 shadow-lg transform -rotate-1 group-hover:rotate-0 transition-transform">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
+                  <Image 
+                    src="/banner.webp"
+                    alt="Caring staff member with client"
+                    fill
+                    className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+              </div>
             </div>
+            
             <div className="space-y-6">
               <p className="text-gray-600 leading-relaxed">
-                Yallburru Community Services is a leading Indiginous, Disability and aged care service provider 
+                Yallburru Community Services is a leading Indigenous, Disability and aged care service provider 
                 at the forefront of service and program development in South East Queensland.
               </p>
               <p className="text-gray-600 leading-relaxed">
@@ -162,13 +205,24 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                 solutions that enhance the quality of life for our clients. Our dedicated team 
                 of professionals is committed to delivering exceptional care with compassion, respect and honoring our communities' cultural heritage.`}
               </p>
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="text-center p-4 bg-sky-50 rounded-lg">
-                  <h4 className="text-2xl font-bold text-sky-900">Community</h4>
+              
+              <div className="grid lg:grid-cols-2 gap-4 pt-4">
+                <div className="group p-6 bg-gradient-to-br from-sky-50 to-white rounded-xl border border-sky-100/50 hover:border-sky-200 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-sky-100 rounded-lg group-hover:bg-sky-200 transition-colors">
+                      <Handshake size={24} className="text-sky-600" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-sky-900">Community</h4>
+                  </div>
                   <p className="text-gray-600">First Approach</p>
                 </div>
-                <div className="text-center p-4 bg-sky-50 rounded-lg">
-                  <h4 className="text-2xl font-bold text-sky-900">Nationwide</h4>
+                <div className="group p-6 bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100/50 hover:border-purple-200 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                      <MapPinned size={24} className="text-purple-600" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-purple-900">Nationwide</h4>
+                  </div>
                   <p className="text-gray-600">Service Coverage</p>
                 </div>
               </div>
@@ -298,7 +352,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                          bg-white px-5 py-2.5 md:px-6 md:py-3 rounded-full shadow-sm hover:shadow-md 
                          border border-gray-200 text-sky-600 hover:text-sky-700 
                          text-sm md:text-base transition-all duration-300"
-              >
+                >
                   View All News
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>

@@ -3,7 +3,7 @@ import Image from 'next/image';
 const WaveDivider = () => {
   return (
     <div className="relative w-full">
-      <div className="absolute left-1/2 -bottom-4 md:bottom-0 transform -translate-x-1/2">
+      <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2">
         <Image 
           src="/Logo.webp" 
           alt="Yallburru Community Services Banner" 
