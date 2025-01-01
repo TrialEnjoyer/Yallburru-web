@@ -20,7 +20,8 @@ Current Features:
 ### Frontend Pages & Features
 - [ ] Add testimonials section to homepage
 - [ ] Create services detail pages (requires more information)
-- [ ] Add blog/news section
+- [x] Add Articles section
+- [ ] Add Articles page
 - [x] Add contact us page
 - [ ] Add about us page (requires more information)
 - [ ] Implement image gallery (requires images)
