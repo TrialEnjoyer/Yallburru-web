@@ -40,6 +40,8 @@ import { Database } from '~/types/supabase';
 import { useUserProfile } from '~/utils/UserProfileContext';
 import Cookies from 'js-cookie';
 import { withRetry } from '~/utils/retryUtils';
+import { LoadingButton } from '~/components/ui/LoadingButton';
+import { LoadingOverlay } from '~/components/ui/LoadingOverlay';
 
 interface FontSizeOptions {
   types: string[];
@@ -435,7 +437,7 @@ const saveArticle = async (articleData: Database['public']['Tables']['articles']
     new Promise((resolve) => {
       supabase
         .from('articles')
-        .insert(articleData)
+        .upsert(articleData)
         .select()
         .single()
         .then(resolve);
@@ -452,6 +454,7 @@ const saveArticle = async (articleData: Database['public']['Tables']['articles']
 
 const EditorMenu = () => {
   const [content, setContent] = useState('');
+  const [id, setId] = useState<undefined|number>(undefined);
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [slug, setSlug] = useState('');
@@ -501,54 +504,46 @@ const EditorMenu = () => {
         slug: string;
       }
 
-      const response = await withRetry<ArticleFields[]>(() => 
-        new Promise((resolve) => {
-          supabase
-            .from('articles')
-            .select('category, subcategory, slug')
-            .then(resolve);
-        })
-      );
+      const { data: paths, error } = await supabase
+        .from('articles')
+        .select('category, subcategory, slug')
+        .order('created_at', { ascending: false });
 
-      if (response.error) throw response.error;
+      if (error) throw error;
 
-      const articles = response.data as ArticleFields[] ?? [];
-      const paths: ArticlePath[] = articles.map(article => ({
-        category: article.category,
-        subcategory: article.subcategory,
-        slug: article.slug
+      const formattedPaths = (paths as ArticleFields[]).map(p => ({
+        category: p.category,
+        subcategory: p.subcategory,
+        slug: p.slug,
       }));
-      setArticlePaths(paths);
 
-      // Save to cookie
-      Cookies.set('articlePaths', JSON.stringify(paths), { expires: 1 });
-
-      // Extract unique categories
-      const categories = [...new Set(paths.map((p: ArticlePath) => p.category))].sort();
+      setArticlePaths(formattedPaths);
+      
+      // Save to cookie for faster initial load
+      Cookies.set('articlePaths', JSON.stringify(formattedPaths), { expires: 1 }); // 1 day
+      
+      // Update available options
+      const categories = [...new Set(formattedPaths.map(p => p.category))].sort();
       setAvailableCategories(categories);
-
-      // Update subcategories if category is selected
+      
       if (category) {
-        const subs = [...new Set(paths
-          .filter((p: ArticlePath) => p.category === category)
-          .map((p: ArticlePath) => p.subcategory)
-          .filter((sub: string | null): sub is string => sub !== null)
+        const subcategories = [...new Set(
+          formattedPaths
+            .filter(p => p.category === category)
+            .map(p => p.subcategory)
+            .filter((sub): sub is string => sub !== null)
         )].sort();
-        setAvailableSubcategories(subs);
-      }
-
-      // Update slugs if category (and optionally subcategory) is selected
-      if (category) {
-        const filteredSlugs = paths
-          .filter((p: ArticlePath) => p.category === category && 
-            (subcategory ? p.subcategory === subcategory : true))
-          .map((p: ArticlePath) => p.slug)
-          .sort();
-        setAvailableSlugs(filteredSlugs);
+        setAvailableSubcategories(subcategories);
+        
+        if (subcategory) {
+          const slugs = formattedPaths
+            .filter(p => p.category === category && p.subcategory === subcategory)
+            .map(p => p.slug);
+          setAvailableSlugs(slugs);
+        }
       }
     } catch (error) {
-      console.error('Error loading article paths:', error);
-      alert('Failed to load article paths');
+      console.error('Error loading paths:', error);
     } finally {
       setIsLoading(false);
     }
@@ -587,6 +582,7 @@ const EditorMenu = () => {
     setIsSaving(true);
     try {
       const articleData:Database['public']['Tables']['articles']['Insert'] = {
+        id: id,
         content,
         category,
         subcategory: subcategory || null,
@@ -630,6 +626,7 @@ const EditorMenu = () => {
     setIsPublishing(true);
     try {
       const articleData = {
+        id: id,
         content,
         category,
         subcategory: subcategory || null,
@@ -687,6 +684,7 @@ const EditorMenu = () => {
           description: article.description ?? '',
           keywords: article.keywords ?? [],
         });
+        setId(article.id);
         setIsSeoOpen(true);
       }
     } catch (error) {
@@ -742,215 +740,235 @@ const EditorMenu = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow mb-4 p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-700">Article Details</h2>
-            <div className="flex gap-2">
-              <button
-                onClick={handleLoadPaths}
-                disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Reload article paths"
-              >
-                <RotateCw size={20} className={isLoading ? 'animate-spin' : ''} />
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={isSaving || isPublishing}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Save size={20} />
-                {isSaving ? 'Saving...' : 'Save Draft'}
-              </button>
-              <button
-                onClick={handlePublish}
-                disabled={isSaving || isPublishing}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isPublishing ? 'Publishing...' : 'Publish'}
-              </button>
-            </div>
+    <div className="relative">
+      {isLoadingArticle && (
+        <LoadingOverlay
+          isLoading={true}
+          text="Loading article..."
+          className="rounded-lg"
+        />
+      )}
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-4">
+          <LoadingButton
+            onClick={handleSave}
+            isLoading={isSaving}
+            loadingText="Saving..."
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Save size={20} />
+            Save Draft
+          </LoadingButton>
+          <LoadingButton
+            onClick={handlePublish}
+            isLoading={isPublishing}
+            loadingText="Publishing..."
+            className="flex items-center gap-2"
+          >
+            <ArrowDownToLine size={20} />
+            Publish
+          </LoadingButton>
+        </div>
+        <div className="flex items-center gap-4">
+          <LoadingButton
+            onClick={handleLoadPaths}
+            isLoading={isLoading}
+            loadingText="Refreshing..."
+            variant="ghost"
+            size="sm"
+          >
+            <RotateCw size={16} />
+          </LoadingButton>
+        
+          <div className='p-2 text-sm text-white cursor-pointer bg-red-500 rounded-md hover:bg-gray-100'>
+            Clear
           </div>
-          
-          <div className="flex flex-col space-y-4">
-            <div className="flex flex-wrap items-start gap-2">
-              <div className="flex flex-col min-w-[150px]">
-                <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
-                <input
-                  id="category"
-                  list="category-list"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    setSubcategory(''); // Reset subcategory when category changes
-                    setSlug(''); // Reset slug when category changes
-                  }}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                  placeholder="Select or type category"
-                />
-                <datalist id="category-list">
-                  {availableCategories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </datalist>
-              </div>
-
-              <div className="flex items-center self-end h-[42px]">
-                <span className="text-gray-500">/</span>
-              </div>
-
-              <div className="flex flex-col min-w-[150px]">
-                <label htmlFor="subcategory" className="text-sm font-medium text-gray-700 mb-1">
-                  Subcategory
-                </label>
-                <input
-                  id="subcategory"
-                  list="subcategory-list"
-                  value={subcategory}
-                  onChange={(e) => {
-                    setSubcategory(e.target.value);
-                    setSlug(''); // Reset slug when subcategory changes
-                  }}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Select or type subcategory"
-                />
-                <datalist id="subcategory-list">
-                  {availableSubcategories.map(sub => (
-                    <option key={sub} value={sub}>{sub}</option>
-                  ))}
-                </datalist>
-              </div>
-
-              <div className="flex items-center self-end h-[42px]">
-                <span className="text-gray-500">/</span>
-              </div>
-
-              <div className="flex flex-col flex-1 min-w-[200px]">
-                <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
-                  Slug
-                </label>
-                <div className="flex gap-2">
+        </div>
+      </div>
+      
+      <div className="min-h-screen bg-gray-100 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow mb-4 p-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex flex-wrap items-start gap-2">
+                <div className="flex flex-col min-w-[150px]">
+                  <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">
+                    Category
+                  </label>
                   <input
-                    id="slug"
-                    list="slug-list"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    id="category"
+                    list="category-list"
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value);
+                      setSubcategory(''); // Reset subcategory when category changes
+                      setSlug(''); // Reset slug when category changes
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     required
-                    placeholder="Select or type slug"
+                    placeholder="Select or type category"
                   />
-                  {doesCurrentPathExist() && (
-                    <button
-                      onClick={handleLoadArticle}
-                      disabled={isLoadingArticle}
-                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                      title="Load article data"
-                    >
-                      <ArrowDownToLine size={20} />
-                      {isLoadingArticle ? 'Loading...' : 'Get'}
-                    </button>
-                  )}
+                  <datalist id="category-list">
+                    {availableCategories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </datalist>
                 </div>
-                <datalist id="slug-list">
-                  {availableSlugs.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </datalist>
+                
+                <div className="flex items-center self-end h-[42px]">
+                  <span className="text-gray-500">/</span>
+                </div>
+
+                <div className="flex flex-col min-w-[150px]">
+                  <label htmlFor="subcategory" className="text-sm font-medium text-gray-700 mb-1">
+                    Subcategory
+                  </label>
+                  <input
+                    id="subcategory"
+                    list="subcategory-list"
+                    value={subcategory}
+                    onChange={(e) => {
+                      setSubcategory(e.target.value);
+                      setSlug(''); // Reset slug when subcategory changes
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Select or type subcategory"
+                  />
+                  <datalist id="subcategory-list">
+                    {availableSubcategories.map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </datalist>
+                </div>
+                
+                <div className="flex items-center self-end h-[42px]">
+                  <span className="text-gray-500">/</span>
+                </div>
+
+                <div className="flex flex-col flex-1 min-w-[200px]">
+                  <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
+                    Slug
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="slug"
+                      list="slug-list"
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      required
+                      placeholder="Select or type slug"
+                    />
+                    {doesCurrentPathExist() && (
+                      <LoadingButton
+                        onClick={handleLoadArticle}
+                        isLoading={isLoadingArticle}
+                        variant="outline"
+                        className="px-3 py-2"
+                        loadingText="Loading..."
+                      >
+                        <ArrowDownToLine size={20} />
+                        Get
+                      </LoadingButton>
+                    )}
+                  </div>
+                  <datalist id="slug-list">
+                    {availableSlugs.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </datalist>
+                </div>
               </div>
-            </div>
 
-            {/* SEO Section */}
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <button
-                onClick={() => setIsSeoOpen(!isSeoOpen)}
-                className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-              >
-                <span className="text-sm font-medium">SEO Metadata</span>
-                {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-              
-              {isSeoOpen && (
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Title <span className="text-red-500">*</span>
-                          <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={seoMeta.title}
-                          onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          placeholder="Enter title (60 characters max)"
-                          maxLength={60}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          {seoMeta.title.length}/60 characters
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Description <span className="text-red-500">*</span>
-                          <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
-                        </label>
-                        <textarea
-                          value={seoMeta.description}
-                          onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          placeholder="Enter description (160 characters max)"
-                          maxLength={160}
-                          rows={3}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          {seoMeta.description.length}/160 characters
-                        </p>
-                      </div>
+              {/* SEO Section */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <button
+                  onClick={() => setIsSeoOpen(!isSeoOpen)}
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+                >
+                  <span className="text-sm font-medium">SEO Metadata</span>
+                  {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                
+                {isSeoOpen && (
+                  <div className="mt-4 space-y-4">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Title <span className="text-red-500">*</span>
+                            <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={seoMeta.title}
+                            onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="Enter title (60 characters max)"
+                            maxLength={60}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            {seoMeta.title.length}/60 characters
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Description <span className="text-red-500">*</span>
+                            <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                          </label>
+                          <textarea
+                            value={seoMeta.description}
+                            onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="Enter description (160 characters max)"
+                            maxLength={160}
+                            rows={3}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            {seoMeta.description.length}/160 characters
+                          </p>
+                        </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Keywords
-                        </label>
-                        <input
-                          type="text"
-                          value={seoMeta.keywords.join(', ')}
-                          onChange={(e) => setSeoMeta({ 
-                            ...seoMeta, 
-                            keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
-                          })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          placeholder="Enter keywords separated by commas"
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Keywords
+                          </label>
+                          <input
+                            type="text"
+                            value={seoMeta.keywords.join(', ')}
+                            onChange={(e) => setSeoMeta({ 
+                              ...seoMeta, 
+                              keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                            })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="Enter keywords separated by commas"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow mb-8">
-          <MenuBar editor={editor} />
-          <div className="p-4">
-            <EditorContent editor={editor} />
-          </div>
-        </div>
 
-        {/* Preview Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Preview</h2>
-          <div 
-            className="prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <div className="bg-white rounded-lg shadow mb-8">
+            <MenuBar editor={editor} />
+            <div className="p-4">
+              <EditorContent editor={editor} />
+            </div>
+          </div>
+
+          {/* Preview Section }
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">Preview</h2>
+            <div 
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
+          </div>*/}
         </div>
       </div>
     </div>

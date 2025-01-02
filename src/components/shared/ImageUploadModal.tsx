@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { X, Upload, Image as ImageIcon, Loader2, Trash2, AlertCircle, RotateCw, ZoomIn, CropIcon } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, Trash2, AlertCircle, RotateCw, ZoomIn, CropIcon } from 'lucide-react';
 import ReactCrop, { type Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { UploadButton } from '~/utils/uploadthing';
@@ -14,12 +14,14 @@ import {
   DialogFooter,
 } from '~/components/ui/dialog';
 import { Button } from '~/components/ui/button';
-import { supabase } from '~/utils/supabase';
+import { LoadingButton } from '~/components/ui/LoadingButton';
+import { LoadingOverlay } from '~/components/ui/LoadingOverlay';
+//import { supabase } from '~/utils/supabase';
 import type { Database } from '~/types/supabase';
 import { saveImageMetadata, fetchImages, deleteImage } from '~/utils/image-upload';
 import { getCookie, setCookie, removeCookie } from '~/utils/cookie';
 import NextImage from 'next/image';
-import { OurFileRouter } from '~/server/uploadthing';
+import type { OurFileRouter } from '~/server/uploadthing';
 
 type Image = Database['public']['Tables']['images']['Row'];
 
@@ -92,20 +94,14 @@ function DeleteDialog({ isOpen, onClose, onConfirm, isDeleting }: DeleteDialogPr
           >
             Cancel
           </Button>
-          <Button
+          <LoadingButton
             variant="destructive"
             onClick={onConfirm}
-            disabled={isDeleting}
+            isLoading={isDeleting}
+            loadingText="Deleting..."
           >
-            {isDeleting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Deleting...
-              </>
-            ) : (
-              'Delete'
-            )}
-          </Button>
+            Delete
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -323,6 +319,7 @@ function ImageEditor({ image: initialImage, onSave, onCancel, userId }: {
               onChange={(_, percentCrop) => setCrop(percentCrop)}
               aspect={undefined}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={initialImage.imageUrl}
                 className='w-full h-full'
@@ -380,20 +377,13 @@ function ImageEditor({ image: initialImage, onSave, onCancel, userId }: {
           <Button variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button 
+          <LoadingButton 
             onClick={() => void handleSave()} 
-            disabled={isLoading}
-            className="flex items-center gap-2"
+            isLoading={isLoading}
+            loadingText="Saving changes..."
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              'Save Changes'
-            )}
-          </Button>
+            Save Changes
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -563,12 +553,11 @@ export default function ImageUploadModal({ isOpen, onClose, onImageSelect }: Ima
           <div className="space-y-6 py-4">
             <div className="relative">
               {uploadStatus === 'uploading' && (
-                <div className="absolute inset-0 bg-white flex items-center justify-center z-10 rounded-lg">
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-                    <span className="text-sm text-gray-600">Uploading image...</span>
-                  </div>
-                </div>
+                <LoadingOverlay
+                  isLoading={true}
+                  text="Uploading image..."
+                  blur={false}
+                />
               )}
               <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 transition-colors hover:border-gray-300">
                 <UploadButton
@@ -629,23 +618,22 @@ export default function ImageUploadModal({ isOpen, onClose, onImageSelect }: Ima
                   <div className="relative rounded-lg border border-gray-200 bg-white">
                     <div className="grid grid-cols-3 gap-4 p-4 max-h-[400px] overflow-y-auto">
                       {isLoading ? (
-                        <div className="col-span-3 flex items-center justify-center py-12">
-                          <div className="flex flex-col items-center gap-2">
-                            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-                            <span className="text-sm text-gray-600">Loading images...</span>
-                          </div>
-                        </div>
+                        <LoadingOverlay
+                          isLoading={true}
+                          text="Loading images..."
+                          className="rounded-lg"
+                        />
                       ) : error ? (
                         <div className="col-span-3 text-center py-12">
                           <AlertCircle className="h-12 w-12 mx-auto mb-4 text-red-500 opacity-50" />
                           <p className="text-gray-500 mb-4">{error}</p>
-                          <Button
+                          <LoadingButton
                             variant="outline"
                             onClick={() => void loadImages()}
                             className="mx-auto"
                           >
                             Try Again
-                          </Button>
+                          </LoadingButton>
                         </div>
                       ) : filteredImages.length === 0 ? (
                         <div className="col-span-3 text-center py-12">
