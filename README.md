@@ -23,13 +23,14 @@ Current Features:
 - [x] Add Articles section
 - [x] Add Articles page
 - [x] Add contact us page
+- [x] Add Team page
 - [ ] Add about us page (requires more information)
 - [ ] Implement image gallery (requires images)
 - [ ] Add staff/team member profiles
 - [ ] Create FAQ page
 - [x] Add privacy policy and terms of service pages
 - [x] Implement breadcrumb navigation
-- [ ] Add loading states and animations
+- [x] Add loading states and animations
 
 ### Admin Features
 - [x] Rich text editor for content management
