@@ -13,9 +13,26 @@ export default withUt({
       animation: {
         'gradient-x': 'gradient-x 15s ease infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
-        'snake': 'snake 20s linear infinite'
+        'snake': 'snake 20s linear infinite',
+        'blob': "blob 7s infinite",
+
       },
       keyframes: {
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
+        
         'gradient-x': {
           '0%, 100%': {
             'opacity': '0.3',
