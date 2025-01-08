@@ -381,7 +381,7 @@ export default function ArticlesPage({articles, categories }: ArticlesPageProps)
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-50 flex items-center justify-center">
                         <Image
-                          src="/Logo.webp"
+                          src="/Logo.svg"
                           alt="Yallburru Logo"
                           width={120}
                           height={120}
@@ -444,7 +444,7 @@ export default function ArticlesPage({articles, categories }: ArticlesPageProps)
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-50 flex items-center justify-center">
                           <Image
-                            src="/Logo.webp"
+                            src="/Logo.svg"
                             alt="Yallburru Logo"
                             width={80}
                             height={80}

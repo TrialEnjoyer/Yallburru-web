@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <Link href="/">
                 <Image 
-                  src="/Logo.webp" 
+                  src="/Logo.svg" 
                   alt="Yallburru Community Services Logo" 
                   className="rounded-full" 
                   width={36} 

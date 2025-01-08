@@ -32,7 +32,7 @@ const WaveDivider = () => {
           {/* Logo Image */}
           <div className="relative">
             <Image 
-              src="/Logo.webp" 
+              src="/Logo.svg" 
               alt="Yallburru Community Services Logo" 
               className="rounded-full ring-1 ring-white/20" 
               width={80} 

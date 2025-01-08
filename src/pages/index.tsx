@@ -949,7 +949,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                         }`}>
                           <div className="absolute inset-0 bg-gradient-to-br from-sky-100 to-sky-50 flex items-center justify-center">
                             <Image
-                              src="/Logo.webp"
+                              src="/Logo.svg"
                               alt="Yallburru Logo"
                               width={index === 0 ? 120 : 80}
                               height={index === 0 ? 120 : 80}
