@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { 
   ArrowRight, 
   Heart, 
@@ -26,22 +27,22 @@ export default function About() {
     {
       year: "2009",
       title: "Our Beginning",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      description: "Yallburru Community Services was established with a vision to provide culturally sensitive care and support services to our community."
     },
     {
       year: "2012",
-      title: "NDIS Registration",
-      description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      title: "Service Expansion",
+      description: "Expanded our services to include comprehensive disability support and elder care programs."
     },
     {
       year: "2015",
-      title: "Expanding Services",
-      description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+      title: "Community Growth",
+      description: "Strengthened our community connections and expanded our cultural programs and services."
     },
     {
       year: "2020",
-      title: "Community Growth",
-      description: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      title: "New Headquarters",
+      description: "Established our new headquarters in Upper Coomera to better serve our growing community."
     }
   ];
 
@@ -55,325 +56,410 @@ export default function About() {
         />
       </Head>
 
-      {/* Hero Section with Parallax Effect */}
-      <div className="relative pt-24 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-sky-900 to-sky-800 opacity-90" />
-          <div className="absolute inset-0 bg-[url('/about-hero.jpg')] bg-cover bg-center" />
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 bg-gradient-to-br from-sky-900 via-sky-800 to-purple-900 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem]">
+            <div className="absolute inset-0 bg-sky-900 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_20%,black_100%)]"></div>
+          </div>
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 py-24 md:py-32">
+        <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block mb-4">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-800 text-sm font-medium">
-                <Building2 className="w-4 h-4" />
-                Our Story
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8"
+            >
+              <Building2 className="w-4 h-4 text-sky-300" />
+              <span className="text-sm font-medium text-sky-100">Our Story</span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-4xl md:text-6xl font-bold text-white mb-6"
+            >
               Empowering Communities
               <span className="block mt-2 bg-gradient-to-r from-sky-200 to-white bg-clip-text text-transparent">
                 Since 2009
               </span>
-            </h1>
-            <p className="text-xl text-sky-100 mb-12 max-w-2xl mx-auto">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
-            </p>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-xl text-sky-100/90 mb-12"
+            >
+              Yallburru Community Services is a leading Indigenous-owned organization providing culturally sensitive care and support services from our base in Gold Coast, Queensland.
+            </motion.p>
           </div>
         </div>
 
-        {/* Wave Divider */}
-        <div className="relative h-16 bg-gray-50">
-          <svg
-            className="absolute bottom-0 w-full h-16 -mb-0.5"
-            preserveAspectRatio="none"
-            viewBox="0 0 1200 120"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              fill: "rgb(249, 250, 251)",
-              width: "100%",
-              height: 40,
-              transform: "rotateY(180deg)"
-            }}
-          >
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" />
-          </svg>
-        </div>
-      </div>
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 -left-64 w-96 h-96 bg-sky-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob" />
+        <div className="absolute top-1/3 -right-64 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000" />
+      </section>
 
-      {/* Quick Stats Section */}
-      <div className="bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* Stats Section */}
+      <section className="relative py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          >
             {[
               { number: "15+", label: "Years of Service", icon: <Calendar className="w-6 h-6 text-sky-600" /> },
               { number: "1000+", label: "Lives Touched", icon: <Heart className="w-6 h-6 text-sky-600" /> },
               { number: "100%", label: "Indigenous Owned", icon: <Star className="w-6 h-6 text-sky-600" /> },
-              { number: "24/7", label: "Community Support", icon: <Users className="w-6 h-6 text-sky-600" /> }
+              { number: "6", label: "Core Services", icon: <Users className="w-6 h-6 text-sky-600" /> }
             ].map((stat, index) => (
-              <div key={index} className="text-center">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.8 }}
+                className="text-center"
+              >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sky-100 mb-4">
                   {stat.icon}
                 </div>
                 <div className="text-3xl font-bold text-gray-900 mb-2">{stat.number}</div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </section>
 
-      <main className="bg-gray-50 pb-16">
+      {/* Mission and Vision Section */}
+      <section className="relative py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            {/* Mission and Vision Section */}
-            <div className="pt-16">
-              <div className="text-center mb-12">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-800 text-sm font-medium mb-4">
-                  <Target className="w-4 h-4" />
-                  Our Purpose
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Mission & Vision
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-              </div>
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <Target className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Our Purpose</span>
+              </motion.div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Mission Card */}
-                <div className="group bg-white rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <Target className="w-6 h-6 text-sky-600" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Our Mission</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-                  <div className="mt-6 space-y-3">
-                    {[
-                      "Duis aute irure dolor in reprehenderit",
-                      "Excepteur sint occaecat cupidatat",
-                      "Sunt in culpa qui officia deserunt"
-                    ].map((goal, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-sky-600 flex-shrink-0" />
-                        <span className="text-gray-600">{goal}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                Strength Through Connections
+              </motion.h2>
 
-                {/* Vision Card */}
-                <div className="group bg-white rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <Globe className="w-6 h-6 text-sky-600" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Our Vision</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                  <div className="mt-6 space-y-3">
-                    {[
-                      "Lorem ipsum dolor sit amet",
-                      "Consectetur adipiscing elit",
-                      "Sed do eiusmod tempor incididunt"
-                    ].map((vision, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <Star className="w-5 h-5 text-sky-600 flex-shrink-0" />
-                        <span className="text-gray-600">{vision}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="text-gray-600 max-w-2xl mx-auto"
+              >
+                {`strengthening our community through culturally sensitive care and support services`}
+              </motion.p>
             </div>
 
-            {/* Our Story Section */}
-            <div className="mt-24">
-              <div className="text-center mb-12">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-800 text-sm font-medium mb-4">
-                  <Clock className="w-4 h-4" />
-                  Our Journey
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  The Yallburru Story
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Mission Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="group bg-white rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Target className="w-6 h-6 text-sky-600" />
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Our Mission</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  To provide culturally sensitive care and support services that empower our community. We are committed to maintaining strong cultural connections while delivering professional, high-quality care that respects and honors our traditions.
                 </p>
-              </div>
-
-              <div className="relative">
-                <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-sky-100 hidden md:block" />
-                <div className="space-y-12 relative">
-                  {milestones.map((milestone, index) => (
-                    <div key={index} className="relative">
-                      <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12" : "md:pl-12 md:ml-auto"}`}>
-                        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                          <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                              <Calendar className="w-6 h-6 text-sky-600" />
-                            </div>
-                            <div>
-                              <div className="text-sm text-sky-600 font-medium mb-1">{milestone.year}</div>
-                              <h3 className="text-xl font-semibold text-gray-900 mb-2">{milestone.title}</h3>
-                              <p className="text-gray-600">{milestone.description}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-sky-600 border-4 border-sky-100 hidden md:block" />
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Delivering culturally appropriate care",
+                    "Supporting community independence",
+                    "Preserving cultural connections"
+                  ].map((goal, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-sky-600 flex-shrink-0" />
+                      <span className="text-gray-600">{goal}</span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
+
+              {/* Vision Card */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="group bg-white rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Globe className="w-6 h-6 text-sky-600" />
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Our Vision</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  To be a leading provider of culturally sensitive community services, where every individual is supported to thrive while maintaining strong connections to culture and community.
+                </p>
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Building stronger communities",
+                    "Empowering cultural identity",
+                    "Creating lasting positive impact"
+                  ].map((vision, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <Star className="w-5 h-5 text-sky-600 flex-shrink-0" />
+                      <span className="text-gray-600">{vision}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline Section */}
+      <section className="relative py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <Clock className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Our Journey</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                The Yallburru Story
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="text-gray-600 max-w-2xl mx-auto"
+              >
+                Since 2009, Yallburru Community Services has grown from a vision of culturally sensitive care to become a leading provider of community services in the Gold Coast and surrounding regions.
+              </motion.p>
             </div>
 
-            {/* Core Values Section */}
-            <div className="mt-24">
-              <div className="text-center mb-12">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-800 text-sm font-medium mb-4">
-                  <Heart className="w-4 h-4" />
-                  Our Values
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  What We Stand For
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                {[
-                  {
-                    icon: <HandHeart className="w-6 h-6 text-sky-600" />,
-                    title: "Community First",
-                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                  },
-                  {
-                    icon: <Users className="w-6 h-6 text-sky-600" />,
-                    title: "Cultural Connection",
-                    description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                  },
-                  {
-                    icon: <Award className="w-6 h-6 text-sky-600" />,
-                    title: "Excellence in Care",
-                    description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-                  }
-                ].map((value, index) => (
-                  <div 
+            <div className="relative">
+              <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-sky-100 hidden md:block" />
+              <div className="space-y-12 relative">
+                {milestones.map((milestone, index) => (
+                  <motion.div
                     key={index}
-                    className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2, duration: 0.8 }}
+                    className="relative"
                   >
-                    <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      {value.icon}
+                    <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12" : "md:pl-12 md:ml-auto"}`}>
+                      <div className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <Calendar className="w-6 h-6 text-sky-600" />
+                          </div>
+                          <div>
+                            <div className="text-sm text-sky-600 font-medium mb-1">{milestone.year}</div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{milestone.title}</h3>
+                            <p className="text-gray-600">{milestone.description}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{value.title}</h3>
-                    <p className="text-gray-600">{value.description}</p>
-                  </div>
+                    <div className="absolute top-6 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-sky-600 border-4 border-sky-100 hidden md:block" />
+                  </motion.div>
                 ))}
-              </div>
-            </div>
-
-            {/* Location Section */}
-            <div className="mt-24">
-              <div className="text-center mb-12">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-800 text-sm font-medium mb-4">
-                  <MapPin className="w-4 h-4" />
-                  Our Location
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Visit Us
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all duration-300">
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-6">Get in Touch</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <MapPin className="w-6 h-6 text-sky-600 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-gray-900">Address</p>
-                        <p className="text-gray-600">The Well, 58 Highland Way, Upper Coomera, QLD, 4209</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <Phone className="w-6 h-6 text-sky-600 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-gray-900">Phone</p>
-                        <a href="tel:+61756325727" className="text-sky-600 hover:text-sky-700">(07) 5632 5727</a>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <Mail className="w-6 h-6 text-sky-600 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-gray-900">Email</p>
-                        <a href="mailto:contact@yallburru.org.au" className="text-sky-600 hover:text-sky-700">contact@yallburru.org.au</a>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <Clock className="w-6 h-6 text-sky-600 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-gray-900">Hours</p>
-                        <p className="text-gray-600">Monday - Friday: 8:30 AM - 4:30 PM</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-sm">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps/embed/v1/place?q=Yallburru%20Community%20Services%2C%20The%20Well%2C%2058%20Highland%20Way%2C%20Upper%20Coomera%20QLD%204209&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="mt-24 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-sky-900 to-sky-800 rounded-2xl" />
-              <div className="absolute inset-0 bg-[url('/about-pattern.png')] opacity-10" />
-              <div className="relative p-12 md:p-16 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Ready to Make a Difference?
-                </h2>
-                <p className="text-sky-100 mb-8 max-w-2xl mx-auto">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Link 
-                    href="/contact"
-                    className="inline-flex items-center gap-2 bg-white text-sky-900 px-8 py-4 rounded-full hover:bg-sky-50 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
-                  >
-                    Get in Touch
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  <Link 
-                    href="/services"
-                    className="inline-flex items-center gap-2 bg-sky-800 text-white border border-sky-700 px-8 py-4 rounded-full hover:bg-sky-700 transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    Our Services
-                    <MessageCircle className="w-5 h-5" />
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Core Values Section */}
+      <section className="relative py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <Heart className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Our Values</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                What We Stand For
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="text-gray-600 max-w-2xl mx-auto"
+              >
+                Our values are deeply rooted in Aboriginal & Torres Strait Islander culture, guiding every aspect of our service delivery and community engagement.
+              </motion.p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: <HandHeart className="w-6 h-6 text-sky-600" />,
+                  title: "Community First",
+                  description: "We prioritize the needs of our community, providing culturally sensitive services that respect and honor our traditions."
+                },
+                {
+                  icon: <Users className="w-6 h-6 text-sky-600" />,
+                  title: "Cultural Connection",
+                  description: "Our services are grounded in Aboriginal & Torres Strait Islander values, maintaining strong cultural connections."
+                },
+                {
+                  icon: <Award className="w-6 h-6 text-sky-600" />,
+                  title: "Excellence in Care",
+                  description: "As a registered service provider, we maintain the highest standards in care and support services."
+                }
+              ].map((value, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                  className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <div className="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    {value.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{value.title}</h3>
+                  <p className="text-gray-600">{value.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-900 via-sky-800 to-purple-900">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem]">
+            <div className="absolute inset-0 bg-sky-900 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_20%,black_100%)]"></div>
+          </div>
+        </div>
+
+        <div className="relative container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8"
+            >
+              <Sparkles className="w-4 h-4 text-sky-300" />
+              <span className="text-sm font-medium text-sky-100">Ready to Make a Difference?</span>
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-3xl md:text-4xl font-bold text-white mb-6"
+            >
+              Join Us in Our Mission
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-xl text-sky-100/90 mb-12"
+            >
+              Contact us at our Upper Coomera office to learn more about how we can support you and your family.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="flex flex-wrap justify-center gap-4"
+            >
+              <Link 
+                href="/contact"
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-900 rounded-full
+                         hover:bg-sky-50 transition-all duration-300 transform hover:-translate-y-1"
+              >
+                Visit Us
+                <span className="text-sm">Suite 4.3 - 58 Highland Way, Upper Coomera QLD 4210</span>
+                <MapPin className="w-5 h-5" />
+              </Link>
+              <Link 
+                href="tel:0756679099"
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-sky-800/50 text-white border border-sky-400/30 
+                         rounded-full hover:bg-sky-700/50 transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm"
+              >
+                Call Us
+                <span className="text-sm">07 5667 9099</span>
+                <Phone className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 -left-64 w-96 h-96 bg-sky-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob" />
+        <div className="absolute top-1/3 -right-64 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000" />
+      </section>
     </>
   );
 } 
