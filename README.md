@@ -15,6 +15,16 @@ Current Features:
 - Form submissions management
 - Newsletter subscription system
 
+
+## Pages Requiring additional info & approval
+
+- Team page (more info)
+- FAQ page (both)
+- Services (both)
+- About (both)
+- Careers (both)
+
+
 ## 📋 TODO List
 
 ### Frontend Pages & Features
