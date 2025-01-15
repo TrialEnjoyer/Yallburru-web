@@ -79,6 +79,60 @@ The website uses a clean, professional design with:
 - Accessible navigation
 - Mobile-first approach
 
+
+## Research
+
+### Kalwun
+
+- Kalwun has an 'Upcoming Events' section in their homepage. - Ask if we require an events calendar.
+- Kalwun has a minimal small tile based links section - rather then individual sections to highlight services and info, they just link to their pages.
+- Kalwun has a revolving gallery hero section with 3 CTA's.
+- Kalwun site structure is alike what i had aimed to achieve, several sections with subsection tabs leading to different pages in the site.
+ - Health + Wellbeing Services
+    Allied Health Services
+    Dental Services
+    Medical Services
+    Our Clinics
+    Social Programs
+    Targeted Health Programs
+    Covid 19 info
+    Health FAQ
+    Feedback and Complaints (why here???? also this is present in every other tab too WHY NOT JUST RESOURCES/CONTACT)
+ - Seniors Services
+    Commonwealth Home Support Program
+    Home Care Packages
+    Wellness Center
+ - Child + Youth + Family
+    Jarjums Playgroup
+    Youth Wellbeing Program
+    Domestic and Family Violence Support Program
+    Early Learning Program
+    Kinship and Foster Care
+    Family Wellbeing Service
+    Family Participation Program
+    Our Centers (Childm youth and family centers - assume some kind of social care offices??? litterally no other info given.)
+    Child, Youth and Family Services FAQ (Apparently multiple FAQ pages rather then 1 - bad practice.)
+ - Housing + Cultural Support
+    Affordable Housing
+    Confirmation of Aboriginality
+    Emergency Relief
+    Feedback and Complaints (At this point im just assuming feedback and complaints are going to different groupds within the org - still bad practice to separate them)
+    Finding Cultural Connections
+ - Culture
+    Community Events (No Calander provided - Application of interest in getting involved is provided though; Music, Dance, Theatre, storytelling, visual Arts and other.)
+    Cultural Tours (Brief info and then just a link to go to a different website.)
+    Early Learning Cultural Program
+    Elders Group
+    Jellurgal Aboriginal Cultural Centre
+    Welcome to Country Ceremonies
+ - News + Resources
+    Corporate Documents
+    Events Calendar (Actual Calendar this time)
+    News and Announcements
+
+### Atsichs
+
+
 ## 📄 License
 
 Copyright © 2024 Yallburru Community Services. All rights reserved.
