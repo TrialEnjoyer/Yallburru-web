@@ -19,14 +19,14 @@ Current Features:
 
 ### Frontend Pages & Features
 - [ ] Add testimonials section to homepage (requires more information)
-- [ ] Create services detail pages (requires more information)
+- [O] Create services detail pages (requires more information)
 - [x] Add Articles section
 - [x] Add Articles page
 - [x] Add contact us page
 - [x] Add Team page
-- [ ] Add about us page (requires more information)
+- [O] Add about us page (requires more information)
 - [ ] Implement image gallery (requires images)
-- [ ] Add staff/team member profiles
+- [O] Add staff/team member profiles
 - [ ] Create FAQ page
 - [x] Add privacy policy and terms of service pages
 - [x] Implement breadcrumb navigation
@@ -53,7 +53,7 @@ Current Features:
 - [ ] Add performance monitoring
 
 ### Security Enhancements
-- [ ] Implement CSRF protection
+- [O] Implement CSRF protection (NOTE: Comes implemented out of the box with next.js getServerSideProps)
 - [ ] Add two-factor authentication
 - [ ] Implement session management
 - [-] Add security headers
