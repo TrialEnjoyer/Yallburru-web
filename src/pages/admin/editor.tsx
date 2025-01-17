@@ -961,14 +961,14 @@ const EditorMenu = () => {
             </div>
           </div>
 
-          {/* Preview Section }
+          {/* Preview Section */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">Preview</h2>
             <div 
               className="prose max-w-none"
               dangerouslySetInnerHTML={{ __html: content }}
             />
-          </div>*/}
+          </div>
         </div>
       </div>
     </div>

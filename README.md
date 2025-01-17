@@ -98,6 +98,7 @@ The website uses a clean, professional design with:
 - Kalwun has a minimal small tile based links section - rather then individual sections to highlight services and info, they just link to their pages.
 - Kalwun has a revolving gallery hero section with 3 CTA's.
 - Kalwun site structure is alike what i had aimed to achieve, several sections with subsection tabs leading to different pages in the site.
+Home
  - Health + Wellbeing Services
     Allied Health Services
     Dental Services
@@ -142,6 +143,69 @@ The website uses a clean, professional design with:
 
 ### Atsichs
 
+- on first glance, Atsich's looks like how i plan to have the site laid out
+ - Category / Subcategory (optional) / Slug
+- main site pages are in an enhanced blog like form which makes it look hard coded
+ - tables, and downloadable resources as extra, CTA, multiple columns, lots of customisation. Thats not to say however that there ar no issues - There are broken components all over the place if you look hard enough. (EDIT - On code review, it is hard coded - Alot of mistakes and code left in.)
+- Mobile menu is difficult to navigate, theres no distinction between parent and child navigation made on expanding tabs.
+- Site Structure is as follows:
+Home
+ - Services & support
+  - Covid-19 support
+  - NDIS
+  - Health & wellbeing
+   - Medical Clinics
+   - Dental Clinics
+   - Allied Health
+   - Community Groups
+   - Deadly Choices
+   - Jajumbora BiOC Hub
+   - Safe & Deadly Places for LGBTIQ+ mob
+   - Social Health
+   - Transport
+  - Children & Families
+   - Deadly Kindy
+   - Family Participation program
+   - housing services
+   - jajumbora Children & family center
+   - Nyanya Minjindei Delegated Authority
+   - Youth Justice Service
+   - Youth Service
+   - Brighter Futures (Extended Post Care Support)
+  - Elders Support
+   - Jumbelunga Nursing Centre
+ - News & Events
+  - Young, Black and Proud Scholarship
+  - Gala Dinner
+ - Contact Us
+  - Locations
+  - Feedback
+  - Raise a Concern
+ - About Us
+  - Our Peaple
+  - Our Story
+  - Our Work
+  - Our Research
+  - Join our Team
+   - Traineeships
+  - Become a Member
+  - Donate
+ - Shop (2 items total, buttons are gross and missaligned, Would have been easier to do without a cart system (Again, why?))
+
+ ### Yallburru (us)
+Home 
+ - [...slug]
+ - about
+ - articles (points to all posible [...slug] locations)
+ - about
+ - cpanel (admin emails & some backend)
+ - Contact
+ - Careers
+ - faq
+ - login
+ - services
+ - team
+  - admin
 
 ## 📄 License
 
