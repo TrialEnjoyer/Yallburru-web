@@ -48,6 +48,14 @@ export type Database = {
           imageurl: string | null
           keywords: string[] | null
           published: boolean
+          resources: Array<{
+            type: string
+            title: string
+            html?: string
+            image?: string
+            url?: string
+            description?: string
+          }> | null
           slug: string
           subcategory: string | null
           title: string
@@ -63,6 +71,14 @@ export type Database = {
           imageurl?: string | null
           keywords?: string[] | null
           published?: boolean
+          resources?: Array<{
+            type: string
+            title: string
+            html?: string
+            image?: string
+            url?: string
+            description?: string
+          }> | null
           slug: string
           subcategory?: string | null
           title: string
@@ -78,6 +94,14 @@ export type Database = {
           imageurl?: string | null
           keywords?: string[] | null
           published?: boolean
+          resources?: Array<{
+            type: string
+            title: string
+            html?: string
+            image?: string
+            url?: string
+            description?: string
+          }> | null
           slug?: string
           subcategory?: string | null
           title?: string

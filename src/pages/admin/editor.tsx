@@ -32,6 +32,11 @@ import {
   Download,
   ArrowDownToLine,
   RotateCw,
+  Plus,
+  Trash2,
+  ExternalLink,
+  FileText,
+  PictureInPicture,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import ImageUploadModal from '~/components/shared/ImageUploadModal';
@@ -124,6 +129,65 @@ const COLORS = {
     { value: '#fce7f3', label: 'Pastel Pink' },
   ],
 };
+
+const initialContent = `
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+        <p class="text-yellow-700">
+          <strong>👋 Welcome to the Demo Article!</strong> This is a placeholder article designed to showcase the editor's capabilities. Feel free to edit or remove this content to start creating your own article.
+        </p>
+      </div>
+
+      <h1 style="font-size: 2.5rem; text-align: center; color: #1e293b;">The Art of Content Creation</h1>
+      <p style="text-align: center; color: #64748b; font-size: 1.125rem;">A comprehensive guide to using our rich text editor</p>
+
+      <h2 style="color: #334155; margin-top: 2rem;">🎨 Styling Capabilities</h2>
+      <p>Our editor supports a wide range of styling options. You can make text <strong>bold</strong>, <em>italic</em>, or both <strong><em>bold and italic</em></strong>.</p>
+      
+      <h3 style="color: #475569;">Text Colors and Highlights</h3>
+      <p>You can <span style="color: #ef4444;">color your text</span> or <mark style="background-color: #fef08a;">highlight important information</mark>. Mix and match to <span style="color: #3b82f6;"><mark style="background-color: #e0f2fe;">create engaging content</mark></span>.</p>
+
+      <h3 style="color: #475569;">Lists and Organization</h3>
+      <ul>
+        <li>Create bulleted lists</li>
+        <li>With multiple items</li>
+        <li>To organize information</li>
+      </ul>
+
+      <ol>
+        <li>Numbered lists</li>
+        <li>Are great for</li>
+        <li>Step-by-step instructions</li>
+      </ol>
+
+      <h3 style="color: #475569;">Quotes and Citations</h3>
+      <blockquote style="border-left: 4px solid #e2e8f0; padding-left: 1rem; margin: 1.5rem 0; color: #64748b;">
+        You can just throw words in to convey Authoritative opinions. 
+        <br>- Adrian Hankin
+      </blockquote>
+
+      <h2 style="color: #334155; margin-top: 2rem;">🔗 Links and Resources</h2>
+      <p>You can add <a href="https://yallburru.org.au" class="text-sky-600 hover:text-sky-500 underline">links to external resources</a> or reference other articles.</p>
+
+      <h2 style="color: #334155; margin-top: 2rem;">📝 Text Alignment</h2>
+      <p style="text-align: left;">This text is left-aligned (default)</p>
+      <p style="text-align: center;">This text is center-aligned</p>
+      <p style="text-align: right;">This text is right-aligned</p>
+      <p style="text-align: justify;">This text is justified, which means it will stretch to fill the width of its container while maintaining even spacing between words. Great for long paragraphs of text.</p>
+
+      <h2 style="color: #334155; margin-top: 2rem;">🎯 Best Practices</h2>
+      <ul>
+        <li>Use headings to structure your content</li>
+        <li>Include relevant images and media</li>
+        <li>Keep paragraphs concise and readable</li>
+        <li>Use formatting to emphasize key points</li>
+        <li>Add resources in the sidebar for additional context</li>
+      </ul>
+
+      <div style="background-color: #f8fafc; border-radius: 0.5rem; padding: 1.5rem; margin: 2rem 0;">
+        <h3 style="color: #475569; margin-top: 0;">💡 Pro Tip</h3>
+        <p>You can use the Resources panel on the right to add supplementary materials like external links, images, or HTML content that complements your article.</p>
+      </div>
+    `
 
 const ColorPickerPopup = ({ 
   isOpen, 
@@ -452,8 +516,176 @@ const saveArticle = async (articleData: Database['public']['Tables']['articles']
   return response.data as Article;
 };
 
+interface Resource {
+  type: string;
+  title: string;
+  html?: string;
+  image?: string;
+  url?: string;
+  description?: string;
+}
+
+const ResourcePanel = ({
+  resources,
+  onResourcesChange,
+}: {
+  resources: Resource[];
+  onResourcesChange: (resources: Resource[]) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [newResource, setNewResource] = useState<Resource>({
+    type: 'link',
+    title: '',
+  });
+  const [isAdding, setIsAdding] = useState(false);
+
+  const resourceTypes = [
+    { value: 'link', label: 'External Link', icon: <ExternalLink size={16} /> },
+    { value: 'html', label: 'HTML Content', icon: <FileText size={16} /> },
+    { value: 'image', label: 'Image', icon: <PictureInPicture size={16} /> },
+  ];
+
+  const handleAddResource = () => {
+    if (!newResource.title) return;
+    
+    onResourcesChange([...resources, newResource]);
+    setNewResource({ type: 'link', title: '' });
+    setIsAdding(false);
+  };
+
+  const handleRemoveResource = (index: number) => {
+    const newResources = [...resources];
+    newResources.splice(index, 1);
+    onResourcesChange(newResources);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 hover:bg-gray-50"
+      >
+        <span className="text-sm font-medium text-gray-700">Resources</span>
+        {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+      </button>
+
+      {isOpen && (
+        <div className="p-4 border-t border-gray-100">
+          {/* Resource List */}
+          <div className="space-y-3 mb-4">
+            {resources.map((resource, index) => (
+              <div key={index} className="flex items-start justify-between gap-2 p-2 bg-gray-50 rounded">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    {resourceTypes.find(t => t.value === resource.type)?.icon}
+                    <span className="text-sm font-medium truncate">{resource.title}</span>
+                  </div>
+                  {resource.description && (
+                    <p className="text-xs text-gray-500 truncate mt-1">{resource.description}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleRemoveResource(index)}
+                  className="p-1 text-gray-400 hover:text-red-500"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Add Resource Form */}
+          {isAdding ? (
+            <div className="space-y-3">
+              <select
+                value={newResource.type}
+                onChange={(e) => setNewResource({ ...newResource, type: e.target.value })}
+                className="w-full p-2 text-sm border rounded"
+              >
+                {resourceTypes.map(type => (
+                  <option key={type.value} value={type.value}>{type.label}</option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                placeholder="Title"
+                value={newResource.title}
+                onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                className="w-full p-2 text-sm border rounded"
+              />
+
+              {newResource.type === 'link' && (
+                <input
+                  type="url"
+                  placeholder="URL"
+                  value={newResource.url || ''}
+                  onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+                  className="w-full p-2 text-sm border rounded"
+                />
+              )}
+
+              {newResource.type === 'html' && (
+                <textarea
+                  placeholder="HTML Content"
+                  value={newResource.html || ''}
+                  onChange={(e) => setNewResource({ ...newResource, html: e.target.value })}
+                  className="w-full p-2 text-sm border rounded"
+                  rows={4}
+                />
+              )}
+
+              {newResource.type === 'image' && (
+                <input
+                  type="url"
+                  placeholder="Image URL"
+                  value={newResource.image || ''}
+                  onChange={(e) => setNewResource({ ...newResource, image: e.target.value })}
+                  className="w-full p-2 text-sm border rounded"
+                />
+              )}
+
+              <input
+                type="text"
+                placeholder="Description (optional)"
+                value={newResource.description || ''}
+                onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                className="w-full p-2 text-sm border rounded"
+              />
+
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setIsAdding(false)}
+                  className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddResource}
+                  disabled={!newResource.title}
+                  className="px-3 py-1 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+                >
+                  Add Resource
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsAdding(true)}
+              className="w-full flex items-center justify-center gap-2 p-2 text-sm text-gray-600 hover:text-gray-800 border border-dashed border-gray-300 rounded hover:border-gray-400"
+            >
+              <Plus size={16} />
+              Add Resource
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const EditorMenu = () => {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState(initialContent);
   const [id, setId] = useState<undefined|number>(undefined);
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
@@ -473,6 +705,7 @@ const EditorMenu = () => {
   const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
   const [isLoadingArticle, setIsLoadingArticle] = useState(false);
   const {userProfile} = useUserProfile()
+  const [resources, setResources] = useState<Resource[]>([]);
   
   // Load paths from cookie on mount and fetch fresh data
   useEffect(() => {
@@ -590,7 +823,8 @@ const EditorMenu = () => {
         title: seoMeta.title,
         description: seoMeta.description,
         keywords: seoMeta.keywords,
-        author_id: userProfile?.id ?? '0', // TODO: Add actual owner_id
+        resources: resources,
+        author_id: userProfile?.id ?? '0',
         published:false,
         created_at: new Date().toISOString(),
       };
@@ -684,6 +918,7 @@ const EditorMenu = () => {
           description: article.description ?? '',
           keywords: article.keywords ?? [],
         });
+        setResources(article.resources ?? []);
         setId(article.id);
         setIsSeoOpen(true);
       }
@@ -728,7 +963,7 @@ const EditorMenu = () => {
         placeholder: 'Write something amazing...',
       }),
     ],
-    content: '<p>Hello World! 🌎</p>',
+    content: initialContent,
     editorProps: {
       attributes: {
         class: 'prose max-w-none focus:outline-none',
@@ -788,7 +1023,7 @@ const EditorMenu = () => {
       </div>
       
       <div className="min-h-screen bg-gray-100 p-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="bg-white rounded-lg shadow mb-4 p-4">
             <div className="flex flex-col space-y-4">
               <div className="flex flex-wrap items-start gap-2">
@@ -961,13 +1196,23 @@ const EditorMenu = () => {
             </div>
           </div>
 
-          {/* Preview Section */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">Preview</h2>
-            <div 
-              className="prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4">
+            {/* Preview Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold mb-4">Preview</h2>
+              <div 
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </div>
+
+            {/* Resources Panel */}
+            <div className="space-y-4">
+              <ResourcePanel
+                resources={resources}
+                onResourcesChange={setResources}
+              />
+            </div>
           </div>
         </div>
       </div>
