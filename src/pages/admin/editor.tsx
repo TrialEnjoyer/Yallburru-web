@@ -137,8 +137,8 @@ const initialContent = `
         </p>
       </div>
 
-      <h1 style="font-size: 2.5rem; text-align: center; color: #1e293b;">The Art of Content Creation</h1>
-      <p style="text-align: center; color: #64748b; font-size: 1.125rem;">A comprehensive guide to using our rich text editor</p>
+      <h1 style="font-size: 2.5rem; text-align: center; color: #1e293b;">Content Creation</h1>
+      <p style="text-align: center; color: #64748b; font-size: 1.125rem;">A guide to using our rich text editor</p>
 
       <h2 style="color: #334155; margin-top: 2rem;">🎨 Styling Capabilities</h2>
       <p>Our editor supports a wide range of styling options. You can make text <strong>bold</strong>, <em>italic</em>, or both <strong><em>bold and italic</em></strong>.</p>
