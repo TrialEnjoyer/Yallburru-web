@@ -4,7 +4,7 @@ import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
+import { Image as TiptapImage } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
@@ -523,6 +523,7 @@ interface Resource {
   image?: string;
   url?: string;
   description?: string;
+  text?: string;
 }
 
 const ResourcePanel = ({
@@ -538,11 +539,13 @@ const ResourcePanel = ({
     title: '',
   });
   const [isAdding, setIsAdding] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const resourceTypes = [
     { value: 'link', label: 'External Link', icon: <ExternalLink size={16} /> },
     { value: 'html', label: 'HTML Content', icon: <FileText size={16} /> },
     { value: 'image', label: 'Image', icon: <PictureInPicture size={16} /> },
+    { value: 'text', label: 'Plain Text', icon: <FileText size={16} /> },
   ];
 
   const handleAddResource = () => {
@@ -557,6 +560,227 @@ const ResourcePanel = ({
     const newResources = [...resources];
     newResources.splice(index, 1);
     onResourcesChange(newResources);
+  };
+
+  const handleStartEdit = (index: number) => {
+    const resource = resources[index];
+    if (!resource) return;
+    
+    setEditingIndex(index);
+    setNewResource({
+      type: resource.type,
+      title: resource.title,
+      html: resource.html,
+      image: resource.image,
+      url: resource.url,
+      text: resource.text,
+      description: resource.description,
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (editingIndex === null || !newResource.title) return;
+    
+    const newResources = [...resources];
+    newResources[editingIndex] = newResource;
+    onResourcesChange(newResources);
+    setEditingIndex(null);
+    setNewResource({ type: 'link', title: '' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setNewResource({ type: 'link', title: '' });
+  };
+
+  const ResourceForm = ({ onSave, onCancel, initialResource = { type: 'link', title: '' } }: {
+    onSave: () => void;
+    onCancel: () => void;
+    initialResource?: Resource;
+  }) => {
+    const [isValidUrl, setIsValidUrl] = useState(true);
+    const [isValidImage, setIsValidImage] = useState(true);
+    const [isCheckingImage, setIsCheckingImage] = useState(false);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+    const validateUrl = (url: string) => {
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const checkImageUrl = async (url: string) => {
+      setIsCheckingImage(true);
+      return new Promise<boolean>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          setIsValidImage(true);
+          setIsCheckingImage(false);
+          resolve(true);
+        };
+        img.onerror = () => {
+          setIsValidImage(false);
+          setIsCheckingImage(false);
+          resolve(false);
+        };
+        img.src = url;
+      });
+    };
+
+    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const url = e.target.value;
+      const isValid = validateUrl(url);
+      setIsValidUrl(isValid);
+      setNewResource({ ...newResource, url });
+    };
+
+    const handleImageUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const url = e.target.value;
+      const isValid = validateUrl(url);
+      setIsValidUrl(isValid);
+      setNewResource({ ...newResource, image: url });
+      if (isValid) {
+        await checkImageUrl(url);
+      }
+    };
+
+    const handleImageSelect = (url: string) => {
+      setNewResource({ ...newResource, image: url });
+      setIsValidImage(true);
+      setIsValidUrl(true);
+    };
+
+    return (
+      <div className="space-y-3">
+        <select
+          value={newResource.type}
+          onChange={(e) => setNewResource({ ...newResource, type: e.target.value })}
+          className="w-full p-2 text-sm border rounded"
+        >
+          {resourceTypes.map(type => (
+            <option key={type.value} value={type.value}>{type.label}</option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          placeholder="Title"
+          value={newResource.title}
+          onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+          className="w-full p-2 text-sm border rounded"
+          maxLength={100}
+        />
+
+        {newResource.type === 'link' && (
+          <div>
+            <input
+              type="url"
+              placeholder="URL"
+              value={newResource.url || ''}
+              onChange={handleUrlChange}
+              className={`w-full p-2 text-sm border rounded ${!isValidUrl && newResource.url ? 'border-red-500' : ''}`}
+            />
+            {!isValidUrl && newResource.url && (
+              <p className="text-xs text-red-500 mt-1">Please enter a valid URL</p>
+            )}
+          </div>
+        )}
+
+        {newResource.type === 'html' && (
+          <textarea
+            placeholder="HTML Content"
+            value={newResource.html || ''}
+            onChange={(e) => setNewResource({ ...newResource, html: e.target.value })}
+            className="w-full p-2 text-sm border rounded"
+            rows={4}
+          />
+        )}
+
+        {newResource.type === 'image' && (
+          <div>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="url"
+                placeholder="Image URL"
+                value={newResource.image || ''}
+                onChange={handleImageUrlChange}
+                className={`flex-1 p-2 text-sm border rounded ${!isValidUrl && newResource.image ? 'border-red-500' : ''}`}
+              />
+              <button
+                onClick={() => setIsImageModalOpen(true)}
+                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded flex items-center gap-2"
+                type="button"
+              >
+                <ImageIcon size={16} />
+              </button>
+            </div>
+            {!isValidUrl && newResource.image && (
+              <p className="text-xs text-red-500 mt-1">Please enter a valid URL</p>
+            )}
+            {isCheckingImage && (
+              <p className="text-xs text-gray-500 mt-1">Checking image...</p>
+            )}
+            {!isValidImage && isValidUrl && newResource.image && (
+              <p className="text-xs text-red-500 mt-1">Unable to load image from this URL</p>
+            )}
+            {isValidImage && newResource.image && (
+              <div className="mt-2 relative aspect-video bg-gray-100 rounded overflow-hidden">
+                <img
+                  src={newResource.image}
+                  alt="Preview"
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
+              </div>
+            )}
+            <ImageUploadModal
+              isOpen={isImageModalOpen}
+              onClose={() => setIsImageModalOpen(false)}
+              onImageSelect={handleImageSelect}
+            />
+          </div>
+        )}
+
+        {newResource.type === 'text' && (
+          <div>
+            <textarea
+              placeholder="Text content"
+              value={newResource.text || ''}
+              onChange={(e) => setNewResource({ ...newResource, text: e.target.value })}
+              className="w-full p-2 text-sm border rounded"
+              rows={4}
+            />
+          </div>
+        )}
+
+        <input
+          type="text"
+          placeholder="Description (optional)"
+          value={newResource.description || ''}
+          onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+          className="w-full p-2 text-sm border rounded"
+          maxLength={200}
+        />
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            disabled={!newResource.title || (newResource.type === 'link' && !isValidUrl) || (newResource.type === 'image' && (!isValidUrl || !isValidImage))}
+            className="px-3 py-1 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+          >
+            {editingIndex !== null ? 'Save Changes' : 'Add Resource'}
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -574,101 +798,58 @@ const ResourcePanel = ({
           {/* Resource List */}
           <div className="space-y-3 mb-4">
             {resources.map((resource, index) => (
-              <div key={index} className="flex items-start justify-between gap-2 p-2 bg-gray-50 rounded">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {resourceTypes.find(t => t.value === resource.type)?.icon}
-                    <span className="text-sm font-medium truncate">{resource.title}</span>
-                  </div>
-                  {resource.description && (
-                    <p className="text-xs text-gray-500 truncate mt-1">{resource.description}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => handleRemoveResource(index)}
-                  className="p-1 text-gray-400 hover:text-red-500"
-                >
-                  <Trash2 size={16} />
-                </button>
+              <div key={index} className="flex items-start justify-between gap-2 p-2 bg-gray-50 rounded group">
+                {editingIndex === index ? (
+                  <ResourceForm
+                    onSave={handleSaveEdit}
+                    onCancel={handleCancelEdit}
+                    initialResource={resource}
+                  />
+                ) : (
+                  <>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        {resourceTypes.find(t => t.value === resource.type)?.icon}
+                        <span className="text-sm font-medium truncate">{resource.title}</span>
+                      </div>
+                      {resource.description && (
+                        <p className="text-xs text-gray-500 truncate mt-1">{resource.description}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleStartEdit(index)}
+                        className="p-1 text-gray-400 hover:text-blue-500"
+                        title="Edit"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                          <path d="m15 5 4 4"/>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleRemoveResource(index)}
+                        className="p-1 text-gray-400 hover:text-red-500"
+                        title="Remove"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
 
           {/* Add Resource Form */}
           {isAdding ? (
-            <div className="space-y-3">
-              <select
-                value={newResource.type}
-                onChange={(e) => setNewResource({ ...newResource, type: e.target.value })}
-                className="w-full p-2 text-sm border rounded"
-              >
-                {resourceTypes.map(type => (
-                  <option key={type.value} value={type.value}>{type.label}</option>
-                ))}
-              </select>
-
-              <input
-                type="text"
-                placeholder="Title"
-                value={newResource.title}
-                onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
-                className="w-full p-2 text-sm border rounded"
-              />
-
-              {newResource.type === 'link' && (
-                <input
-                  type="url"
-                  placeholder="URL"
-                  value={newResource.url || ''}
-                  onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
-                  className="w-full p-2 text-sm border rounded"
-                />
-              )}
-
-              {newResource.type === 'html' && (
-                <textarea
-                  placeholder="HTML Content"
-                  value={newResource.html || ''}
-                  onChange={(e) => setNewResource({ ...newResource, html: e.target.value })}
-                  className="w-full p-2 text-sm border rounded"
-                  rows={4}
-                />
-              )}
-
-              {newResource.type === 'image' && (
-                <input
-                  type="url"
-                  placeholder="Image URL"
-                  value={newResource.image || ''}
-                  onChange={(e) => setNewResource({ ...newResource, image: e.target.value })}
-                  className="w-full p-2 text-sm border rounded"
-                />
-              )}
-
-              <input
-                type="text"
-                placeholder="Description (optional)"
-                value={newResource.description || ''}
-                onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
-                className="w-full p-2 text-sm border rounded"
-              />
-
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => setIsAdding(false)}
-                  className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddResource}
-                  disabled={!newResource.title}
-                  className="px-3 py-1 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
-                >
-                  Add Resource
-                </button>
-              </div>
-            </div>
+            <ResourceForm
+              onSave={handleAddResource}
+              onCancel={() => {
+                setIsAdding(false);
+                setNewResource({ type: 'link', title: '' });
+              }}
+            />
           ) : (
             <button
               onClick={() => setIsAdding(true)}
@@ -682,6 +863,82 @@ const ResourcePanel = ({
       )}
     </div>
   );
+};
+
+const ResourcePreview = ({ resource }: { resource: Resource }) => {
+  switch (resource.type) {
+    case 'link':
+      return (
+        <a 
+          href={resource.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <ExternalLink size={16} className="text-blue-500" />
+            <span className="text-sm font-medium text-blue-500">{resource.title}</span>
+          </div>
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-1">{resource.description}</p>
+          )}
+        </a>
+      );
+    
+    case 'text':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          <div className="text-sm text-gray-600 whitespace-pre-wrap">{resource.text}</div>
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    case 'html':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          <div 
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: resource.html || '' }}
+          />
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    case 'image':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <PictureInPicture size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          {resource.image && (
+            <img 
+              src={resource.image} 
+              alt={resource.title}
+              className="w-full h-auto rounded-md"
+            />
+          )}
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    default:
+      return null;
+  }
 };
 
 const EditorMenu = () => {
@@ -704,8 +961,46 @@ const EditorMenu = () => {
   const [availableSubcategories, setAvailableSubcategories] = useState<string[]>([]);
   const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
   const [isLoadingArticle, setIsLoadingArticle] = useState(false);
-  const {userProfile} = useUserProfile()
-  const [resources, setResources] = useState<Resource[]>([]);
+  const {userProfile} = useUserProfile();
+  const [resources, setResources] = useState<Resource[]>([
+    {
+      type: 'link',
+      title: 'Editor Documentation',
+      url: 'https://tiptap.dev/docs',
+      description: 'Official TipTap editor documentation'
+    },
+    {
+      type: 'text',
+      title: 'Did you know?',
+      text: 'The editor supports markdown shortcuts! Try typing "# " for a heading, ">" for a quote, or "- " for a bullet point. These shortcuts automatically chance your text when you press space!',
+      description: 'Quick tip about markdown shortcuts'
+    },
+    {
+      type: 'html',
+      title: 'html Formatting Example',
+      html: `
+        <div style="font-family: system-ui, -apple-system, sans-serif;">
+          <p style="background-color: #f0fdf4; color: #166534; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            This is text with a green background and matching text color.
+          </p>
+          <p style="background-color: #eff6ff; color: #1e40af; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            You can use different background colors to highlight important information.
+          </p>
+          <p style="background-color: #fef2f2; color: #991b1b; padding: 0.75rem; border-radius: 0.5rem;">
+            Perfect for warnings, notes, or any content you want to emphasize!
+          </p>
+        </div>`,
+      description: 'Example of styled text blocks using html code'
+    },
+    {
+      type: 'image',
+      title: 'Websites Logo',
+      image: '/Logo.svg',
+      description: 'Websites Logo'
+    }
+  ]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
   // Load paths from cookie on mount and fetch fresh data
   useEffect(() => {
@@ -806,6 +1101,47 @@ const EditorMenu = () => {
     }
   }, [category, subcategory, articlePaths]);
 
+  // Add beforeunload event listener
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Autosave functionality
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const performAutosave = async () => {
+      if (!hasUnsavedChanges || !category || !slug) return;
+
+      try {
+        await handleSave();
+        setLastSaved(new Date());
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error('Autosave failed:', error);
+      }
+    };
+
+    if (hasUnsavedChanges) {
+      timeoutId = setTimeout(performAutosave, 30000); // Autosave after 30 seconds of no changes
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [hasUnsavedChanges, content, category, slug, resources]);
+
+  // Update hasUnsavedChanges when content changes
+  useEffect(() => {
+    setHasUnsavedChanges(true);
+  }, [content, category, subcategory, slug, seoMeta, resources]);
+
   const handleSave = async () => {
     if (!category || !slug) {
       alert('Category and slug are required');
@@ -832,6 +1168,8 @@ const EditorMenu = () => {
       const savedArticle = await saveArticle(articleData);
       console.log('Saved article:', savedArticle);
       
+      setLastSaved(new Date());
+      setHasUnsavedChanges(false);
       alert('Draft saved successfully!');
     } catch (error) {
       console.error('Error saving article:', error);
@@ -930,6 +1268,23 @@ const EditorMenu = () => {
     }
   };
 
+  const handleClear = () => {
+    const confirmClear = window.confirm('Are you sure you want to clear all content? This cannot be undone.');
+    if (!confirmClear) return;
+
+    editor?.commands.clearContent();
+    setCategory('');
+    setSubcategory('');
+    setSlug('');
+    setSeoMeta({
+      title: '',
+      description: '',
+      keywords: [],
+    });
+    setResources([]);
+    setId(undefined);
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -942,7 +1297,11 @@ const EditorMenu = () => {
           keepAttributes: false,
         },
       }),
-      Image,
+      TiptapImage.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded-lg',
+        },
+      }),
       Color.configure({ types: [TextStyle.name] }),
       TextStyle.configure(),
       FontSize,
@@ -1004,6 +1363,19 @@ const EditorMenu = () => {
             <ArrowDownToLine size={20} />
             Publish
           </LoadingButton>
+          {lastSaved && (
+            <span className="text-sm text-gray-500">
+              Last saved: {new Intl.RelativeTimeFormat().format(
+                Math.round((lastSaved.getTime() - Date.now()) / 1000 / 60),
+                'minute'
+              )}
+            </span>
+          )}
+          {hasUnsavedChanges && (
+            <span className="text-sm text-yellow-600">
+              ● Unsaved changes
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <LoadingButton
@@ -1016,14 +1388,18 @@ const EditorMenu = () => {
             <RotateCw size={16} />
           </LoadingButton>
         
-          <div className='p-2 text-sm text-white cursor-pointer bg-red-500 rounded-md hover:bg-gray-100'>
+          <button
+            onClick={handleClear}
+            className="p-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors flex items-center gap-2"
+          >
+            <X size={16} />
             Clear
-          </div>
+          </button>
         </div>
       </div>
       
       <div className="min-h-screen bg-gray-100 p-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-[1400px] mx-auto">
           <div className="bg-white rounded-lg shadow mb-4 p-4">
             <div className="flex flex-col space-y-4">
               <div className="flex flex-wrap items-start gap-2">
@@ -1189,21 +1565,13 @@ const EditorMenu = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow mb-8">
-            <MenuBar editor={editor} />
-            <div className="p-4">
-              <EditorContent editor={editor} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4">
-            {/* Preview Section */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Preview</h2>
-              <div 
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
+          {/* Editor and Resources Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4 mb-8">
+            <div className="bg-white rounded-lg shadow">
+              <MenuBar editor={editor} />
+              <div className="p-4">
+                <EditorContent editor={editor} />
+              </div>
             </div>
 
             {/* Resources Panel */}
@@ -1212,6 +1580,36 @@ const EditorMenu = () => {
                 resources={resources}
                 onResourcesChange={setResources}
               />
+            </div>
+          </div>
+
+          {/* Preview Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4">
+            {/* Article Preview */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold mb-4">Content Preview</h2>
+              <div 
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </div>
+
+            {/* Resources Preview */}
+            <div className="space-y-4">
+              <div className="bg-white rounded-lg shadow">
+                <div className="p-4 border-b border-gray-100">
+                  <h2 className="text-lg font-semibold">Resources Preview</h2>
+                </div>
+                <div className="p-4 space-y-3">
+                  {resources.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center">No resources added yet</p>
+                  ) : (
+                    resources.map((resource, index) => (
+                      <ResourcePreview key={index} resource={resource} />
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

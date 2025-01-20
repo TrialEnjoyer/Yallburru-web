@@ -54,6 +54,7 @@ export type Database = {
             html?: string
             image?: string
             url?: string
+            text?: string
             description?: string
           }> | null
           slug: string
@@ -77,6 +78,7 @@ export type Database = {
             html?: string
             image?: string
             url?: string
+            text?: string
             description?: string
           }> | null
           slug: string
@@ -100,6 +102,7 @@ export type Database = {
             html?: string
             image?: string
             url?: string
+            text?: string
             description?: string
           }> | null
           slug?: string
