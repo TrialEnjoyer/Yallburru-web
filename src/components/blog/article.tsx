@@ -5,8 +5,95 @@ import { useEffect, useState } from "react";
 import { supabase } from "~/utils/supabase";
 import { useRouter } from "next/router";
 import type { Database } from "~/types/supabase";
+import { ExternalLink, FileText } from 'lucide-react';
 
 type Article = Database["public"]["Tables"]["articles"]["Row"];
+
+interface Resource {
+  type: string;
+  title: string;
+  html?: string;
+  image?: string;
+  url?: string;
+  description?: string;
+  text?: string;
+}
+
+const ResourcePreview = ({ resource }: { resource: Resource }) => {
+  switch (resource.type) {
+    case 'link':
+      return (
+        <a 
+          href={resource.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <ExternalLink size={16} className="text-blue-500" />
+            <span className="text-sm font-medium text-blue-500">{resource.title}</span>
+          </div>
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-1">{resource.description}</p>
+          )}
+        </a>
+      );
+    
+    case 'text':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          <div className="text-sm text-gray-600 whitespace-pre-wrap">{resource.text}</div>
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    case 'html':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          <div 
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: resource.html ?? '' }}
+          />
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    case 'image':
+      return (
+        <div className="p-3 bg-white rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText size={16} className="text-gray-500" />
+            <span className="text-sm font-medium">{resource.title}</span>
+          </div>
+          {resource.image && (
+            <img 
+              src={resource.image} 
+              alt={resource.title}
+              className="w-full h-auto rounded-md"
+            />
+          )}
+          {resource.description && (
+            <p className="text-xs text-gray-500 mt-2">{resource.description}</p>
+          )}
+        </div>
+      );
+    
+    default:
+      return null;
+  }
+};
 
 const ArticleHead = ({
   article,
@@ -182,7 +269,20 @@ const Article = () => {
       published: true,
       created_at: "2024-03-20T00:00:00.000Z",
       updated_at: "2024-03-20T00:00:00.000Z",
-      resources: null
+      resources: [
+        {
+          type: 'link',
+          title: 'Our Programs',
+          url: 'https://yallburru.org.au/services',
+          description: 'Learn more about our community programs'
+        },
+        {
+          type: 'text',
+          title: 'Get Involved',
+          text: 'Contact us at support@yallburru.org.au to learn more about volunteer opportunities.',
+          description: 'Ways to support our community'
+        }
+      ]
     }
     setArticle(data);
   };
@@ -269,37 +369,70 @@ const Article = () => {
           </ol>
         </nav>
 
-        <article className="bg-white rounded-lg shadow-sm p-4 sm:p-8 max-w-3xl mx-auto lg:max-w-6xl">
-          <div className="max-w-3xl mx-auto lg:max-w-4xl">
-            <h1 className="text-3xl font-bold text-sky-900 sm:text-4xl mb-4">
-              {article.title}
-            </h1>
-            
-            <div className="mb-8 flex items-center space-x-4">
-              <span className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-sm">
-                {article.category}
-              </span>
-              <time className="text-gray-500 text-sm">
-                {new Date(article.updated_at ?? article.created_at).toLocaleDateString()}
-              </time>
-            </div>
-
-            {article.imageurl && (
-              <div className="mb-8">
-                <Image
-                  src={article.imageurl}
-                  alt={article.title}
-                  width={1200}
-                  height={675}
-                  className="rounded-lg w-full"
-                  priority
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4 max-w-6xl mx-auto">
+          <article className="bg-white rounded-lg shadow-sm p-4 sm:p-8">
+            <div className="max-w-3xl mx-auto">
+              <h1 className="text-3xl font-bold text-sky-900 sm:text-4xl mb-4">
+                {article.title}
+              </h1>
+              
+              <div className="mb-8 flex items-center space-x-4">
+                <span className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-sm">
+                  {article.category}
+                </span>
+                <time className="text-gray-500 text-sm">
+                  {new Date(article.updated_at ?? article.created_at).toLocaleDateString()}
+                </time>
               </div>
-            )}
 
-            <ArticleHtml content={article.content} />
-          </div>
-        </article>
+              {article.imageurl && (
+                <div className="mb-8">
+                  <Image
+                    src={article.imageurl}
+                    alt={article.title}
+                    width={1200}
+                    height={675}
+                    className="rounded-lg w-full"
+                    priority
+                  />
+                </div>
+              )}
+
+              <ArticleHtml content={article.content} />
+
+              {article.keywords && article.keywords.length > 0 && (
+                <footer className="mt-12 pt-8 border-t border-gray-200">
+                  <div className="flex flex-wrap gap-2">
+                    {article.keywords.map((keyword, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                      >
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                </footer>
+              )}
+            </div>
+          </article>
+
+          {/* Resources Section */}
+          {article.resources && article.resources.length > 0 && (
+            <div className="space-y-4">
+              <div className="bg-white rounded-lg shadow">
+                <div className="p-4 border-b border-gray-100">
+                  <h2 className="text-lg font-semibold">Resources</h2>
+                </div>
+                <div className="p-4 space-y-3">
+                  {article.resources.map((resource, index) => (
+                    <ResourcePreview key={index} resource={resource} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

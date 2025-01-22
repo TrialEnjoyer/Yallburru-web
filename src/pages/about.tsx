@@ -279,7 +279,9 @@ export default function About() {
             </div>
 
             <div className="relative">
-              <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-sky-100 hidden md:block" />
+              {/* Timeline bar - visible on all screen sizes */}
+              <div className="absolute left-[14px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-sky-100" />
+              
               <div className="space-y-12 relative">
                 {milestones.map((milestone, index) => (
                   <motion.div
@@ -290,7 +292,7 @@ export default function About() {
                     transition={{ delay: index * 0.2, duration: 0.8 }}
                     className="relative"
                   >
-                    <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12" : "md:pl-12 md:ml-auto"}`}>
+                    <div className={`md:w-1/2 ${index % 2 === 0 ? "pl-12 md:pr-12 md:pl-0" : "pl-12 md:ml-auto"}`}>
                       <div className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                         <div className="flex items-start gap-4">
                           <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -304,7 +306,8 @@ export default function About() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute top-6 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-sky-600 border-4 border-sky-100 hidden md:block" />
+                    {/* Timeline dot - adjusted position for mobile and desktop */}
+                    <div className="absolute top-6 left-[12px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-sky-600 border-4 border-sky-100" />
                   </motion.div>
                 ))}
               </div>
