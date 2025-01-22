@@ -181,7 +181,8 @@ const Article = () => {
       imageurl: "/banner.webp",
       published: true,
       created_at: "2024-03-20T00:00:00.000Z",
-      updated_at: "2024-03-20T00:00:00.000Z"
+      updated_at: "2024-03-20T00:00:00.000Z",
+      resources: null
     }
     setArticle(data);
   };
