@@ -26,23 +26,23 @@ export default function About() {
   const milestones = [
     {
       year: "2009",
-      title: "Our Beginning",
-      description: "Yallburru Community Services was established with a vision to provide culturally sensitive care and support services to our community."
+      title: "Cultural Beginnings",
+      description: "Uncle Graham Dillon (OAM) of the Koombumeri people bestowed the name 'Yallburru' to our founding Aunties, granting cultural authority to form the organization."
     },
     {
       year: "2012",
-      title: "Service Expansion",
-      description: "Expanded our services to include comprehensive disability support and elder care programs."
+      title: "Community Growth",
+      description: "Expanded our reach across South East Queensland, establishing connections in Logan, Brisbane, Redlands, Ipswich, and surrounding areas."
     },
     {
       year: "2015",
-      title: "Community Growth",
-      description: "Strengthened our community connections and expanded our cultural programs and services."
+      title: "Service Evolution",
+      description: "Developed comprehensive programs focused on Indigenous Diaspora support, cultural preservation, and community engagement."
     },
     {
       year: "2020",
-      title: "New Headquarters",
-      description: "Established our new headquarters in Upper Coomera to better serve our growing community."
+      title: "New Chapter",
+      description: "Established our new headquarters in Upper Coomera, strengthening our position as a voice for Indigenous Diaspora in South East Queensland."
     }
   ];
 
@@ -84,9 +84,9 @@ export default function About() {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-4xl md:text-6xl font-bold text-white mb-6"
             >
-              Empowering Communities
+              Yallburru
               <span className="block mt-2 bg-gradient-to-r from-sky-200 to-white bg-clip-text text-transparent">
-                Since 2009
+                Empowering Communities Since 2009
               </span>
             </motion.h1>
 
@@ -96,7 +96,7 @@ export default function About() {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-xl text-sky-100/90 mb-12"
             >
-              Yallburru Community Services is a leading Indigenous-owned organization providing culturally sensitive care and support services from our base in Gold Coast, Queensland.
+              A Yugumbeh word bestowed by Uncle Graham Dillon (OAM) of the Koombumeri people, Yallburru represents our commitment to serving the Indigenous Diaspora of the Gold Coast and South East Queensland, providing culturally sensitive care and support services from our base in Gold Coast, Queensland.
             </motion.p>
           </div>
         </div>
@@ -348,9 +348,13 @@ export default function About() {
               className="bg-white rounded-2xl shadow-sm p-8 max-w-3xl mx-auto"
             >
               <p className="text-gray-600 leading-relaxed text-lg text-center mb-6">
-                Yallburru Community Services is dedicated to providing culturally appropriate support services 
-                that empower Aboriginal and Torres Strait Islander communities. We strive to create positive 
-                change through holistic care, cultural preservation, and community engagement.
+                Yallburru proudly identifies as serving and representing the First Nations Diaspora, with our foundations laid on the Gold Coast – the area of the wider Yugumbeh-Bundgelung encompassing the Koombumerri peoples. Our founding members have established strong working community connections within the wider South East Queensland region, including Logan, Brisbane, Redlands, Ipswich, Beaudesert, Tamborine, and Toowoomba.
+              </p>
+              <p className="text-gray-600 leading-relaxed text-lg text-center mb-6">
+                We aim to increase self-determination and the capacity of Indigenous organisations and entities through a dual approach: improving access to culturally safe community services for our people, and offering &apos;our way&apos; to mainstream Australia. This enhances outcomes for both Indigenous and non-Indigenous communities while increasing Indigenous self-determination.
+              </p>
+              <p className="text-gray-600 leading-relaxed text-lg text-center">
+                Our vision extends to serving the needs of the Indigenous Diaspora throughout the Australian continent, recognizing both historical displacement through the stolen generations and contemporary urbanisation, while ensuring a means of belonging, connection, engagement, and voice for all our people.
               </p>
             </motion.div>
           </div>
@@ -561,18 +565,18 @@ export default function About() {
               {[
                 {
                   icon: <HandHeart className="w-6 h-6 text-sky-600" />,
-                  title: "Community First",
-                  description: "We prioritize the needs of our community, providing culturally sensitive services that respect and honor our traditions."
+                  title: "Cultural Connection",
+                  description: "We honor and preserve Indigenous traditions while providing a means of belonging and connection for the Indigenous Diaspora across Australia."
                 },
                 {
                   icon: <Users className="w-6 h-6 text-sky-600" />,
-                  title: "Cultural Connection",
-                  description: "Our services are grounded in Aboriginal & Torres Strait Islander values, maintaining strong cultural connections."
+                  title: "Self-Determination",
+                  description: "We empower Indigenous communities through culturally safe services and by sharing our way with mainstream Australia."
                 },
                 {
                   icon: <Award className="w-6 h-6 text-sky-600" />,
-                  title: "Excellence in Care",
-                  description: "As a registered service provider, we maintain the highest standards in care and support services."
+                  title: "Community Voice",
+                  description: "We serve as a platform for the Indigenous Diaspora, ensuring their needs are heard, understood, and met with dignity and respect."
                 }
               ].map((value, index) => (
                 <motion.div
