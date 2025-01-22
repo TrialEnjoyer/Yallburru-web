@@ -313,6 +313,214 @@ export default function About() {
         </div>
       </section>
 
+      {/* Mission Statement Section */}
+      <section className="relative py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <Target className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Mission Statement</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                Our Commitment to Community
+              </motion.h2>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="bg-white rounded-2xl shadow-sm p-8 max-w-3xl mx-auto"
+            >
+              <p className="text-gray-600 leading-relaxed text-lg text-center mb-6">
+                Yallburru Community Services is dedicated to providing culturally appropriate support services 
+                that empower Aboriginal and Torres Strait Islander communities. We strive to create positive 
+                change through holistic care, cultural preservation, and community engagement.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Membership Requests Section */}
+      <section className="relative py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <Users className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Join Our Community</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                Membership Requests
+              </motion.h2>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="bg-white rounded-2xl shadow-sm p-8 max-w-3xl mx-auto"
+            >
+              <p className="text-gray-600 leading-relaxed mb-6">
+                We welcome membership applications from individuals and organizations who share our vision 
+                for strengthening Aboriginal and Torres Strait Islander communities.
+              </p>
+              <Link 
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg
+                         hover:bg-sky-700 transition-all duration-300 transform hover:-translate-y-1"
+              >
+                Apply for Membership
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Formal Partnerships Section */}
+      <section className="relative py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <HandHeart className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Our Partners</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                Formal Partnerships
+              </motion.h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "NIAA",
+                  description: "National Indigenous Australians Agency - Supporting Indigenous communities across Australia"
+                },
+                {
+                  title: "GCHHS",
+                  description: "Gold Coast Hospital and Health Service - Providing healthcare services to our local community"
+                },
+                {
+                  title: "QAIHC",
+                  description: "Queensland Aboriginal and Islander Health Council - Promoting Indigenous health and wellbeing"
+                }
+              ].map((partner, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{partner.title}</h3>
+                  <p className="text-gray-600">{partner.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Confirmation of Aboriginality Section */}
+      <section className="relative py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
+              >
+                <CheckCircle className="w-4 h-4 text-sky-600" />
+                <span className="text-sm font-medium text-sky-900">Identity Confirmation</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              >
+                Confirmation of Aboriginality
+              </motion.h2>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="bg-white rounded-2xl shadow-sm p-8 max-w-3xl mx-auto"
+            >
+              <p className="text-gray-600 leading-relaxed mb-6">
+                We provide Confirmation of Aboriginality services for our community members. This process 
+                requires documentation and community verification. Please contact our office to learn more 
+                about the requirements and process.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link 
+                  href="/contact"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg
+                           hover:bg-sky-700 transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Contact Us
+                  <MessageCircle className="w-5 h-5" />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Core Values Section */}
       <section className="relative py-20 bg-white">
         <div className="container mx-auto px-4">

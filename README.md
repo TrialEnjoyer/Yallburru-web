@@ -41,6 +41,8 @@ Current Features:
 - [x] Add privacy policy and terms of service pages
 - [x] Implement breadcrumb navigation
 - [x] Add loading states and animations
+- [ ] add lines to timeline on about for mobile
+- [ ] Founders pages, need extended names.
 
 ### Admin Features
 - [x] Rich text editor for content management
@@ -121,7 +123,7 @@ Home
     Kinship and Foster Care
     Family Wellbeing Service
     Family Participation Program
-    Our Centers (Childm youth and family centers - assume some kind of social care offices??? litterally no other info given.)
+    Our Centers (Child youth and family centers - assume some kind of social care offices??? litterally no other info given.)
     Child, Youth and Family Services FAQ (Apparently multiple FAQ pages rather then 1 - bad practice.)
  - Housing + Cultural Support
     Affordable Housing
@@ -206,6 +208,8 @@ Home
  - services
  - team
   - admin
+
+Extra's that Rachel want done - Who We Are
 
 ## 📄 License
 

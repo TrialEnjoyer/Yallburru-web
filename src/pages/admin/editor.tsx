@@ -37,8 +37,9 @@ import {
   ExternalLink,
   FileText,
   PictureInPicture,
+  Copy,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ImageUploadModal from '~/components/shared/ImageUploadModal';
 import { supabase } from '~/utils/supabase';
 import { Database } from '~/types/supabase';
@@ -47,6 +48,8 @@ import Cookies from 'js-cookie';
 import { withRetry } from '~/utils/retryUtils';
 import { LoadingButton } from '~/components/ui/LoadingButton';
 import { LoadingOverlay } from '~/components/ui/LoadingOverlay';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 
 interface FontSizeOptions {
   types: string[];
@@ -548,6 +551,47 @@ const ResourcePanel = ({
     { value: 'text', label: 'Plain Text', icon: <FileText size={16} /> },
   ];
 
+  const handleMoveResource = (index: number, direction: 'up' | 'down') => {
+    if (index < 0 || index >= resources.length) return;
+    
+    const newResources = [...resources] as Resource[];
+    if (direction === 'up' && index > 0) {
+      const current = newResources[index];
+      const previous = newResources[index - 1];
+      if (!current || !previous) return;
+      newResources[index] = previous;
+      newResources[index - 1] = current;
+      onResourcesChange(newResources);
+    } else if (direction === 'down' && index < resources.length - 1) {
+      const current = newResources[index];
+      const next = newResources[index + 1];
+      if (!current || !next) return;
+      newResources[index] = next;
+      newResources[index + 1] = current;
+      onResourcesChange(newResources);
+    }
+  };
+
+  const handleDuplicateResource = (index: number) => {
+    if (index < 0 || index >= resources.length) return;
+    const resourceToDuplicate = resources[index];
+    if (!resourceToDuplicate) return;
+    
+    const duplicatedResource: Resource = {
+      type: resourceToDuplicate.type,
+      title: `${resourceToDuplicate.title} (Copy)`,
+      description: resourceToDuplicate.description,
+      html: resourceToDuplicate.html,
+      image: resourceToDuplicate.image,
+      url: resourceToDuplicate.url,
+      text: resourceToDuplicate.text,
+    };
+    
+    const newResources = [...resources] as Resource[];
+    newResources.splice(index + 1, 0, duplicatedResource);
+    onResourcesChange(newResources);
+  };
+
   const handleAddResource = () => {
     if (!newResource.title) return;
     
@@ -593,11 +637,16 @@ const ResourcePanel = ({
     setNewResource({ type: 'link', title: '' });
   };
 
-  const ResourceForm = ({ onSave, onCancel, initialResource = { type: 'link', title: '' } }: {
-    onSave: () => void;
+  const ResourceForm = ({ 
+    onSave, 
+    onCancel,
+    initialResource = { type: 'link', title: '' } 
+  }: {
+    onSave: (resource: Resource) => void;
     onCancel: () => void;
-    initialResource?: Resource;
+    initialResource: Resource;
   }) => {
+    const [formState, setFormState] = useState<Resource>(initialResource);
     const [isValidUrl, setIsValidUrl] = useState(true);
     const [isValidImage, setIsValidImage] = useState(true);
     const [isCheckingImage, setIsCheckingImage] = useState(false);
@@ -612,52 +661,32 @@ const ResourcePanel = ({
       }
     };
 
-    const checkImageUrl = async (url: string) => {
-      setIsCheckingImage(true);
-      return new Promise<boolean>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          setIsValidImage(true);
-          setIsCheckingImage(false);
-          resolve(true);
-        };
-        img.onerror = () => {
-          setIsValidImage(false);
-          setIsCheckingImage(false);
-          resolve(false);
-        };
-        img.src = url;
-      });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormState(prev => ({
+        ...prev,
+        [name]: value
+      }));
     };
 
     const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const url = e.target.value;
       const isValid = validateUrl(url);
       setIsValidUrl(isValid);
-      setNewResource({ ...newResource, url });
+      handleChange(e);
     };
 
-    const handleImageUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const url = e.target.value;
-      const isValid = validateUrl(url);
-      setIsValidUrl(isValid);
-      setNewResource({ ...newResource, image: url });
-      if (isValid) {
-        await checkImageUrl(url);
-      }
-    };
-
-    const handleImageSelect = (url: string) => {
-      setNewResource({ ...newResource, image: url });
-      setIsValidImage(true);
-      setIsValidUrl(true);
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      onSave(formState);
     };
 
     return (
-      <div className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3 w-full">
         <select
-          value={newResource.type}
-          onChange={(e) => setNewResource({ ...newResource, type: e.target.value })}
+          name="type"
+          value={formState.type}
+          onChange={handleChange}
           className="w-full p-2 text-sm border rounded"
         >
           {resourceTypes.map(type => (
@@ -667,119 +696,79 @@ const ResourcePanel = ({
 
         <input
           type="text"
+          name="title"
           placeholder="Title"
-          value={newResource.title}
-          onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+          value={formState.title}
+          onChange={handleChange}
           className="w-full p-2 text-sm border rounded"
           maxLength={100}
         />
 
-        {newResource.type === 'link' && (
+        {formState.type === 'link' && (
           <div>
             <input
               type="url"
+              name="url"
               placeholder="URL"
-              value={newResource.url || ''}
+              value={formState.url || ''}
               onChange={handleUrlChange}
-              className={`w-full p-2 text-sm border rounded ${!isValidUrl && newResource.url ? 'border-red-500' : ''}`}
+              className={`w-full p-2 text-sm border rounded ${!isValidUrl && formState.url ? 'border-red-500' : ''}`}
             />
-            {!isValidUrl && newResource.url && (
+            {!isValidUrl && formState.url && (
               <p className="text-xs text-red-500 mt-1">Please enter a valid URL</p>
             )}
           </div>
         )}
 
-        {newResource.type === 'html' && (
+        {formState.type === 'html' && (
           <textarea
+            name="html"
             placeholder="HTML Content"
-            value={newResource.html || ''}
-            onChange={(e) => setNewResource({ ...newResource, html: e.target.value })}
+            value={formState.html || ''}
+            onChange={handleChange}
             className="w-full p-2 text-sm border rounded"
             rows={4}
           />
         )}
 
-        {newResource.type === 'image' && (
-          <div>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="url"
-                placeholder="Image URL"
-                value={newResource.image || ''}
-                onChange={handleImageUrlChange}
-                className={`flex-1 p-2 text-sm border rounded ${!isValidUrl && newResource.image ? 'border-red-500' : ''}`}
-              />
-              <button
-                onClick={() => setIsImageModalOpen(true)}
-                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded flex items-center gap-2"
-                type="button"
-              >
-                <ImageIcon size={16} />
-              </button>
-            </div>
-            {!isValidUrl && newResource.image && (
-              <p className="text-xs text-red-500 mt-1">Please enter a valid URL</p>
-            )}
-            {isCheckingImage && (
-              <p className="text-xs text-gray-500 mt-1">Checking image...</p>
-            )}
-            {!isValidImage && isValidUrl && newResource.image && (
-              <p className="text-xs text-red-500 mt-1">Unable to load image from this URL</p>
-            )}
-            {isValidImage && newResource.image && (
-              <div className="mt-2 relative aspect-video bg-gray-100 rounded overflow-hidden">
-                <img
-                  src={newResource.image}
-                  alt="Preview"
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
-              </div>
-            )}
-            <ImageUploadModal
-              isOpen={isImageModalOpen}
-              onClose={() => setIsImageModalOpen(false)}
-              onImageSelect={handleImageSelect}
-            />
-          </div>
-        )}
-
-        {newResource.type === 'text' && (
-          <div>
-            <textarea
-              placeholder="Text content"
-              value={newResource.text || ''}
-              onChange={(e) => setNewResource({ ...newResource, text: e.target.value })}
-              className="w-full p-2 text-sm border rounded"
-              rows={4}
-            />
-          </div>
+        {formState.type === 'text' && (
+          <textarea
+            name="text"
+            placeholder="Text content"
+            value={formState.text || ''}
+            onChange={handleChange}
+            className="w-full p-2 text-sm border rounded"
+            rows={4}
+          />
         )}
 
         <input
           type="text"
+          name="description"
           placeholder="Description (optional)"
-          value={newResource.description || ''}
-          onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+          value={formState.description || ''}
+          onChange={handleChange}
           className="w-full p-2 text-sm border rounded"
           maxLength={200}
         />
 
         <div className="flex justify-end gap-2">
           <button
+            type="button"
             onClick={onCancel}
             className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
           >
             Cancel
           </button>
           <button
-            onClick={onSave}
-            disabled={!newResource.title || (newResource.type === 'link' && !isValidUrl) || (newResource.type === 'image' && (!isValidUrl || !isValidImage))}
+            type="submit"
+            disabled={!formState.title || (formState.type === 'link' && !isValidUrl)}
             className="px-3 py-1 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
           >
             {editingIndex !== null ? 'Save Changes' : 'Add Resource'}
           </button>
         </div>
-      </div>
+      </form>
     );
   };
 
@@ -787,26 +776,62 @@ const ResourcePanel = ({
     <div className="bg-white rounded-lg shadow">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-50"
+        className="w-full flex items-center justify-between p-4 hover:bg-blue-50/50"
       >
         <span className="text-sm font-medium text-gray-700">Resources</span>
         {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
 
       {isOpen && (
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-blue-100 bg-blue-50/50">
           {/* Resource List */}
           <div className="space-y-3 mb-4">
             {resources.map((resource, index) => (
-              <div key={index} className="flex items-start justify-between gap-2 p-2 bg-gray-50 rounded group">
+              <div
+                key={index}
+                className="bg-white rounded"
+              >
                 {editingIndex === index ? (
                   <ResourceForm
-                    onSave={handleSaveEdit}
+                    onSave={(updatedResource) => {
+                      const newResources = [...resources];
+                      newResources[index] = updatedResource;
+                      onResourcesChange(newResources);
+                      setEditingIndex(null);
+                    }}
                     onCancel={handleCancelEdit}
                     initialResource={resource}
                   />
                 ) : (
-                  <>
+                  <div className="flex items-start gap-2 p-2 group">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleMoveResource(index, 'up')}
+                        disabled={index === 0}
+                        className={`p-1 rounded-md transition-colors ${
+                          index === 0 
+                            ? 'text-gray-300 cursor-not-allowed' 
+                            : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                        }`}
+                        title="Move up"
+                      >
+                        <ChevronUp size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveResource(index, 'down')}
+                        disabled={index === resources.length - 1}
+                        className={`p-1 rounded-md transition-colors ${
+                          index === resources.length - 1
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                        }`}
+                        title="Move down"
+                      >
+                        <ChevronDown size={16} />
+                      </button>
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         {resourceTypes.find(t => t.value === resource.type)?.icon}
@@ -818,8 +843,25 @@ const ResourcePanel = ({
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => handleStartEdit(index)}
-                        className="p-1 text-gray-400 hover:text-blue-500"
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDuplicateResource(index);
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-colors"
+                        title="Duplicate"
+                      >
+                        <Copy size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleStartEdit(index);
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-colors"
                         title="Edit"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -828,14 +870,19 @@ const ResourcePanel = ({
                         </svg>
                       </button>
                       <button
-                        onClick={() => handleRemoveResource(index)}
-                        className="p-1 text-gray-400 hover:text-red-500"
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveResource(index);
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
                         title="Remove"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             ))}
@@ -844,11 +891,14 @@ const ResourcePanel = ({
           {/* Add Resource Form */}
           {isAdding ? (
             <ResourceForm
-              onSave={handleAddResource}
+              onSave={(newResource) => {
+                onResourcesChange([...resources, newResource]);
+                setIsAdding(false);
+              }}
               onCancel={() => {
                 setIsAdding(false);
-                setNewResource({ type: 'link', title: '' });
               }}
+              initialResource={{ type: 'link', title: '' }}
             />
           ) : (
             <button
@@ -941,6 +991,12 @@ const ResourcePreview = ({ resource }: { resource: Resource }) => {
   }
 };
 
+const SEO_LIMITS = {
+  title: { min: 30, max: 60, recommended: 50 },
+  description: { min: 120, max: 160, recommended: 150 },
+  keywords: { min: 3, max: 10 }
+};
+
 const EditorMenu = () => {
   const [content, setContent] = useState(initialContent);
   const [id, setId] = useState<undefined|number>(undefined);
@@ -951,6 +1007,8 @@ const EditorMenu = () => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSeoOpen, setIsSeoOpen] = useState(false);
+  const [isScoreBreakdownOpen, setIsScoreBreakdownOpen] = useState(false);
+  const [isSocialPreviewOpen, setIsSocialPreviewOpen] = useState(false);
   const [seoMeta, setSeoMeta] = useState({
     title: '',
     description: '',
@@ -1001,6 +1059,13 @@ const EditorMenu = () => {
   ]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [slugError, setSlugError] = useState<string | null>(null);
+  const [seoScores, setSeoScores] = useState({
+    title: 0,
+    description: 0,
+    keywords: 0,
+    overall: 0
+  });
   
   // Load paths from cookie on mount and fetch fresh data
   useEffect(() => {
@@ -1142,6 +1207,75 @@ const EditorMenu = () => {
     setHasUnsavedChanges(true);
   }, [content, category, subcategory, slug, seoMeta, resources]);
 
+  // Add slug validation
+  const validateSlug = (newSlug: string) => {
+    if (!newSlug) {
+      setSlugError(null);
+      return;
+    }
+
+    const existingArticle = articlePaths.find(
+      path => path.slug === newSlug && 
+             path.category === category && 
+             path.subcategory === subcategory
+    );
+
+    if (existingArticle) {
+      setSlugError('An article with this slug already exists in this category/subcategory');
+    } else {
+      setSlugError(null);
+    }
+  };
+
+  // Update slug validation when dependencies change
+  useEffect(() => {
+    validateSlug(slug);
+  }, [slug, category, subcategory, articlePaths]);
+
+  // Calculate SEO scores
+  const calculateSeoScores = useCallback(() => {
+    const scores = {
+      title: 0,
+      description: 0,
+      keywords: 0,
+      overall: 0
+    };
+
+    // Title score
+    const titleLength = seoMeta.title.length;
+    if (titleLength >= SEO_LIMITS.title.min && titleLength <= SEO_LIMITS.title.max) {
+      scores.title = titleLength === SEO_LIMITS.title.recommended ? 100 : 80;
+    } else {
+      scores.title = 40;
+    }
+
+    // Description score
+    const descLength = seoMeta.description?.length || 0;
+    if (descLength >= SEO_LIMITS.description.min && descLength <= SEO_LIMITS.description.max) {
+      scores.description = descLength === SEO_LIMITS.description.recommended ? 100 : 80;
+    } else {
+      scores.description = 40;
+    }
+
+    // Keywords score
+    const keywordCount = seoMeta.keywords.length;
+    if (keywordCount >= SEO_LIMITS.keywords.min && keywordCount <= SEO_LIMITS.keywords.max) {
+      scores.keywords = 100;
+    } else if (keywordCount > 0) {
+      scores.keywords = 60;
+    }
+
+    // Calculate overall score
+    scores.overall = Math.round((scores.title + scores.description + scores.keywords) / 3);
+
+    setSeoScores(scores);
+  }, [seoMeta]);
+
+  // Update SEO scores when metadata changes
+  useEffect(() => {
+    calculateSeoScores();
+  }, [seoMeta, calculateSeoScores]);
+
   const handleSave = async () => {
     if (!category || !slug) {
       alert('Category and slug are required');
@@ -1182,6 +1316,7 @@ const EditorMenu = () => {
   const handlePublish = async () => {
     if (!category || !slug || !content.trim()) {
       alert('Category, slug, and content are required to publish');
+      setIsSeoOpen(true); // Open SEO section to show required fields
       return;
     }
 
@@ -1349,7 +1484,7 @@ const EditorMenu = () => {
             isLoading={isSaving}
             loadingText="Saving..."
             variant="outline"
-            className="flex items-center gap-2"
+            className="md:flex hidden items-center gap-2"
           >
             <Save size={20} />
             Save Draft
@@ -1358,13 +1493,30 @@ const EditorMenu = () => {
             onClick={handlePublish}
             isLoading={isPublishing}
             loadingText="Publishing..."
-            className="flex items-center gap-2"
+            className="md:flex hidden items-center gap-2"
           >
             <ArrowDownToLine size={20} />
             Publish
           </LoadingButton>
+          {/* Mobile Save/Publish Icons */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={handleSave}
+              className="p-2 hover:bg-gray-100 rounded-full"
+              aria-label="Save Draft"
+            >
+              <Save size={20} />
+            </button>
+            <button
+              onClick={handlePublish}
+              className="p-2 hover:bg-gray-100 rounded-full"
+              aria-label="Publish"
+            >
+              <ArrowDownToLine size={20} />
+            </button>
+          </div>
           {lastSaved && (
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 hidden md:inline">
               Last saved: {new Intl.RelativeTimeFormat().format(
                 Math.round((lastSaved.getTime() - Date.now()) / 1000 / 60),
                 'minute'
@@ -1372,7 +1524,7 @@ const EditorMenu = () => {
             </span>
           )}
           {hasUnsavedChanges && (
-            <span className="text-sm text-yellow-600">
+            <span className="text-sm text-yellow-600 hidden md:inline">
               ● Unsaved changes
             </span>
           )}
@@ -1384,16 +1536,25 @@ const EditorMenu = () => {
             loadingText="Refreshing..."
             variant="ghost"
             size="sm"
+            className="hidden md:inline-flex"
           >
             <RotateCw size={16} />
           </LoadingButton>
         
           <button
             onClick={handleClear}
-            className="p-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors flex items-center gap-2"
+            className="md:flex hidden items-center gap-2 p-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors"
           >
             <X size={16} />
             Clear
+          </button>
+          {/* Mobile Clear Icon */}
+          <button
+            onClick={handleClear}
+            className="flex md:hidden p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+            aria-label="Clear"
+          >
+            <Trash2 size={20} />
           </button>
         </div>
       </div>
@@ -1459,18 +1620,25 @@ const EditorMenu = () => {
 
                 <div className="flex flex-col flex-1 min-w-[200px]">
                   <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
-                    Slug
+                    Slug <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
-                    <input
-                      id="slug"
-                      list="slug-list"
-                      value={slug}
-                      onChange={(e) => setSlug(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      required
-                      placeholder="Select or type slug"
-                    />
+                    <div className="flex-1">
+                      <input
+                        id="slug"
+                        list="slug-list"
+                        value={slug}
+                        onChange={(e) => setSlug(e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                          slugError ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        required
+                        placeholder="Select or type slug"
+                      />
+                      {slugError && (
+                        <p className="text-xs text-red-500 mt-1">{slugError}</p>
+                      )}
+                    </div>
                     {doesCurrentPathExist() && (
                       <LoadingButton
                         onClick={handleLoadArticle}
@@ -1484,11 +1652,6 @@ const EditorMenu = () => {
                       </LoadingButton>
                     )}
                   </div>
-                  <datalist id="slug-list">
-                    {availableSlugs.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </datalist>
                 </div>
               </div>
 
@@ -1499,6 +1662,14 @@ const EditorMenu = () => {
                   className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
                 >
                   <span className="text-sm font-medium">SEO Metadata</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`h-2 w-2 rounded-full ${
+                      seoScores.overall >= 80 ? 'bg-green-500' :
+                      seoScores.overall >= 60 ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`} />
+                    <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+                  </div>
                   {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </button>
                 
@@ -1515,13 +1686,23 @@ const EditorMenu = () => {
                             type="text"
                             value={seoMeta.title}
                             onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Enter title (60 characters max)"
-                            maxLength={60}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                              seoMeta.title.length > SEO_LIMITS.title.max ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            placeholder="Enter title"
                           />
-                          <p className="text-xs text-gray-500 mt-1">
-                            {seoMeta.title.length}/60 characters
-                          </p>
+                          <div className="flex justify-between mt-1">
+                            <p className={`text-xs ${
+                              seoMeta.title.length > SEO_LIMITS.title.max ? 'text-red-500' :
+                              seoMeta.title.length < SEO_LIMITS.title.min ? 'text-yellow-500' :
+                              'text-green-500'
+                            }`}>
+                              {seoMeta.title.length}/{SEO_LIMITS.title.max} characters
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Recommended: {SEO_LIMITS.title.min}-{SEO_LIMITS.title.max} characters
+                            </p>
+                          </div>
                         </div>
                         
                         <div>
@@ -1532,14 +1713,24 @@ const EditorMenu = () => {
                           <textarea
                             value={seoMeta.description}
                             onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Enter description (160 characters max)"
-                            maxLength={160}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                              seoMeta.description.length > SEO_LIMITS.description.max ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            placeholder="Enter description"
                             rows={3}
                           />
-                          <p className="text-xs text-gray-500 mt-1">
-                            {seoMeta.description.length}/160 characters
-                          </p>
+                          <div className="flex justify-between mt-1">
+                            <p className={`text-xs ${
+                              seoMeta.description.length > SEO_LIMITS.description.max ? 'text-red-500' :
+                              seoMeta.description.length < SEO_LIMITS.description.min ? 'text-yellow-500' :
+                              'text-green-500'
+                            }`}>
+                              {seoMeta.description.length}/{SEO_LIMITS.description.max} characters
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Recommended: {SEO_LIMITS.description.min}-{SEO_LIMITS.description.max} characters
+                            </p>
+                          </div>
                         </div>
 
                         <div>
@@ -1556,11 +1747,155 @@ const EditorMenu = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             placeholder="Enter keywords separated by commas"
                           />
+                          <div className="flex justify-between mt-1">
+                            <p className={`text-xs ${
+                              seoMeta.keywords.length > SEO_LIMITS.keywords.max ? 'text-red-500' :
+                              seoMeta.keywords.length < SEO_LIMITS.keywords.min ? 'text-yellow-500' :
+                              'text-green-500'
+                            }`}>
+                              {seoMeta.keywords.length} keywords
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Recommended: {SEO_LIMITS.keywords.min}-{SEO_LIMITS.keywords.max} keywords
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Score Breakdown Dropdown */}
+                        <div className="bg-gray-50 rounded-lg">
+                          <button
+                            onClick={() => setIsScoreBreakdownOpen(!isScoreBreakdownOpen)}
+                            className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                            <span className="text-sm font-medium text-gray-700">SEO Score Breakdown</span>
+                            <div className="flex items-center gap-2">
+                              <div className={`h-2 w-2 rounded-full ${
+                                seoScores.overall >= 80 ? 'bg-green-500' :
+                                seoScores.overall >= 60 ? 'bg-yellow-500' :
+                                'bg-red-500'
+                              }`} />
+                              <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+                            </div>
+                          </button>
+                          
+                          {isScoreBreakdownOpen && (
+                            <div className="p-4 space-y-2 border-t border-gray-200">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Title</span>
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-2 w-2 rounded-full ${
+                                    seoScores.title >= 80 ? 'bg-green-500' :
+                                    seoScores.title >= 60 ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  }`} />
+                                  <span className="text-sm text-gray-500">{seoScores.title}%</span>
+                                </div>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Description</span>
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-2 w-2 rounded-full ${
+                                    seoScores.description >= 80 ? 'bg-green-500' :
+                                    seoScores.description >= 60 ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  }`} />
+                                  <span className="text-sm text-gray-500">{seoScores.description}%</span>
+                                </div>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Keywords</span>
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-2 w-2 rounded-full ${
+                                    seoScores.keywords >= 80 ? 'bg-green-500' :
+                                    seoScores.keywords >= 60 ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  }`} />
+                                  <span className="text-sm text-gray-500">{seoScores.keywords}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Social Media Preview Dropdown */}
+                        <div className="bg-gray-50 rounded-lg">
+                          <button
+                            onClick={() => setIsSocialPreviewOpen(!isSocialPreviewOpen)}
+                            className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                            <span className="text-sm font-medium text-gray-700">Social Media Preview</span>
+                            {isSocialPreviewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </button>
+                          
+                          {isSocialPreviewOpen && (
+                            <div className="p-4 space-y-6 border-t border-gray-200">
+                              {/* Google Preview */}
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-700 mb-2">Google Search Result</h4>
+                                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden p-4">
+                                  <div className="text-[#1a0dab] text-xl mb-1 hover:underline cursor-pointer line-clamp-1">
+                                    {seoMeta.title || 'Your title will appear here'}
+                                  </div>
+                                  <div className="text-[#006621] text-[14px] mb-1">
+                                    yallburru.com.au › {category} {subcategory ? ` › ${subcategory}` : ''} › {slug}
+                                  </div>
+                                  <div className="text-[#545454] text-[14px] line-clamp-2">
+                                    {seoMeta.description || 'Your description will appear here'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Social Media Previews Grid */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Facebook Preview */}
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-700 mb-2">Facebook</h4>
+                                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '500px' }}>
+                                    <div className="aspect-[1.91/1] bg-gray-100 flex items-center justify-center">
+                                      <span className="text-sm text-gray-500">1200 x 630px</span>
+                                    </div>
+                                    <div className="p-3">
+                                      <div className="text-[13px] text-[#385898] uppercase tracking-wide font-medium mb-1">yallburru.com.au</div>
+                                      <div className="text-[16px] font-bold text-[#1c1e21] mb-2 line-clamp-2">
+                                        {seoMeta.title || 'Your title will appear here'}
+                                      </div>
+                                      <div className="text-[14px] text-[#606770] line-clamp-3">
+                                        {seoMeta.description || 'Your description will appear here'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Twitter Preview */}
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-700 mb-2">Twitter</h4>
+                                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '440px' }}>
+                                    <div className="aspect-[2/1] bg-gray-100 flex items-center justify-center">
+                                      <span className="text-sm text-gray-500">800 x 418px</span>
+                                    </div>
+                                    <div className="p-3">
+                                      <div className="text-[15px] font-bold text-[#0f1419] mb-1 line-clamp-2">
+                                        {seoMeta.title || 'Your title will appear here'}
+                                      </div>
+                                      <div className="text-[13px] text-[#536471] mb-2 line-clamp-2">
+                                        {seoMeta.description || 'Your description will appear here'}
+                                      </div>
+                                      <div className="text-[13px] text-[#536471] flex items-center gap-1">
+                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S13.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g></svg>
+                                        yallburru.com.au
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1614,7 +1949,6 @@ const EditorMenu = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
