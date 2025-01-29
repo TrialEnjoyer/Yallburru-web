@@ -406,14 +406,15 @@ export default function Homepage({ articles }: { articles: Article[] }) {
             >
               {/* Main Image */}
               <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-purple-500 rounded-2xl transform rotate-1 opacity-10 group-hover:rotate-2 group-hover:scale-105 transition-transform"></div>
-                <div className="relative bg-white rounded-2xl p-2 shadow-lg transform -rotate-1 group-hover:rotate-0 transition-transform">
+                <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-purple-500 rounded-2xl transform rotate-1 opacity-20 group-hover:rotate-2 group-hover:scale-105 transition-transform"></div>
+                <div className="relative bg-gray-900 rounded-2xl p-2 shadow-lg transform -rotate-1 group-hover:rotate-0 transition-transform">
                   <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
                     <Image 
-                      src="/banner.webp"
+                      src="/banner.png"
                       alt="Caring staff member with client"
                       fill
-                      className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+                      className=" object-scale-down transform group-hover:scale-105 transition-transform duration-700"
+                      style={{ objectPosition: 'center center' }}
                     />
                   </div>
                 </div>
