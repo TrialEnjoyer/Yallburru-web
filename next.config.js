@@ -24,7 +24,14 @@ const config = {
         protocol: 'https',
         hostname: 'utfs.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'sqq4x8niu5.ufs.sh',
+      },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 

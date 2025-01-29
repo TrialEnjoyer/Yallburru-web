@@ -2,8 +2,8 @@ import Head from "next/head";
 import { useEffect, useState, } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import { Book, ArrowRight, ChevronRight } from "lucide-react";
-import InterpretationDictionary from "./consolidated-rule-book/InterpretationDictionary";
+import { Book, ChevronRight } from "lucide-react";
+import InterpretationDictionary from "./InterpretationDictionary";
 
 
 type TableOfContentsItem = {

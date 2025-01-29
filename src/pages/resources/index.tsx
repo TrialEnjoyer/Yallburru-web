@@ -65,6 +65,71 @@ export default function ResourcesPage() {
       <section className="relative py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
+            {/* Rule Book Section */}
+            <div className="mb-20">
+              <div className="text-center mb-16">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 mb-6"
+                >
+                  <Book className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-900">Resource Library</span>
+                </motion.div>
+
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+                >
+                  Documents
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="text-gray-600 max-w-2xl mx-auto mb-12"
+                >
+                  Our comprehensive guide containing all guidelines, policies, and procedures for members of Yallburru Community Services
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 max-w-3xl mx-auto hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="flex flex-col md:flex-row items-center gap-6 text-left">
+                    <div className="p-4 bg-purple-50 rounded-2xl">
+                      <Book className="w-12 h-12 text-purple-600" />
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                        Consolidated Rule Book
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Access the complete set of rules, regulations, and guidelines that govern our organization and memberships. Essential reading for all members to understand their rights, responsibilities, and our operational procedures.
+                      </p>
+                      <Link
+                        href="/resources/consolidated-rule-book"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                      >
+                        View Rule Book
+                        <ArrowRight className="w-5 h-5" />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+
             {/* Forms Section */}
             <div className="mb-16">
               <div className="text-center mb-16">
@@ -76,7 +141,7 @@ export default function ResourcesPage() {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 mb-6"
                 >
                   <Book className="w-4 h-4 text-sky-600" />
-                  <span className="text-sm font-medium text-sky-900">Available Forms</span>
+                  <span className="text-sm font-medium text-sky-900">Application Materials</span>
                 </motion.div>
 
                 <motion.h2

@@ -33,6 +33,7 @@ import WaveDivider from "../components/home/WaveDivider";
 import ContactForm from "../components/home/ContactForm";
 import { supabase } from "~/utils/supabase";
 import { motion } from "framer-motion";
+import PartnersCarousel from "~/components/home/PartnersCarousel";
 
 interface Article {
   id: string;
@@ -548,6 +549,8 @@ export default function Homepage({ articles }: { articles: Article[] }) {
         </div>
       </section>
 
+      {/* Partners */}
+      <PartnersCarousel />
       {/* Testimonials Section }
       <section className="relative py-32 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
         {/* Background Pattern }

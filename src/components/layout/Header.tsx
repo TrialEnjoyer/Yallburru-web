@@ -41,7 +41,7 @@ export default function Header() {
         <Link href="/" className="flex items-center h-full">
           <div className="w-36 sm:w-40 h-8">
             <Image 
-              src="/banner.webp" 
+              src="/banner.png" 
               alt="Yallburru Community Services banner" 
               width={192}
               height={48}

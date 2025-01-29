@@ -34,7 +34,7 @@ const WaveDivider = () => {
             <Image 
               src="/Logo.svg" 
               alt="Yallburru Community Services Logo" 
-              className="rounded-full ring-1 ring-white/20" 
+              className="rounded-full" 
               width={80} 
               height={80}
               priority
