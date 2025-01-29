@@ -8,7 +8,39 @@ export default withUt({
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        // Default font for body text
+        sans: [
+          "Whitney",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif"
+        ],
+        // Font for main headings (h1, h2)
+        display: [
+          "Whitney",
+          "SF Pro Display",
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif"
+        ],
+        // Font for other headings (h3, h4, h5, h6)
+        heading: [
+          "Whitney",
+          "SF Pro Text",
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif"
+        ],
       },
       animation: {
         'gradient-x': 'gradient-x 15s ease infinite',
