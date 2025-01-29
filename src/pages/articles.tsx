@@ -267,12 +267,13 @@ export default function ArticlesPage({articles, categories }: ArticlesPageProps)
         />
       </Head>
 
-      {/* Hero Section with Animated Background */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-sky-950 via-sky-900 to-sky-800">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5"></div>
+            {/* Hero Section */}
+            <section className="relative pt-32 pb-20 bg-gradient-to-br from-sky-900 via-sky-800 to-purple-900 overflow-hidden">
+        {/* Background Pattern */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-600/20 via-transparent to-transparent animate-pulse"></div>
-          <div className="absolute inset-0 bg-gradient-to-tl from-sky-900/30 via-transparent to-transparent animate-pulse delay-700"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem]">
+            <div className="absolute inset-0 bg-sky-900 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,transparent_20%,black_100%)]"></div>
+          </div>
         </div>
         
         <div className="container relative mx-auto px-4">
