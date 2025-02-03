@@ -50,6 +50,7 @@ import { LoadingButton } from '~/components/ui/LoadingButton';
 import { LoadingOverlay } from '~/components/ui/LoadingOverlay';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import ScheduleTab from '~/components/admin/ScheduleTab';
 
 interface FontSizeOptions {
   types: string[];
@@ -998,6 +999,7 @@ const SEO_LIMITS = {
 };
 
 const EditorMenu = () => {
+  const [view, setView] = useState<'editor' | 'seo' | 'schedule'>('editor');
   const [content, setContent] = useState(initialContent);
   const [id, setId] = useState<undefined|number>(undefined);
   const [category, setCategory] = useState('');
@@ -1469,486 +1471,772 @@ const EditorMenu = () => {
   });
 
   return (
-    <div className="relative">
-      {isLoadingArticle && (
-        <LoadingOverlay
-          isLoading={true}
-          text="Loading article..."
-          className="rounded-lg"
-        />
-      )}
-      <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-4">
-          <LoadingButton
-            onClick={handleSave}
-            isLoading={isSaving}
-            loadingText="Saving..."
-            variant="outline"
-            className="md:flex hidden items-center gap-2"
-          >
-            <Save size={20} />
-            Save Draft
-          </LoadingButton>
-          <LoadingButton
-            onClick={handlePublish}
-            isLoading={isPublishing}
-            loadingText="Publishing..."
-            className="md:flex hidden items-center gap-2"
-          >
-            <ArrowDownToLine size={20} />
-            Publish
-          </LoadingButton>
-          {/* Mobile Save/Publish Icons */}
-          <div className="flex md:hidden items-center gap-2">
-            <button
-              onClick={handleSave}
-              className="p-2 hover:bg-gray-100 rounded-full"
-              aria-label="Save Draft"
-            >
-              <Save size={20} />
-            </button>
-            <button
-              onClick={handlePublish}
-              className="p-2 hover:bg-gray-100 rounded-full"
-              aria-label="Publish"
-            >
-              <ArrowDownToLine size={20} />
-            </button>
-          </div>
-          {lastSaved && (
-            <span className="text-sm text-gray-500 hidden md:inline">
-              Last saved: {new Intl.RelativeTimeFormat().format(
-                Math.round((lastSaved.getTime() - Date.now()) / 1000 / 60),
-                'minute'
-              )}
-            </span>
-          )}
-          {hasUnsavedChanges && (
-            <span className="text-sm text-yellow-600 hidden md:inline">
-              ● Unsaved changes
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <LoadingButton
-            onClick={handleLoadPaths}
-            isLoading={isLoading}
-            loadingText="Refreshing..."
-            variant="ghost"
-            size="sm"
-            className="hidden md:inline-flex"
-          >
-            <RotateCw size={16} />
-          </LoadingButton>
-        
-          <button
-            onClick={handleClear}
-            className="md:flex hidden items-center gap-2 p-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors"
-          >
-            <X size={16} />
-            Clear
-          </button>
-          {/* Mobile Clear Icon */}
-          <button
-            onClick={handleClear}
-            className="flex md:hidden p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
-            aria-label="Clear"
-          >
-            <Trash2 size={20} />
-          </button>
-        </div>
+    <div className="flex flex-col h-full">
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setView('editor')}
+          className={`px-4 py-2 rounded-lg ${
+            view === 'editor'
+              ? 'bg-sky-100 text-sky-600'
+              : 'hover:bg-gray-100'
+          }`}
+        >
+          Editor
+        </button>
+        <button
+          onClick={() => setView('seo')}
+          className={`px-4 py-2 rounded-lg ${
+            view === 'seo'
+              ? 'bg-sky-100 text-sky-600'
+              : 'hover:bg-gray-100'
+          }`}
+        >
+          SEO
+        </button>
+        <button
+          onClick={() => setView('schedule')}
+          className={`px-4 py-2 rounded-lg ${
+            view === 'schedule'
+              ? 'bg-sky-100 text-sky-600'
+              : 'hover:bg-gray-100'
+          }`}
+        >
+          Schedule
+        </button>
       </div>
-      
-      <div className="min-h-screen bg-gray-100 p-4">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="bg-white rounded-lg shadow mb-4 p-4">
-            <div className="flex flex-col space-y-4">
-              <div className="flex flex-wrap items-start gap-2">
-                <div className="flex flex-col min-w-[150px]">
-                  <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">
-                    Category
-                  </label>
-                  <input
-                    id="category"
-                    list="category-list"
-                    value={category}
-                    onChange={(e) => {
-                      setCategory(e.target.value);
-                      setSubcategory(''); // Reset subcategory when category changes
-                      setSlug(''); // Reset slug when category changes
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                    placeholder="Select or type category"
-                  />
-                  <datalist id="category-list">
-                    {availableCategories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </datalist>
-                </div>
-                
-                <div className="flex items-center self-end h-[42px]">
-                  <span className="text-gray-500">/</span>
-                </div>
 
-                <div className="flex flex-col min-w-[150px]">
-                  <label htmlFor="subcategory" className="text-sm font-medium text-gray-700 mb-1">
-                    Subcategory
-                  </label>
-                  <input
-                    id="subcategory"
-                    list="subcategory-list"
-                    value={subcategory}
-                    onChange={(e) => {
-                      setSubcategory(e.target.value);
-                      setSlug(''); // Reset slug when subcategory changes
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Select or type subcategory"
-                  />
-                  <datalist id="subcategory-list">
-                    {availableSubcategories.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </datalist>
-                </div>
-                
-                <div className="flex items-center self-end h-[42px]">
-                  <span className="text-gray-500">/</span>
-                </div>
-
-                <div className="flex flex-col flex-1 min-w-[200px]">
-                  <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
-                    Slug <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
+      {view === 'editor' && (
+        <div className="relative">
+          {isLoadingArticle && (
+            <LoadingOverlay
+              isLoading={true}
+              text="Loading article..."
+              className="rounded-lg"
+            />
+          )}
+          <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center gap-4">
+              <LoadingButton
+                onClick={handleSave}
+                isLoading={isSaving}
+                loadingText="Saving..."
+                variant="outline"
+                className="md:flex hidden items-center gap-2"
+              >
+                <Save size={20} />
+                Save Draft
+              </LoadingButton>
+              <LoadingButton
+                onClick={handlePublish}
+                isLoading={isPublishing}
+                loadingText="Publishing..."
+                className="md:flex hidden items-center gap-2"
+              >
+                <ArrowDownToLine size={20} />
+                Publish
+              </LoadingButton>
+              {/* Mobile Save/Publish Icons */}
+              <div className="flex md:hidden items-center gap-2">
+                <button
+                  onClick={handleSave}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                  aria-label="Save Draft"
+                >
+                  <Save size={20} />
+                </button>
+                <button
+                  onClick={handlePublish}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                  aria-label="Publish"
+                >
+                  <ArrowDownToLine size={20} />
+                </button>
+              </div>
+              {lastSaved && (
+                <span className="text-sm text-gray-500 hidden md:inline">
+                  Last saved: {new Intl.RelativeTimeFormat().format(
+                    Math.round((lastSaved.getTime() - Date.now()) / 1000 / 60),
+                    'minute'
+                  )}
+                </span>
+              )}
+              {hasUnsavedChanges && (
+                <span className="text-sm text-yellow-600 hidden md:inline">
+                  ● Unsaved changes
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-4">
+              <LoadingButton
+                onClick={handleLoadPaths}
+                isLoading={isLoading}
+                loadingText="Refreshing..."
+                variant="ghost"
+                size="sm"
+                className="hidden md:inline-flex"
+              >
+                <RotateCw size={16} />
+              </LoadingButton>
+            
+              <button
+                onClick={handleClear}
+                className="md:flex hidden items-center gap-2 p-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors"
+              >
+                <X size={16} />
+                Clear
+              </button>
+              {/* Mobile Clear Icon */}
+              <button
+                onClick={handleClear}
+                className="flex md:hidden p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                aria-label="Clear"
+              >
+                <Trash2 size={20} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="min-h-screen bg-gray-100 p-4">
+            <div className="max-w-[1400px] mx-auto">
+              <div className="bg-white rounded-lg shadow mb-4 p-4">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-wrap items-start gap-2">
+                    <div className="flex flex-col min-w-[150px]">
+                      <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">
+                        Category
+                      </label>
                       <input
-                        id="slug"
-                        list="slug-list"
-                        value={slug}
-                        onChange={(e) => setSlug(e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                          slugError ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        id="category"
+                        list="category-list"
+                        value={category}
+                        onChange={(e) => {
+                          setCategory(e.target.value);
+                          setSubcategory(''); // Reset subcategory when category changes
+                          setSlug(''); // Reset slug when category changes
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         required
-                        placeholder="Select or type slug"
+                        placeholder="Select or type category"
                       />
-                      {slugError && (
-                        <p className="text-xs text-red-500 mt-1">{slugError}</p>
+                      <datalist id="category-list">
+                        {availableCategories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </datalist>
+                    </div>
+                    
+                    <div className="flex items-center self-end h-[42px]">
+                      <span className="text-gray-500">/</span>
+                    </div>
+
+                    <div className="flex flex-col min-w-[150px]">
+                      <label htmlFor="subcategory" className="text-sm font-medium text-gray-700 mb-1">
+                        Subcategory
+                      </label>
+                      <input
+                        id="subcategory"
+                        list="subcategory-list"
+                        value={subcategory}
+                        onChange={(e) => {
+                          setSubcategory(e.target.value);
+                          setSlug(''); // Reset slug when subcategory changes
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Select or type subcategory"
+                      />
+                      <datalist id="subcategory-list">
+                        {availableSubcategories.map(sub => (
+                          <option key={sub} value={sub}>{sub}</option>
+                        ))}
+                      </datalist>
+                    </div>
+                    
+                    <div className="flex items-center self-end h-[42px]">
+                      <span className="text-gray-500">/</span>
+                    </div>
+
+                    <div className="flex flex-col flex-1 min-w-[200px]">
+                      <label htmlFor="slug" className="text-sm font-medium text-gray-700 mb-1">
+                        Slug <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <input
+                            id="slug"
+                            list="slug-list"
+                            value={slug}
+                            onChange={(e) => setSlug(e.target.value)}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                              slugError ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            required
+                            placeholder="Select or type slug"
+                          />
+                          {slugError && (
+                            <p className="text-xs text-red-500 mt-1">{slugError}</p>
+                          )}
+                        </div>
+                        {doesCurrentPathExist() && (
+                          <LoadingButton
+                            onClick={handleLoadArticle}
+                            isLoading={isLoadingArticle}
+                            variant="outline"
+                            className="px-3 py-2"
+                            loadingText="Loading..."
+                          >
+                            <ArrowDownToLine size={20} />
+                            Get
+                          </LoadingButton>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SEO Section */}
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <button
+                      onClick={() => setIsSeoOpen(!isSeoOpen)}
+                      className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+                    >
+                      <span className="text-sm font-medium">SEO Metadata</span>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${
+                          seoScores.overall >= 80 ? 'bg-green-500' :
+                          seoScores.overall >= 60 ? 'bg-yellow-500' :
+                          'bg-red-500'
+                        }`} />
+                        <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+                      </div>
+                      {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </button>
+                    
+                    {isSeoOpen && (
+                      <div className="mt-4 space-y-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Title <span className="text-red-500">*</span>
+                                <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={seoMeta.title}
+                                onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                  seoMeta.title.length > SEO_LIMITS.title.max ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                                placeholder="Enter title"
+                              />
+                              <div className="flex justify-between mt-1">
+                                <p className={`text-xs ${
+                                  seoMeta.title.length > SEO_LIMITS.title.max ? 'text-red-500' :
+                                  seoMeta.title.length < SEO_LIMITS.title.min ? 'text-yellow-500' :
+                                  'text-green-500'
+                                }`}>
+                                  {seoMeta.title.length}/{SEO_LIMITS.title.max} characters
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Recommended: {SEO_LIMITS.title.min}-{SEO_LIMITS.title.max} characters
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Description <span className="text-red-500">*</span>
+                                <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                              </label>
+                              <textarea
+                                value={seoMeta.description}
+                                onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
+                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                  seoMeta.description.length > SEO_LIMITS.description.max ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                                placeholder="Enter description"
+                                rows={3}
+                              />
+                              <div className="flex justify-between mt-1">
+                                <p className={`text-xs ${
+                                  seoMeta.description.length > SEO_LIMITS.description.max ? 'text-red-500' :
+                                  seoMeta.description.length < SEO_LIMITS.description.min ? 'text-yellow-500' :
+                                  'text-green-500'
+                                }`}>
+                                  {seoMeta.description.length}/{SEO_LIMITS.description.max} characters
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Recommended: {SEO_LIMITS.description.min}-{SEO_LIMITS.description.max} characters
+                                </p>
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Keywords
+                              </label>
+                              <input
+                                type="text"
+                                value={seoMeta.keywords.join(', ')}
+                                onChange={(e) => setSeoMeta({ 
+                                  ...seoMeta, 
+                                  keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                                })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Enter keywords separated by commas"
+                              />
+                              <div className="flex justify-between mt-1">
+                                <p className={`text-xs ${
+                                  seoMeta.keywords.length > SEO_LIMITS.keywords.max ? 'text-red-500' :
+                                  seoMeta.keywords.length < SEO_LIMITS.keywords.min ? 'text-yellow-500' :
+                                  'text-green-500'
+                                }`}>
+                                  {seoMeta.keywords.length} keywords
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Recommended: {SEO_LIMITS.keywords.min}-{SEO_LIMITS.keywords.max} keywords
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Score Breakdown Dropdown */}
+                            <div className="bg-gray-50 rounded-lg">
+                              <button
+                                onClick={() => setIsScoreBreakdownOpen(!isScoreBreakdownOpen)}
+                                className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <span className="text-sm font-medium text-gray-700">SEO Score Breakdown</span>
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-2 w-2 rounded-full ${
+                                    seoScores.overall >= 80 ? 'bg-green-500' :
+                                    seoScores.overall >= 60 ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  }`} />
+                                  <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+                                </div>
+                              </button>
+                              
+                              {isScoreBreakdownOpen && (
+                                <div className="p-4 space-y-2 border-t border-gray-200">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Title</span>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`h-2 w-2 rounded-full ${
+                                        seoScores.title >= 80 ? 'bg-green-500' :
+                                        seoScores.title >= 60 ? 'bg-yellow-500' :
+                                        'bg-red-500'
+                                      }`} />
+                                      <span className="text-sm text-gray-500">{seoScores.title}%</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Description</span>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`h-2 w-2 rounded-full ${
+                                        seoScores.description >= 80 ? 'bg-green-500' :
+                                        seoScores.description >= 60 ? 'bg-yellow-500' :
+                                        'bg-red-500'
+                                      }`} />
+                                      <span className="text-sm text-gray-500">{seoScores.description}%</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Keywords</span>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`h-2 w-2 rounded-full ${
+                                        seoScores.keywords >= 80 ? 'bg-green-500' :
+                                        seoScores.keywords >= 60 ? 'bg-yellow-500' :
+                                        'bg-red-500'
+                                      }`} />
+                                      <span className="text-sm text-gray-500">{seoScores.keywords}%</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Social Media Preview Dropdown */}
+                            <div className="bg-gray-50 rounded-lg">
+                              <button
+                                onClick={() => setIsSocialPreviewOpen(!isSocialPreviewOpen)}
+                                className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <span className="text-sm font-medium text-gray-700">Social Media Preview</span>
+                                {isSocialPreviewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                              </button>
+                              
+                              {isSocialPreviewOpen && (
+                                <div className="p-4 space-y-6 border-t border-gray-200">
+                                  {/* Google Preview */}
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Google Search Result</h4>
+                                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden p-4">
+                                      <div className="text-[#1a0dab] text-xl mb-1 hover:underline cursor-pointer line-clamp-1">
+                                        {seoMeta.title || 'Your title will appear here'}
+                                      </div>
+                                      <div className="text-[#006621] text-[14px] mb-1">
+                                        yallburru.com.au › {category} {subcategory ? ` › ${subcategory}` : ''} › {slug}
+                                      </div>
+                                      <div className="text-[#545454] text-[14px] line-clamp-2">
+                                        {seoMeta.description || 'Your description will appear here'}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Social Media Previews Grid */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Facebook Preview */}
+                                    <div>
+                                      <h4 className="text-sm font-medium text-gray-700 mb-2">Facebook</h4>
+                                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '500px' }}>
+                                        <div className="aspect-[1.91/1] bg-gray-100 flex items-center justify-center">
+                                          <span className="text-sm text-gray-500">1200 x 630px</span>
+                                        </div>
+                                        <div className="p-3">
+                                          <div className="text-[13px] text-[#385898] uppercase tracking-wide font-medium mb-1">yallburru.com.au</div>
+                                          <div className="text-[16px] font-bold text-[#1c1e21] mb-2 line-clamp-2">
+                                            {seoMeta.title || 'Your title will appear here'}
+                                          </div>
+                                          <div className="text-[14px] text-[#606770] line-clamp-3">
+                                            {seoMeta.description || 'Your description will appear here'}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Twitter Preview */}
+                                    <div>
+                                      <h4 className="text-sm font-medium text-gray-700 mb-2">Twitter</h4>
+                                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '440px' }}>
+                                        <div className="aspect-[2/1] bg-gray-100 flex items-center justify-center">
+                                          <span className="text-sm text-gray-500">800 x 418px</span>
+                                        </div>
+                                        <div className="p-3">
+                                          <div className="text-[15px] font-bold text-[#0f1419] mb-1 line-clamp-2">
+                                            {seoMeta.title || 'Your title will appear here'}
+                                          </div>
+                                          <div className="text-[13px] text-[#536471] mb-2 line-clamp-2">
+                                            {seoMeta.description || 'Your description will appear here'}
+                                          </div>
+                                          <div className="text-[13px] text-[#536471] flex items-center gap-1">
+                                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S13.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g></svg>
+                                            yallburru.com.au
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       )}
                     </div>
-                    {doesCurrentPathExist() && (
-                      <LoadingButton
-                        onClick={handleLoadArticle}
-                        isLoading={isLoadingArticle}
-                        variant="outline"
-                        className="px-3 py-2"
-                        loadingText="Loading..."
-                      >
-                        <ArrowDownToLine size={20} />
-                        Get
-                      </LoadingButton>
+                  </div>
+                </div>
+              </div>
+
+              {/* Editor and Resources Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4 mb-8">
+                <div className="bg-white rounded-lg shadow">
+                  <MenuBar editor={editor} />
+                  <div className="p-4">
+                    <EditorContent editor={editor} />
+                  </div>
+                </div>
+
+                {/* Resources Panel */}
+                <div className="space-y-4">
+                  <ResourcePanel
+                    resources={resources}
+                    onResourcesChange={setResources}
+                  />
+                </div>
+              </div>
+
+              {/* Preview Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4">
+                {/* Article Preview */}
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-lg font-semibold mb-4">Content Preview</h2>
+                  <div 
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
+                </div>
+
+                {/* Resources Preview */}
+                <div className="space-y-4">
+                  <div className="bg-white rounded-lg shadow">
+                    <div className="p-4 border-b border-gray-100">
+                      <h2 className="text-lg font-semibold">Resources Preview</h2>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      {resources.length === 0 ? (
+                        <p className="text-sm text-gray-500 text-center">No resources added yet</p>
+                      ) : (
+                        resources.map((resource, index) => (
+                          <ResourcePreview key={index} resource={resource} />
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+       )}
+
+      {view === 'seo' && (
+        <div className="p-4 border-t border-gray-200 pt-4 mt-4">
+          <button
+            onClick={() => setIsSeoOpen(!isSeoOpen)}
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+          >
+            <span className="text-sm font-medium">SEO Metadata</span>
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${
+                seoScores.overall >= 80 ? 'bg-green-500' :
+                seoScores.overall >= 60 ? 'bg-yellow-500' :
+                'bg-red-500'
+              }`} />
+              <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+            </div>
+            {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+          
+          {isSeoOpen && (
+            <div className="mt-4 space-y-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Title <span className="text-red-500">*</span>
+                      <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={seoMeta.title}
+                      onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                        seoMeta.title.length > SEO_LIMITS.title.max ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter title"
+                    />
+                    <div className="flex justify-between mt-1">
+                      <p className={`text-xs ${
+                        seoMeta.title.length > SEO_LIMITS.title.max ? 'text-red-500' :
+                        seoMeta.title.length < SEO_LIMITS.title.min ? 'text-yellow-500' :
+                        'text-green-500'
+                      }`}>
+                        {seoMeta.title.length}/{SEO_LIMITS.title.max} characters
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Recommended: {SEO_LIMITS.title.min}-{SEO_LIMITS.title.max} characters
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Description <span className="text-red-500">*</span>
+                      <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
+                    </label>
+                    <textarea
+                      value={seoMeta.description}
+                      onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                        seoMeta.description.length > SEO_LIMITS.description.max ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter description"
+                      rows={3}
+                    />
+                    <div className="flex justify-between mt-1">
+                      <p className={`text-xs ${
+                        seoMeta.description.length > SEO_LIMITS.description.max ? 'text-red-500' :
+                        seoMeta.description.length < SEO_LIMITS.description.min ? 'text-yellow-500' :
+                        'text-green-500'
+                      }`}>
+                        {seoMeta.description.length}/{SEO_LIMITS.description.max} characters
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Recommended: {SEO_LIMITS.description.min}-{SEO_LIMITS.description.max} characters
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Keywords
+                    </label>
+                    <input
+                      type="text"
+                      value={seoMeta.keywords.join(', ')}
+                      onChange={(e) => setSeoMeta({ 
+                        ...seoMeta, 
+                        keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="Enter keywords separated by commas"
+                    />
+                    <div className="flex justify-between mt-1">
+                      <p className={`text-xs ${
+                        seoMeta.keywords.length > SEO_LIMITS.keywords.max ? 'text-red-500' :
+                        seoMeta.keywords.length < SEO_LIMITS.keywords.min ? 'text-yellow-500' :
+                        'text-green-500'
+                      }`}>
+                        {seoMeta.keywords.length} keywords
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Recommended: {SEO_LIMITS.keywords.min}-{SEO_LIMITS.keywords.max} keywords
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Score Breakdown Dropdown */}
+                  <div className="bg-gray-50 rounded-lg">
+                    <button
+                      onClick={() => setIsScoreBreakdownOpen(!isScoreBreakdownOpen)}
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <span className="text-sm font-medium text-gray-700">SEO Score Breakdown</span>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${
+                          seoScores.overall >= 80 ? 'bg-green-500' :
+                          seoScores.overall >= 60 ? 'bg-yellow-500' :
+                          'bg-red-500'
+                        }`} />
+                        <span className="text-sm text-gray-500">{seoScores.overall}%</span>
+                      </div>
+                    </button>
+                    
+                    {isScoreBreakdownOpen && (
+                      <div className="p-4 space-y-2 border-t border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Title</span>
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${
+                              seoScores.title >= 80 ? 'bg-green-500' :
+                              seoScores.title >= 60 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`} />
+                            <span className="text-sm text-gray-500">{seoScores.title}%</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Description</span>
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${
+                              seoScores.description >= 80 ? 'bg-green-500' :
+                              seoScores.description >= 60 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`} />
+                            <span className="text-sm text-gray-500">{seoScores.description}%</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Keywords</span>
+                          <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${
+                              seoScores.keywords >= 80 ? 'bg-green-500' :
+                              seoScores.keywords >= 60 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`} />
+                            <span className="text-sm text-gray-500">{seoScores.keywords}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Social Media Preview Dropdown */}
+                  <div className="bg-gray-50 rounded-lg">
+                    <button
+                      onClick={() => setIsSocialPreviewOpen(!isSocialPreviewOpen)}
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <span className="text-sm font-medium text-gray-700">Social Media Preview</span>
+                      {isSocialPreviewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </button>
+                    
+                    {isSocialPreviewOpen && (
+                      <div className="p-4 space-y-6 border-t border-gray-200">
+                        {/* Google Preview */}
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-2">Google Search Result</h4>
+                          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden p-4">
+                            <div className="text-[#1a0dab] text-xl mb-1 hover:underline cursor-pointer line-clamp-1">
+                              {seoMeta.title || 'Your title will appear here'}
+                            </div>
+                            <div className="text-[#006621] text-[14px] mb-1">
+                              yallburru.com.au › {category} {subcategory ? ` › ${subcategory}` : ''} › {slug}
+                            </div>
+                            <div className="text-[#545454] text-[14px] line-clamp-2">
+                              {seoMeta.description || 'Your description will appear here'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Social Media Previews Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Facebook Preview */}
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Facebook</h4>
+                            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '500px' }}>
+                              <div className="aspect-[1.91/1] bg-gray-100 flex items-center justify-center">
+                                <span className="text-sm text-gray-500">1200 x 630px</span>
+                              </div>
+                              <div className="p-3">
+                                <div className="text-[13px] text-[#385898] uppercase tracking-wide font-medium mb-1">yallburru.com.au</div>
+                                <div className="text-[16px] font-bold text-[#1c1e21] mb-2 line-clamp-2">
+                                  {seoMeta.title || 'Your title will appear here'}
+                                </div>
+                                <div className="text-[14px] text-[#606770] line-clamp-3">
+                                  {seoMeta.description || 'Your description will appear here'}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Twitter Preview */}
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Twitter</h4>
+                            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '440px' }}>
+                              <div className="aspect-[2/1] bg-gray-100 flex items-center justify-center">
+                                <span className="text-sm text-gray-500">800 x 418px</span>
+                              </div>
+                              <div className="p-3">
+                                <div className="text-[15px] font-bold text-[#0f1419] mb-1 line-clamp-2">
+                                  {seoMeta.title || 'Your title will appear here'}
+                                </div>
+                                <div className="text-[13px] text-[#536471] mb-2 line-clamp-2">
+                                  {seoMeta.description || 'Your description will appear here'}
+                                </div>
+                                <div className="text-[13px] text-[#536471] flex items-center gap-1">
+                                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S13.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g></svg>
+                                  yallburru.com.au
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
-
-              {/* SEO Section */}
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <button
-                  onClick={() => setIsSeoOpen(!isSeoOpen)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-                >
-                  <span className="text-sm font-medium">SEO Metadata</span>
-                  <div className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${
-                      seoScores.overall >= 80 ? 'bg-green-500' :
-                      seoScores.overall >= 60 ? 'bg-yellow-500' :
-                      'bg-red-500'
-                    }`} />
-                    <span className="text-sm text-gray-500">{seoScores.overall}%</span>
-                  </div>
-                  {isSeoOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </button>
-                
-                {isSeoOpen && (
-                  <div className="mt-4 space-y-4">
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Title <span className="text-red-500">*</span>
-                            <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={seoMeta.title}
-                            onChange={(e) => setSeoMeta({ ...seoMeta, title: e.target.value })}
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                              seoMeta.title.length > SEO_LIMITS.title.max ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                            placeholder="Enter title"
-                          />
-                          <div className="flex justify-between mt-1">
-                            <p className={`text-xs ${
-                              seoMeta.title.length > SEO_LIMITS.title.max ? 'text-red-500' :
-                              seoMeta.title.length < SEO_LIMITS.title.min ? 'text-yellow-500' :
-                              'text-green-500'
-                            }`}>
-                              {seoMeta.title.length}/{SEO_LIMITS.title.max} characters
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Recommended: {SEO_LIMITS.title.min}-{SEO_LIMITS.title.max} characters
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Description <span className="text-red-500">*</span>
-                            <span className="text-xs text-gray-500 ml-1">(required for publishing)</span>
-                          </label>
-                          <textarea
-                            value={seoMeta.description}
-                            onChange={(e) => setSeoMeta({ ...seoMeta, description: e.target.value })}
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                              seoMeta.description.length > SEO_LIMITS.description.max ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                            placeholder="Enter description"
-                            rows={3}
-                          />
-                          <div className="flex justify-between mt-1">
-                            <p className={`text-xs ${
-                              seoMeta.description.length > SEO_LIMITS.description.max ? 'text-red-500' :
-                              seoMeta.description.length < SEO_LIMITS.description.min ? 'text-yellow-500' :
-                              'text-green-500'
-                            }`}>
-                              {seoMeta.description.length}/{SEO_LIMITS.description.max} characters
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Recommended: {SEO_LIMITS.description.min}-{SEO_LIMITS.description.max} characters
-                            </p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Keywords
-                          </label>
-                          <input
-                            type="text"
-                            value={seoMeta.keywords.join(', ')}
-                            onChange={(e) => setSeoMeta({ 
-                              ...seoMeta, 
-                              keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
-                            })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Enter keywords separated by commas"
-                          />
-                          <div className="flex justify-between mt-1">
-                            <p className={`text-xs ${
-                              seoMeta.keywords.length > SEO_LIMITS.keywords.max ? 'text-red-500' :
-                              seoMeta.keywords.length < SEO_LIMITS.keywords.min ? 'text-yellow-500' :
-                              'text-green-500'
-                            }`}>
-                              {seoMeta.keywords.length} keywords
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Recommended: {SEO_LIMITS.keywords.min}-{SEO_LIMITS.keywords.max} keywords
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Score Breakdown Dropdown */}
-                        <div className="bg-gray-50 rounded-lg">
-                          <button
-                            onClick={() => setIsScoreBreakdownOpen(!isScoreBreakdownOpen)}
-                            className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
-                          >
-                            <span className="text-sm font-medium text-gray-700">SEO Score Breakdown</span>
-                            <div className="flex items-center gap-2">
-                              <div className={`h-2 w-2 rounded-full ${
-                                seoScores.overall >= 80 ? 'bg-green-500' :
-                                seoScores.overall >= 60 ? 'bg-yellow-500' :
-                                'bg-red-500'
-                              }`} />
-                              <span className="text-sm text-gray-500">{seoScores.overall}%</span>
-                            </div>
-                          </button>
-                          
-                          {isScoreBreakdownOpen && (
-                            <div className="p-4 space-y-2 border-t border-gray-200">
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600">Title</span>
-                                <div className="flex items-center gap-2">
-                                  <div className={`h-2 w-2 rounded-full ${
-                                    seoScores.title >= 80 ? 'bg-green-500' :
-                                    seoScores.title >= 60 ? 'bg-yellow-500' :
-                                    'bg-red-500'
-                                  }`} />
-                                  <span className="text-sm text-gray-500">{seoScores.title}%</span>
-                                </div>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600">Description</span>
-                                <div className="flex items-center gap-2">
-                                  <div className={`h-2 w-2 rounded-full ${
-                                    seoScores.description >= 80 ? 'bg-green-500' :
-                                    seoScores.description >= 60 ? 'bg-yellow-500' :
-                                    'bg-red-500'
-                                  }`} />
-                                  <span className="text-sm text-gray-500">{seoScores.description}%</span>
-                                </div>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600">Keywords</span>
-                                <div className="flex items-center gap-2">
-                                  <div className={`h-2 w-2 rounded-full ${
-                                    seoScores.keywords >= 80 ? 'bg-green-500' :
-                                    seoScores.keywords >= 60 ? 'bg-yellow-500' :
-                                    'bg-red-500'
-                                  }`} />
-                                  <span className="text-sm text-gray-500">{seoScores.keywords}%</span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Social Media Preview Dropdown */}
-                        <div className="bg-gray-50 rounded-lg">
-                          <button
-                            onClick={() => setIsSocialPreviewOpen(!isSocialPreviewOpen)}
-                            className="w-full flex items-center justify-between p-4 hover:bg-gray-100 rounded-lg transition-colors"
-                          >
-                            <span className="text-sm font-medium text-gray-700">Social Media Preview</span>
-                            {isSocialPreviewOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                          </button>
-                          
-                          {isSocialPreviewOpen && (
-                            <div className="p-4 space-y-6 border-t border-gray-200">
-                              {/* Google Preview */}
-                              <div>
-                                <h4 className="text-sm font-medium text-gray-700 mb-2">Google Search Result</h4>
-                                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden p-4">
-                                  <div className="text-[#1a0dab] text-xl mb-1 hover:underline cursor-pointer line-clamp-1">
-                                    {seoMeta.title || 'Your title will appear here'}
-                                  </div>
-                                  <div className="text-[#006621] text-[14px] mb-1">
-                                    yallburru.com.au › {category} {subcategory ? ` › ${subcategory}` : ''} › {slug}
-                                  </div>
-                                  <div className="text-[#545454] text-[14px] line-clamp-2">
-                                    {seoMeta.description || 'Your description will appear here'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Social Media Previews Grid */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Facebook Preview */}
-                                <div>
-                                  <h4 className="text-sm font-medium text-gray-700 mb-2">Facebook</h4>
-                                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '500px' }}>
-                                    <div className="aspect-[1.91/1] bg-gray-100 flex items-center justify-center">
-                                      <span className="text-sm text-gray-500">1200 x 630px</span>
-                                    </div>
-                                    <div className="p-3">
-                                      <div className="text-[13px] text-[#385898] uppercase tracking-wide font-medium mb-1">yallburru.com.au</div>
-                                      <div className="text-[16px] font-bold text-[#1c1e21] mb-2 line-clamp-2">
-                                        {seoMeta.title || 'Your title will appear here'}
-                                      </div>
-                                      <div className="text-[14px] text-[#606770] line-clamp-3">
-                                        {seoMeta.description || 'Your description will appear here'}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Twitter Preview */}
-                                <div>
-                                  <h4 className="text-sm font-medium text-gray-700 mb-2">Twitter</h4>
-                                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden" style={{ maxWidth: '440px' }}>
-                                    <div className="aspect-[2/1] bg-gray-100 flex items-center justify-center">
-                                      <span className="text-sm text-gray-500">800 x 418px</span>
-                                    </div>
-                                    <div className="p-3">
-                                      <div className="text-[15px] font-bold text-[#0f1419] mb-1 line-clamp-2">
-                                        {seoMeta.title || 'Your title will appear here'}
-                                      </div>
-                                      <div className="text-[13px] text-[#536471] mb-2 line-clamp-2">
-                                        {seoMeta.description || 'Your description will appear here'}
-                                      </div>
-                                      <div className="text-[13px] text-[#536471] flex items-center gap-1">
-                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true"><g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S13.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g></svg>
-                                        yallburru.com.au
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  )}
-                </div>
-              </div>
             </div>
-          </div>
-
-          {/* Editor and Resources Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4 mb-8">
-            <div className="bg-white rounded-lg shadow">
-              <MenuBar editor={editor} />
-              <div className="p-4">
-                <EditorContent editor={editor} />
-              </div>
-            </div>
-
-            {/* Resources Panel */}
-            <div className="space-y-4">
-              <ResourcePanel
-                resources={resources}
-                onResourcesChange={setResources}
-              />
-            </div>
-          </div>
-
-          {/* Preview Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-4">
-            {/* Article Preview */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">Content Preview</h2>
-              <div 
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            </div>
-
-            {/* Resources Preview */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-lg shadow">
-                <div className="p-4 border-b border-gray-100">
-                  <h2 className="text-lg font-semibold">Resources Preview</h2>
-                </div>
-                <div className="p-4 space-y-3">
-                  {resources.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center">No resources added yet</p>
-                  ) : (
-                    resources.map((resource, index) => (
-                      <ResourcePreview key={index} resource={resource} />
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
-      </div>
+      )}
+
+      {view === 'schedule' && (
+        <div className="flex-1">
+          <ScheduleTab />
+        </div>
+      )}
+    </div>
   );
 };
 

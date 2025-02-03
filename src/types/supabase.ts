@@ -264,6 +264,62 @@ export type Database = {
         }
         Relationships: []
       }
+      schedules: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          start_time: string
+          end_time: string
+          location: string | null
+          category: string | null
+          created_at: string
+          updated_at: string
+          created_by: string
+          status: string
+          recurring_rule: { [key: string]: any } | null
+          metadata: { [key: string]: any } | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          start_time: string
+          end_time: string
+          location?: string | null
+          category?: string | null
+          created_at?: string
+          updated_at?: string
+          created_by: string
+          status?: string
+          recurring_rule?: { [key: string]: any } | null
+          metadata?: { [key: string]: any } | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          start_time?: string
+          end_time?: string
+          location?: string | null
+          category?: string | null
+          created_at?: string
+          updated_at?: string
+          created_by?: string
+          status?: string
+          recurring_rule?: { [key: string]: any } | null
+          metadata?: { [key: string]: any } | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profile"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

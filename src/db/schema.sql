@@ -79,4 +79,51 @@ $$ language 'plpgsql';
 CREATE TRIGGER update_articles_updated_at
     BEFORE UPDATE ON articles
     FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TABLE IF NOT EXISTS schedules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    description TEXT,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    location TEXT,
+    category TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_by UUID REFERENCES user_profile(id),
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'completed')),
+    recurring_rule JSONB, -- For recurring events (optional)
+    metadata JSONB -- For additional fields that might come from CSV
+);
+
+-- Add indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_schedules_start_time ON schedules(start_time);
+CREATE INDEX IF NOT EXISTS idx_schedules_category ON schedules(category);
+CREATE INDEX IF NOT EXISTS idx_schedules_status ON schedules(status);
+
+-- Add RLS policies
+ALTER TABLE schedules ENABLE ROW LEVEL SECURITY;
+
+-- Allow anyone to read active schedules
+CREATE POLICY "Anyone can read active schedules"
+    ON schedules FOR SELECT
+    USING (status = 'active');
+
+-- Allow authenticated users to manage schedules
+CREATE POLICY "Authenticated users can manage schedules"
+    ON schedules FOR ALL
+    TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM user_profile
+            WHERE id = auth.uid()
+            AND role = 'admin'
+        )
+    );
+
+-- Update trigger for updated_at
+CREATE TRIGGER update_schedules_updated_at
+    BEFORE UPDATE ON schedules
+    FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column(); 

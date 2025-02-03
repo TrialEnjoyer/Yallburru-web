@@ -6,6 +6,7 @@ import {
   Menu, 
   Server,
   X,
+  Calendar,
   LayoutDashboard,
   Pencil,
   InboxIcon,
@@ -25,6 +26,7 @@ function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/admin' },
     { name: 'Site Editor', icon: <Pencil size={20} />, href: '/admin/editor' },
     { name: 'Form Submissions', icon: <InboxIcon size={20} />, href: '/admin/submissions' },
+    { name: 'Schedule', icon: <Calendar size={20} />, href: '/admin/schedule' },
     {
       name: 'Settings',
       href: '/admin/settings',

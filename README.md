@@ -53,6 +53,7 @@ Current Features:
 - [ ] Email template customization
 - [ ] Service management interface
 - [ ] Backup and restore functionality
+- [x] Assisted shiftcare notification system.
 
 ### Technical Improvements
 - [-] Implement server-side rendering for better SEO
