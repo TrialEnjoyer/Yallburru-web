@@ -188,6 +188,16 @@ const MORNING_REMINDER_HOUR = 6;
 const EVENING_REMINDER_HOUR = 17;
 const EVENING_REMINDER_MINUTE = 30;
 
+// Add new constants for care work shift types
+const CARE_WORK_SHIFT_TYPES = [
+  "Assistance with daily living",
+  "Garden lawns light",
+  "Domestic assistance",
+  "Individual social support",
+  "Domestic assistance",
+  "Personal Care"
+];
+
 // Add new functions before the return statement
 const checkAndSetLastUpload = () => {
   try {
@@ -251,6 +261,8 @@ export default function ScheduleTab() {
   const [selectedSmsShift, setSelectedSmsShift] = useState<SmsModalShift>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showOnlyCareWork, setShowOnlyCareWork] = useState(false);
+  const [showOnlyCareWorkUpcoming, setShowOnlyCareWorkUpcoming] = useState(false);
 
   const CACHE_KEY = 'compliance_data_cache';
 
@@ -890,6 +902,32 @@ and have a great shift!`;
     };
   }, [checkUploadReminders]); // Only depend on the memoized callback
 
+  // Add filter function for care work shifts
+  const filterCareWorkShifts = (shifts: DbSchedule[]): DbSchedule[] => {
+    if (!shifts) return [];
+    return shifts.filter(shift => CARE_WORK_SHIFT_TYPES.includes(shift.shift_type));
+  };
+
+  // Update the staff compliance section to include the filter
+  const getFilteredComplianceData = (): StaffCompliance[] => {
+    if (!showOnlyCareWork) return complianceData;
+    
+    return complianceData.map(staff => ({
+      ...staff,
+      incompleteShifts: filterCareWorkShifts(staff.incompleteShifts),
+      totalShifts: filterCareWorkShifts(staff.incompleteShifts).length,
+      missingClockIn: filterCareWorkShifts(staff.incompleteShifts.filter(s => !s.clockin_date_time)).length,
+      missingClockOut: filterCareWorkShifts(staff.incompleteShifts.filter(s => !s.clockout_date_time)).length,
+      missingNotes: filterCareWorkShifts(staff.incompleteShifts.filter(s => !s.note)).length,
+    })).filter(staff => staff.totalShifts > 0);
+  };
+
+  // Update the upcoming shifts section to include the filter
+  const getFilteredUpcomingShifts = (): UpcomingShift[] => {
+    if (!showOnlyCareWorkUpcoming) return upcomingShifts;
+    return upcomingShifts.filter(shift => CARE_WORK_SHIFT_TYPES.includes(shift.shift_type));
+  };
+
   return (
     <div className="min-h-[600px] p-4">
       {/* Header */}
@@ -986,12 +1024,31 @@ and have a great shift!`;
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Non-compliant Staff List */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4">Staff Requiring Attention</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Staff Requiring Attention</h3>
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Care Work Only</span>
+                    <button
+                      onClick={() => setShowOnlyCareWork(!showOnlyCareWork)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
+                        showOnlyCareWork ? 'bg-sky-600' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`${
+                          showOnlyCareWork ? 'translate-x-6' : 'translate-x-1'
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                      />
+                    </button>
+                  </label>
+                </div>
+              </div>
               <div className="space-y-4">
-                {complianceData.length === 0 ? (
+                {getFilteredComplianceData().length === 0 ? (
                   <p className="text-gray-500 text-center py-4">All staff are up to date with their shift requirements!</p>
                 ) : (
-                  complianceData.map((staff) => {
+                  getFilteredComplianceData().map((staff) => {
                     const isExpanded = expandedStaff.has(staff.staff_id);
                     const totalMissing = getTotalMissingItems(staff);
 
@@ -1062,24 +1119,41 @@ and have a great shift!`;
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Upcoming Shifts</h3>
-                {!notificationsEnabled && (
-                  <button
-                    onClick={() => void Notification.requestPermission().then(
-                      permission => setNotificationsEnabled(permission === 'granted')
-                    )}
-                    className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
-                  >
-                    <Bell className="w-4 h-4" />
-                    Enable Notifications
-                  </button>
-                )}
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm text-gray-600">
+                    <span>Care Work Only</span>
+                    <button
+                      onClick={() => setShowOnlyCareWorkUpcoming(!showOnlyCareWorkUpcoming)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 ${
+                        showOnlyCareWorkUpcoming ? 'bg-sky-600' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`${
+                          showOnlyCareWorkUpcoming ? 'translate-x-6' : 'translate-x-1'
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                      />
+                    </button>
+                  </label>
+                  {!notificationsEnabled && (
+                    <button
+                      onClick={() => void Notification.requestPermission().then(
+                        permission => setNotificationsEnabled(permission === 'granted')
+                      )}
+                      className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
+                    >
+                      <Bell className="w-4 h-4" />
+                      Enable Notifications
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="space-y-4">
-                {upcomingShifts.length === 0 ? (
+                {getFilteredUpcomingShifts().length === 0 ? (
                   <p className="text-gray-500 text-center py-4">No upcoming shifts for staff requiring attention</p>
                 ) : (
                     //first five
-                    upcomingShifts.slice(0, 5).map((shift) => {
+                    getFilteredUpcomingShifts().slice(0, 5).map((shift) => {
                     const status = getShiftStatus(shift);
                     return (
                       <div 
