@@ -11,10 +11,10 @@ export default function SchedulePage() {
 
       <div className="min-h-screen bg-gray-100">
         <div className="max-w-7xl mx-auto p-4 lg:p-8">
-          <h1 className="text-2xl font-bold mb-8">Schedule Management</h1>
+          <h1 className="text-2xl font-bold mb-8">Schedule Management - DISSABLED</h1>
           
           <div className="bg-white rounded-lg shadow-sm">
-            <ScheduleTab />
+            {/*<ScheduleTab />*/}
           </div>
         </div>
       </div>

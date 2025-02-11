@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Calendar as CalendarIcon, Upload, X, MapPin, Clock, User, FileText, ChevronDown, Bell, SquareArrowUpRightIcon, HelpCircle } from 'lucide-react';
 import { supabase } from '~/utils/supabase';
