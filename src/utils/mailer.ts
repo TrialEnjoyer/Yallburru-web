@@ -246,7 +246,7 @@ export async function sendEmail(mailOptions: Mail): Promise<void> {
     // Send both emails
     await Promise.all([
       transporter.sendMail(userEmailData),
-      //transporter.sendMail(adminEmailData),
+      transporter.sendMail(adminEmailData),
     ]);
 
   } catch (error: unknown) {
