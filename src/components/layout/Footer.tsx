@@ -25,9 +25,9 @@ export default function Footer() {
               Providing Elder Care & Disability Support with Compassion and Cultural Understanding
             </p>
             <div className="space-y-3">
-              <a href="tel:0756325727" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
+              <a href="tel:1300071157" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
                 <Phone className="w-4 h-4" />
-                (07) 5632 5727
+                1300 071 157
               </a>
               <a href="mailto:contact@yallburru.org.au" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
                 <Mail className="w-4 h-4" />

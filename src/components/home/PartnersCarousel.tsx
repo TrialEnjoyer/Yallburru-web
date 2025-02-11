@@ -10,7 +10,7 @@ const partners = [
   { name: "Crosslife Property", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6Tvt8W40nGcu6ELDsJVwYW1pZ4r3BMFAm5PoiN" },
   { name: "MK-Therapy", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TElyTj0CgzWkNGdLZ7t2ayfT0X4hixwMmAuRU" },
   { name: "TrilogyCare", logo:"https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TqPIK0jkzok7lj1Mtvgsz2NcV5YauEm9pwDOh" },//logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TC2n9Kv4gb3Qmd9UXsr2FqKvpVjoPt6uCcAJN" },
-  { name: "NDIS", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6T8RfHW38rYdWB4IRU6mJhTZpqLrxcQCjvVlt5" },
+  //{ name: "NDIS", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6T8RfHW38rYdWB4IRU6mJhTZpqLrxcQCjvVlt5" },
   { name: "Back On Your Feed Podiatry", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TGxjgZe0Ib9jiwHka0hFXD8qzo5spC2x7lEvW" },
   { name: "NIAA", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TeoX152N9gpDjnzF17GYwCRWXPUvy2KEL543m" },
   { name: "Balance Mobility", logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TqTwasgzok7lj1Mtvgsz2NcV5YauEm9pwDOh6"},

@@ -75,7 +75,7 @@ export default function Contact() {
               className="flex flex-wrap justify-center gap-4"
             >
               <a 
-                href="tel:0756325727"
+                href="tel:075632"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-900 rounded-full
                          hover:bg-sky-50 transition-all duration-300 transform hover:-translate-y-1"
               >
@@ -113,8 +113,8 @@ export default function Contact() {
                     title: "Call Us",
                     description: "Available Mon-Fri, 8:30am-4:30pm",
                     action: {
-                      text: "(07) 5632 5727",
-                      href: "tel:0756325727"
+                      text: "1300 071 157",
+                      href: "tel:1300071157"
                     }
                   },
                   {

@@ -26,174 +26,90 @@ function generateEmailHTML(content: string, name: string, subject: string): stri
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Yallburru Community Services</title>
-          <style>
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-              line-height: 1.6;
-              color: #374151;
-              margin: 0;
-              padding: 0;
-              background-color: #f3f4f6;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              border-radius: 8px;
-              overflow: hidden;
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              word-wrap: break-word;
-              overflow-wrap: break-word;
-              word-break: break-word;
-            }
-            .header {
-              background: linear-gradient(to right, #FFFFFF, #FFFFFF);
-              color: white;
-              padding: 20px;
-              text-align: center;
-            }
-            .logo {
-              max-width: 200px;
-              height: auto;
-            }
-            .content {
-              padding: 40px 30px;
-              color: #374151;
-              word-wrap: break-word;
-              overflow-wrap: break-word;
-              word-break: break-word;
-            }
-            .content p {
-              margin: 0 0 16px 0;
-              padding: 0;
-              max-width: 100%;
-              word-wrap: break-word;
-              overflow-wrap: break-word;
-              word-break: break-word;
-            }
-            .content p:last-child {
-              margin-bottom: 0;
-            }
-            .footer {
-              text-align: center;
-              padding: 20px;
-              font-size: 0.875rem;
-              color: #6b7280;
-              border-top: 1px solid #e5e7eb;
-              background-color: #f9fafb;
-              word-wrap: break-word;
-              overflow-wrap: break-word;
-              word-break: break-word;
-            }
-            .footer p {
-              margin: 8px 0;
-            }
-            .footer a {
-              color: #0369a1;
-              text-decoration: none;
-              word-wrap: break-word;
-              overflow-wrap: break-word;
-              word-break: break-word;
-            }
-            .footer a:hover {
-              text-decoration: underline;
-            }
-            .button {
-              display: inline-block;
-              padding: 12px 24px;
-              background-color: #0284c7;
-              color: white;
-              text-decoration: none;
-              border-radius: 6px;
-              margin-top: 20px;
-            }
-            * {
-              max-width: 100%;
-              -ms-word-break: break-all;
-              word-break: break-all;
-              word-break: break-word;
-              -webkit-hyphens: auto;
-              -moz-hyphens: auto;
-              hyphens: auto;
-            }
-            @media only screen and (max-width: 600px) {
-              .container {
-                width: 100%;
-                border-radius: 0;
-              }
-              .content {
-                padding: 30px 20px;
-              }
-            }
-            .divider {
-              border-bottom: 1px solid #e5e7eb;
-              margin: 20px 0;
-            }
-            .message-container {
-              margin: 20px 0;
-              padding: 20px;
-              border: 1px solid #e5e7eb;
-              border-radius: 6px;
-              background-color: #f9fafb;
-            }
-
-            .greeting {
-              font-size: 1.25rem;
-              font-weight: 600;
-              color: #0c4a6e;
-              margin-bottom: 16px;
-            }
-
-            .subject {
-              font-weight: 600;
-              color: #1f2937;
-              margin-bottom: 12px;
-            }
-
-            .intro-text {
-              margin-bottom: 20px;
-              color: #4b5563;
-            }
-
-            .outro-text {
-              margin-top: 20px;
-              color: #4b5563;
-              font-style: italic;
-            }
-          </style>
         </head>
-        <body style="margin: 0; padding: 20px;">
-          <div class="container">
-            <div class="header">
-              <img src="https://yallburru.org.au/banner.webp" alt="Yallburru Community Services" class="logo">
-            </div>
-            <div class="content">
-              <div class="greeting">
-                Hi ${name},
-              </div>
-              <div class="intro-text">
-                Thank you for reaching out to Yallburru Community Services. We have received your message and appreciate you taking the time to contact us.
-              </div>
-              <div class="intro-text">
-                We have recieved the following message:
-              </div>
-              <div class="message-container">
-                <div class="subject">
-                  ${subject}
-                </div>
-                <div class="divider"></div>
-                ${content}
-              </div>
-              <div class="outro-text">
-                Our team will review your message and get back to you as soon as possible. If your matter is urgent, please don't hesitate to call us directly at (07) 5632 5727.
-              </div>
-            </div>
-            <div class="footer">
-              <p>© ${new Date().getFullYear()} Yallburru Community Services. All rights reserved.</p>
-              <p>55 Highland way, Upper Coomera, QLD, 4209</p>
-              <p><a href="tel:0756325727">(07) 5632 5727</a> | <a href="mailto:admin@yallburru.org.au">admin@yallburru.org.au</a></p>
-            </div>
-          </div>
+        <body style="margin: 0; padding: 0;">
+          <table style="background-color: #f5f5f5;" border="0" width="100%" cellspacing="0" cellpadding="0">
+            <tbody>
+              <tr>
+                <td style="padding: 20px 0;" align="center">
+                  <table style="background-color: #ffffff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px;" border="0" width="814" cellspacing="0" cellpadding="0">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                            <tbody>
+                              <tr>
+                                <td style="padding: 40px 0; text-align: center;" bgcolor="#0f172a">
+                                  <img style="max-width: 80%; height: auto;" src="https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TKtsA5RdFyBcwRaT7Cn3ObivUMWk4uGgXp15s" alt="Yallburru Banner" />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 40px;">
+                          <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">Dear ${name},</p>
+                          <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                            Thank you for reaching out to Yallburru Community Services. We have received your message and appreciate you taking the time to contact us.
+                          </p>
+                          <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                            We have received the following message:
+                          </p>
+                          <div style="margin: 20px 0; padding: 20px; background-color: #f8fafc; border-radius: 6px;">
+                            <p style="margin: 0 0 10px 0; color: #333333; font-weight: 600;">${subject}</p>
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;" />
+                            <p style="margin: 0; color: #333333;">${content}</p>
+                          </div>
+                          <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6; font-style: italic;">
+                            Our team will review your message and get back to you as soon as possible. If your matter is urgent, please don't hesitate to call us directly at 1300 071 157.
+                          </p>
+                          <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">Best regards,</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 30px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+                          <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                            <tbody>
+                              <tr>
+                                <td style="vertical-align: top;">
+                                  <p style="margin: 0; font-size: 14px; color: #64748b;">Yallburru Community Services</p>
+                                  <table style="margin-top: 20px;" border="0" cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                      <tr>
+                                        <td style="padding-right: 12px;">
+                                          <a style="display: inline-block;" href="https://www.facebook.com/YallburruCommunityServices">
+                                            <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" width="34" height="34" />
+                                          </a>
+                                        </td>
+                                        <td>
+                                          <a style="display: inline-block;" href="https://www.yallburru.org.au">
+                                            <img src="https://img.icons8.com/ios/50/internet--v1.png" alt="Website" width="34" height="34" />
+                                          </a>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                                <td style="text-align: right; vertical-align: top;">
+                                  <img style="width: 120px; height: auto;" src="https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TL8DuCZie6dNc7b4VYnFJ3o9QDAvHIygWtwqZ" alt="Yallburru Community Services Logo" />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 20px; text-align: center; font-size: 12px; color: #666666; background-color: #f8fafc;">
+                          &copy; ${new Date().getFullYear()} Yallburru Community Services. All rights reserved.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </body>
       </html>
     `;
@@ -330,7 +246,7 @@ export async function sendEmail(mailOptions: Mail): Promise<void> {
     // Send both emails
     await Promise.all([
       transporter.sendMail(userEmailData),
-      transporter.sendMail(adminEmailData),
+      //transporter.sendMail(adminEmailData),
     ]);
 
   } catch (error: unknown) {

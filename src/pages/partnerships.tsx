@@ -41,12 +41,12 @@ const partners = [
     description: "A transparent and client-focused home care provider empowering individuals to self-manage their Home Care Packages. With flat-rate pricing and no hidden fees, they ensure clients have full control over their care workers and support services while receiving the best value care at home.",
     website: "https://trilogycare.com.au/"
   },
-  { 
+  /*{ 
     name: "NDIS", 
     logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6T8RfHW38rYdWB4IRU6mJhTZpqLrxcQCjvVlt5",
     description: "Working alongside the National Disability Insurance Scheme (NDIS) to support better lives for Australians with significant and permanent disabilities. We help participants navigate and maximize their NDIS journey through dedicated support coordination and service facilitation.",
     website: "https://www.ndis.gov.au/"
-  },
+  },*/
   { 
     name: "Back On Your Feet Podiatry", 
     logo: "https://sqq4x8niu5.ufs.sh/f/DP7snRSl1H6TGxjgZe0Ib9jiwHka0hFXD8qzo5spC2x7lEvW",

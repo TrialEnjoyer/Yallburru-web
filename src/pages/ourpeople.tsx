@@ -409,7 +409,7 @@ export default function OurPeople() {
                         src={member.image ?? DEFAULT_BANNER}
                         alt={member.name}
                         fill
-                        className={`${member.image ? 'object-cover group-hover:scale-110' : 'object-contain opacity-40'} transition-transform duration-500`}
+                        className={`${member.image ? 'object-cover group-hover:scale-110' : 'object-contain opacity-90'} transition-transform duration-500`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
                       <div className="absolute bottom-6 left-6 right-6">
@@ -568,7 +568,7 @@ export default function OurPeople() {
                         src={member.image ?? DEFAULT_BANNER}
                         alt={member.name}
                         fill
-                        className={`${member.image ? 'object-cover' : 'object-contain opacity-40'}`}
+                        className={`${member.image ? 'object-cover' : 'object-contain opacity-90'}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
@@ -660,7 +660,7 @@ export default function OurPeople() {
                         src={member.image ?? DEFAULT_BANNER}
                         alt={member.name}
                         fill
-                        className={`${member.image ? 'object-cover' : 'object-contain opacity-40'}`}
+                        className={`${member.image ? 'object-cover' : 'object-contain opacity-90'}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                       <div className="absolute bottom-3 left-3 right-3">
@@ -796,7 +796,7 @@ export default function OurPeople() {
                         src={member.image ?? DEFAULT_BANNER}
                         alt={member.name}
                         fill
-                        className={`${member.image ? 'object-cover' : 'object-contain opacity-40'}`}
+                        className={`${member.image ? 'object-cover' : 'object-contain opacity-90'}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">

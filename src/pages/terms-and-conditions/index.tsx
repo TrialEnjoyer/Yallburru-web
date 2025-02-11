@@ -96,7 +96,7 @@ export default function TermsAndConditions() {
             <p>Yallburru Community Services</p>
             <p>55 Highland way</p>
             <p>Upper Coomera, QLD, 4209</p>
-            <p>Phone: (07) 5632 5727</p>
+            <p>Phone: 1300 071 157</p>
             <p>Email: contact@yallburru.org.au</p>
           </div>
         </section>

@@ -291,8 +291,8 @@ export default function Homepage({ articles }: { articles: Article[] }) {
               {
                 icon: <Accessibility className="w-8 h-8" />,
                 title: "Disability Support",
-                description: "Culturally sensitive disability support services and NDIS coordination.",
-                features: ["NDIS Support", "Community Access", "Skill Development", "Allied Health"],
+                description: "Culturally sensitive disability support services",// and NDIS coordination.",
+                features: [/*"NDIS Support", */"Community Access", "Skill Development", "Allied Health"],
                 color: "purple",
                 delay: 0.4
               },
@@ -772,13 +772,13 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                 color: "pink",
                 delay: 0.6
               },
-              {
+              /*{
                 icon: <Shield className="w-8 h-8" />,
                 title: "Quality Assured",
                 description: "Registered NDIS provider meeting highest industry standards",
                 color: "indigo",
                 delay: 0.8
-              },
+              },*/
               {
                 icon: <Clock className="w-8 h-8" />,
                 title: "24/7 Support",
@@ -1090,7 +1090,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link
-                    href="tel:+61756325727"
+                    href="tel:1300071157"
                     className="group relative inline-flex items-center gap-3 px-8 py-4 
                              border border-white/30 text-white rounded-full
                              overflow-hidden transition-all duration-300"
@@ -1098,7 +1098,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                     <span className="absolute inset-0 bg-white/10 opacity-0 
                                    group-hover:opacity-100 transition-opacity" />
                     <Phone className="w-5 h-5 relative" />
-                    <span className="relative">(07) 5632 5727</span>
+                    <span className="relative">1300 071 157</span>
                   </Link>
                 </motion.div>
               </motion.div>
@@ -1237,7 +1237,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                       className="group"
                     >
                       <Link 
-                        href="tel:+61756325727"
+                        href="tel:1300071157"
                         className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg sm:rounded-xl hover:bg-sky-50 transition-colors"
                       >
                         <div className="p-2 sm:p-3 bg-sky-100 rounded-lg group-hover:bg-sky-200 transition-colors">
@@ -1245,7 +1245,7 @@ export default function Homepage({ articles }: { articles: Article[] }) {
                         </div>
                         <div>
                           <div className="text-xs sm:text-sm text-gray-600 mb-0.5 sm:mb-1">Phone</div>
-                          <div className="text-base sm:text-lg font-medium text-gray-900">(07) 5632 5727</div>
+                          <div className="text-base sm:text-lg font-medium text-gray-900">1300 071 157</div>
                         </div>
                       </Link>
                     </motion.div>

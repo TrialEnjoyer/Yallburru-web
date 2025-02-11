@@ -46,10 +46,10 @@ export default function Services() {
     {
       title: "Disability Services",
       category: "disability",
-      description: "NDIS-registered support services focused on empowerment, independence, and cultural connection.",
+      description: /*"NDIS-registered*/" Support services focused on empowerment, independence, and cultural connection.",
       icon: <Accessibility className="w-6 h-6 text-sky-600" />,
       features: [
-        "NDIS registered provider",
+        //"NDIS registered provider",
         "Specialized support workers",
         "Community participation",
         "Cultural engagement"
@@ -391,11 +391,11 @@ export default function Services() {
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                {
+                /*{
                   icon: <Shield className="w-6 h-6 text-sky-600" />,
                   title: "Quality Assurance",
                   description: "Registered NDIS provider meeting the highest industry standards"
-                },
+                },*/
                 {
                   icon: <Users className="w-6 h-6 text-sky-600" />,
                   title: "Expert Team",
@@ -484,7 +484,7 @@ export default function Services() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
-                href="tel:+61756325727"
+                href="tel:1300071157"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-sky-800/50 text-white border border-sky-400/30 
                          rounded-full hover:bg-sky-700/50 transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm"
               >

@@ -132,7 +132,7 @@ export default function CareersPage() {
                     {[
                       { icon: Users, text: "Domestic cleaning experience preferred" },
                       { icon: Clock, text: "Immediate Start (initially casual)" },
-                      { icon: MapPin, text: "Supporting Elders & NDIS participants (in/out of home)" },
+                      //{ icon: MapPin, text: "Supporting Elders & NDIS participants (in/out of home)" },
                       { icon: Car, text: "Drivers license & reliable vehicle required" },
                       { icon: Shield, text: "Current criminal history check required" },
                     ].map((item, index) => (

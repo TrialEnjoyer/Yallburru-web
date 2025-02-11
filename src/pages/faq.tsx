@@ -45,7 +45,7 @@ export default function FAQPage() {
           <p>We provide a comprehensive range of services including:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>Elder Care Services</li>
-            <li>Disability Support Services (NDIS registered)</li>
+            {/*<li>Disability Support Services (NDIS registered)</li>*/}
             <li>Youth & Family Services</li>
             <li>Community Consultation</li>
             <li>Culture & Connection Programs</li>
@@ -72,12 +72,12 @@ export default function FAQPage() {
     },
 
     // NDIS FAQs
-    {
+    /*{
       category: "ndis",
       question: "Are you a registered NDIS provider?",
       answer: "Yes, we are a registered NDIS provider. We meet all the quality and safety requirements set by the NDIS Quality and Safeguards Commission.",
-    },
-    {
+    },*/
+    /*{
       category: "ndis",
       question: "How can I access your NDIS services?",
       answer: (
@@ -102,7 +102,7 @@ export default function FAQPage() {
       category: "ndis",
       question: "What NDIS supports do you provide?",
       answer: "We provide a wide range of NDIS supports including personal care, community participation, capacity building, and specialized support services. All our services are culturally sensitive and tailored to individual needs.",
-    },
+    },*/
 
     // Cultural Services FAQs
     {
@@ -256,7 +256,7 @@ export default function FAQPage() {
               {[
                 { id: "all", label: "All Questions", icon: HelpCircle },
                 { id: "services", label: "Our Services", icon: Heart },
-                { id: "ndis", label: "NDIS Support", icon: Shield },
+                /*{ id: "ndis", label: "NDIS Support", icon: Shield },*/
                 { id: "cultural", label: "Cultural Services", icon: Leaf },
                 { id: "general", label: "General Info", icon: MessageCircle },
               ].map((category) => (
@@ -387,12 +387,12 @@ export default function FAQPage() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                href="tel:0756325727"
+                href="tel:1300071157"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-900 rounded-full
                          border border-gray-200 hover:bg-sky-50 transition-all duration-300 transform hover:-translate-y-1"
               >
                 <Phone className="w-5 h-5" />
-                (07) 5632 5727
+                1300 071 157
               </Link>
             </motion.div>
           </div>
