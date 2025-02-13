@@ -57,7 +57,7 @@ function Navigation({ isSidebarOpen, setIsSidebarOpen }: NavigationProps) {
             </button>
             <Link href="/" className="flex items-center gap-2">
               <Image 
-                src="/banner.webp" 
+                src="/banner.png" 
                 alt="Yallburru Community Services banner" 
                 width={192}
                 height={48}
