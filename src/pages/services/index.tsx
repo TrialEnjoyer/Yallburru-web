@@ -5,7 +5,6 @@ import {
   ArrowRight, 
   Heart, 
   Users, 
-  Clock, 
   Home, 
   Accessibility, 
   Phone, 
@@ -14,14 +13,9 @@ import {
   Sparkles,
   Target,
   HandHeart,
-  Leaf,
-  Award,
-  MessageCircle,
   CheckCircle2,
   Star,
   Shield,
-  MapPin,
-  Mail
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,80 +25,86 @@ export default function Services() {
 
   const services = [
     {
-      title: "Elder Care Services",
+      title: "Elder & Seniors Care",
       category: "elder",
-      description: "Culturally sensitive care and support services tailored for our Elders, delivered with respect and understanding.",
+      description: "Comprehensive support services tailored for our Elders, ensuring comfort and independence in their daily lives.",
       icon: <Heart className="w-6 h-6 text-sky-600" />,
       features: [
-        "Personalized care plans",
-        "Cultural connection activities",
-        "Social engagement",
-        "Health & wellbeing support"
+        "Social Support (Individual & Group)",
+        "Personal Care",
+        "Transport Services",
+        "Domestic Assistance",
+        "Allied Health Support"
       ],
       image: "/elder-care.jpg"
     },
     {
       title: "Disability Services",
       category: "disability",
-      description: /*"NDIS-registered*/" Support services focused on empowerment, independence, and cultural connection.",
+      description: "Empowering support services focused on independence and quality of life.",
       icon: <Accessibility className="w-6 h-6 text-sky-600" />,
       features: [
-        //"NDIS registered provider",
-        "Specialized support workers",
-        "Community participation",
-        "Cultural engagement"
+        "Support Coordination",
+        "ADL (Assistance with Daily Living)",
+        "Social & Community Access",
+        "STA/Respite Services",
+        "Cleaning & Maintenance"
       ],
       image: "/disability-support.jpg"
     },
     {
       title: "Youth & Family Services",
       category: "youth",
-      description: "Supporting young people and families with culturally appropriate services and programs.",
+      description: "Supporting young people and families through BDIYP and specialized programs.",
       icon: <Users className="w-6 h-6 text-sky-600" />,
       features: [
-        "Family support programs",
-        "Youth engagement",
-        "Cultural education",
-        "Community activities"
+        "BDIYP Youth Program",
+        "NIAA Children & Schooling",
+        "Family Support Programs",
+        "Youth Engagement",
+        "Cultural Education"
       ],
       image: "/youth-services.jpg"
     },
     {
-      title: "Community Consultation",
-      category: "community",
-      description: "Working with communities to ensure our services meet their needs and preserve cultural connections.",
-      icon: <MessageCircle className="w-6 h-6 text-sky-600" />,
+      title: "Home & Garden Care",
+      category: "home",
+      description: "Comprehensive home maintenance services to keep your living space safe and comfortable.",
+      icon: <Home className="w-6 h-6 text-sky-600" />,
       features: [
-        "Cultural consultation",
-        "Community engagement",
-        "Service planning",
-        "Needs assessment"
+        "Minor Home Maintenance",
+        "Lawn & Garden Care",
+        "Yard Maintenance",
+        "Cleaning Services",
+        "Home Safety Checks"
       ],
-      image: "/community.jpg"
+      image: "/home-maintenance.jpg"
     },
     {
-      title: "Culture & Connection",
-      category: "culture",
-      description: "Programs and services focused on maintaining and strengthening cultural connections.",
-      icon: <Leaf className="w-6 h-6 text-sky-600" />,
+      title: "Social Support Services",
+      category: "social",
+      description: "Fostering community connections and social engagement through structured support programs.",
+      icon: <HandHeart className="w-6 h-6 text-sky-600" />,
       features: [
-        "Cultural activities",
-        "Traditional practices",
-        "Community events",
-        "Knowledge sharing"
+        "Individual Support",
+        "Group Activities",
+        "Community Access",
+        "Social Programs",
+        "Transport Assistance"
       ],
-      image: "/culture.jpg"
+      image: "/social-support.jpg"
     },
     {
-      title: "Advocacy & Education",
+      title: "Advocacy Services",
       category: "advocacy",
-      description: "Supporting our community through advocacy and educational programs.",
-      icon: <Award className="w-6 h-6 text-sky-600" />,
+      description: "Strong advocacy support through SEQ DEQ and CYMJA programs.",
+      icon: <Shield className="w-6 h-6 text-sky-600" />,
       features: [
-        "Community advocacy",
-        "Educational programs",
-        "Capacity building",
-        "Rights awareness"
+        "SEQ DEQ Program",
+        "CYMJA Support",
+        "Rights Protection",
+        "Community Advocacy",
+        "Service Navigation"
       ],
       image: "/advocacy.jpg"
     }
@@ -277,12 +277,12 @@ export default function Services() {
             >
               {[
                 { id: "all", label: "All Services" },
-                { id: "elder", label: "Elder Care" },
-                { id: "disability", label: "Disability Support" },
-                { id: "youth", label: "Youth & Family Services" },
-                { id: "community", label: "Community Consultation" },
-                { id: "culture", label: "Culture & Connection" },
-                { id: "advocacy", label: "Advocacy & Education" }
+                { id: "elder", label: "Elder & Seniors Care" },
+                { id: "disability", label: "Disability Services" },
+                { id: "youth", label: "Youth & Family" },
+                { id: "home", label: "Home & Garden Care" },
+                { id: "social", label: "Social Support" },
+                { id: "advocacy", label: "Advocacy" }
               ].map((tab) => (
                 <motion.button
                   key={tab.id}
@@ -315,7 +315,7 @@ export default function Services() {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <Image
-                        src={/*service.image*/ "logo.svg"}
+                        src={/*service.image*/ "/logo.svg"}
                         alt={service.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-500"

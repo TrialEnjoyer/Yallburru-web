@@ -5,8 +5,7 @@
 /* Whitney Font Declarations */
 @font-face {
   font-family: 'Whitney';
-  src: url('/fonts/whitney-light.woff2') format('woff2'),
-       url('/fonts/whitney-light.woff') format('woff');
+  src: url('/fonts/whitney-light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -14,8 +13,7 @@
 
 @font-face {
   font-family: 'Whitney';
-  src: url('/fonts/whitney-book.woff2') format('woff2'),
-       url('/fonts/whitney-book.woff') format('woff');
+  src: url('/fonts/whitney-book.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -23,8 +21,7 @@
 
 @font-face {
   font-family: 'Whitney';
-  src: url('/fonts/whitney-medium.woff2') format('woff2'),
-       url('/fonts/whitney-medium.woff') format('woff');
+  src: url('/fonts/whitney-medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -32,8 +29,7 @@
 
 @font-face {
   font-family: 'Whitney';
-  src: url('/fonts/whitney-semibold.woff2') format('woff2'),
-       url('/fonts/whitney-semibold.woff') format('woff');
+  src: url('/fonts/whitney-semibold.otf') format('opentype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -41,8 +37,7 @@
 
 @font-face {
   font-family: 'Whitney';
-  src: url('/fonts/whitney-bold.woff2') format('woff2'),
-       url('/fonts/whitney-bold.woff') format('woff');
+  src: url('/fonts/whitney-bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -51,21 +46,28 @@
 @layer base {
   /* Default body font - Whitney Book */
   body {
-    @apply font-sans font-normal;
+    @apply font-sans text-base;
+    font-family: 'Whitney', sans-serif;
+    font-weight: 400;
   }
 
   /* Main headings - Whitney Bold */
   h1, h2 {
-    @apply font-display font-bold;
+    @apply font-bold text-3xl mb-4;
+    font-family: 'Whitney', sans-serif;
+    font-weight: 700;
   }
 
   /* Secondary headings - Whitney Medium */
   h3, h4, h5, h6 {
-    @apply font-heading font-medium;
+    @apply font-medium text-xl mb-3;
+    font-family: 'Whitney', sans-serif;
+    font-weight: 500;
   }
 
-  /* Ensure paragraphs and other text elements use Whitney Book */
+  /* Body text - Whitney Book */
   p, span, div, li, a {
-    @apply font-normal;
+    font-family: 'Whitney', sans-serif;
+    font-weight: 400;
   }
 }
