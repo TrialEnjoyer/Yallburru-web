@@ -54,7 +54,7 @@
     "google-map-react": "^2.2.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
-    "next": "^15.0.1",
+    "next": "15.0.7",
     "nodemailer": "^6.9.16",
     "papaparse": "^5.5.2",
     "react": "^18.3.1",
